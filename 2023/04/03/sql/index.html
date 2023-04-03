@@ -420,7 +420,7 @@
 <p>mysql -u username -p</p>
 <p>or </p>
 <p>mysql -u username -ppassword(这里-p要和你的密码紧靠在一起)</p>
-<p><img src="/./1.png" alt="1"></p>
+<p><img src="/2023/04/03/sql/1.png" alt="1"></p>
 <h3 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h3><h4 id="创建数据库、表"><a href="#创建数据库、表" class="headerlink" title="创建数据库、表"></a>创建数据库、表</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">DATABASE</span> dbname<span class="token punctuation">;</span> <span class="token comment">#创建数据库</span>
 <span class="token keyword">DROP</span> <span class="token keyword">DATABASE</span> dbname<span class="token punctuation">;</span>  <span class="token comment">#删除数据库</span>
 
@@ -453,7 +453,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <p>show databases;   ==&gt;  展现所有数据库名</p>
 <p>show tables;  ==&gt; 展现当前数据库的所有表名</p>
 <p>use databaseName;  ==&gt; 使用databaseName数据库</p>
-<p><img src="/./2.png" alt="2"></p>
+<p><img src="/2023/04/03/sql/2.png" alt="2"></p>
 <h3 id="数据查询语句"><a href="#数据查询语句" class="headerlink" title="数据查询语句"></a>数据查询语句</h3><h4 id="SELECT"><a href="#SELECT" class="headerlink" title="SELECT"></a>SELECT</h4><p>SELECT：用于从数据库中选取数据；</p>
 <p>基本格式：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> column1<span class="token punctuation">,</span> column2<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
@@ -463,7 +463,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li>column1, column2, …：要选择的字段名称，可以为多个字段。如果不指定字段名称或指定为<code>*</code>，则会选择所有字段;</li>
 <li>table_name：要查询的表名称。</li>
 </ul>
-<p><img src="/./SQL/3.png" alt="3"></p>
+<p><img src="/2023/04/03/sql/3.png" alt="3"></p>
 <h4 id="SELECT-DISTINCT"><a href="#SELECT-DISTINCT" class="headerlink" title="SELECT DISTINCT"></a>SELECT DISTINCT</h4><p>SELECT DISTINCT：用于返回唯一不同的值。</p>
 <p>基本格式：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token keyword">DISTINCT</span> column1<span class="token punctuation">,</span> column2<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
@@ -474,7 +474,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li><strong>table_name</strong>：要查询的表名称。</li>
 </ul>
 <p>如下：去除了city列中的重复值；</p>
-<p><img src="/./SQL/4.png" alt="4"></p>
+<p><img src="/2023/04/03/sql/4.png" alt="4"></p>
 <p><strong>Note：</strong>若指定了多个column，则表示排除column都相等的；</p>
 <h4 id="WHERE"><a href="#WHERE" class="headerlink" title="WHERE"></a>WHERE</h4><p>WHERE：该子句用于过滤记录；用于提取那些满足指定条件的记录。</p>
 <p>格式：</p>
@@ -486,7 +486,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li>condition：指定的条件，可以用<code>AND/&amp;&amp;</code>或者<code>OR/||</code>连接多个条件，或在condition前加NOT表示否定;优先级：()&gt;not&gt;and&gt;or;</li>
 <li>column，table_name解释如上SELECT;</li>
 </ul>
-<p><img src="/./img/SQL/5.png" alt="5"></p>
+<p><img src="/2023/04/03/sql/5.png" alt="5"></p>
 <p><strong>Note：</strong>SQL 使用单引号<code>''</code>来环绕文本值(可双引号<code>""</code>)；如果是数值字段，请不要使用引号。</p>
 <h5 id="可在where子句中使用的运算符"><a href="#可在where子句中使用的运算符" class="headerlink" title="可在where子句中使用的运算符"></a>可在where子句中使用的运算符</h5><table>
 <thead>
@@ -569,7 +569,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 </tbody></table>
 <p><strong>LIKE 与 通配符 配合使用：</strong></p>
 <p>当 like后面直接加具体的值(column like value)则相当于 column=vlaue，可以用来饶过<code>=</code>过滤；</p>
-<p><img src="/./img/SQL/8.png" alt="8"></p>
+<p><img src="/2023/04/03/sql/8.png" alt="8"></p>
 <p><strong>[charlist]通配符：</strong>MySQL 中使用 <strong>REGEXP</strong> 或 <strong>NOT REGEXP</strong> 运算符 (或 RLIKE 和 NOT RLIKE) 来操作正则表达式。</p>
 <p>格式：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> column1<span class="token punctuation">,</span> column2<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
@@ -580,7 +580,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li>column_：要匹配的字段名称；</li>
 <li>pattern：正则表达式。</li>
 </ul>
-<p><img src="/./img/SQL/9.png" alt="9"></p>
+<p><img src="/2023/04/03/sql/9.png" alt="9"></p>
 <h6 id="IN运算符"><a href="#IN运算符" class="headerlink" title="IN运算符"></a>IN运算符</h6><p>IN：该操作符允许您在 WHERE 子句中规定多个值。</p>
 <p>格式：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> column1<span class="token punctuation">,</span> column2<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
@@ -591,7 +591,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li>column_：要匹配的字段名称；</li>
 <li>value1, value2, …：要查询的值，可以为多个值。</li>
 </ul>
-<p><img src="/./img/SQL/10.png" alt="10"></p>
+<p><img src="/2023/04/03/sql/10.png" alt="10"></p>
 <p>Note：其实就相当于 column_ = value1 || column_ = value2 || …</p>
 <h6 id="BETWEEN运算符"><a href="#BETWEEN运算符" class="headerlink" title="BETWEEN运算符"></a>BETWEEN运算符</h6><p>BETWEEN：该操作符用于选取介于两个值之间的数据范围内的值。这些值可以是数值、文本或者日期。</p>
 <p>格式：BETWEEN … AND ….</p>
@@ -603,9 +603,9 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li>column_：要匹配的字段名称；</li>
 <li>value1、value2：范围的起始值和结束值。</li>
 </ul>
-<p><img src="/./img/SQL/6.png" alt="6"></p>
+<p><img src="/2023/04/03/sql/6.png" alt="6"></p>
 <p>Note：如果是文本的话，按照字符对应的数值依此比较；如下：</p>
-<p><img src="/./img/SQL/7.png" alt="7"></p>
+<p><img src="/2023/04/03/sql/7.png" alt="7"></p>
 <p><strong>Note：</strong></p>
 <ul>
 <li>在某些数据库中，BETWEEN 不包括两个测试值的字段；</li>
@@ -616,7 +616,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <ul>
 <li>直接 where 0(非0); 0时返回空，1时返回所有查询的列的值</li>
 </ul>
-<p><img src="/./img/SQL/11.png" alt="11"></p>
+<p><img src="/2023/04/03/sql/11.png" alt="11"></p>
 <ul>
 <li>空值判断：is null</li>
 </ul>
@@ -632,7 +632,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li>ASC：表示按升序排序；</li>
 <li>DESC：表示按降序排序。</li>
 </ul>
-<p><img src="/./img/SQL/12.png" alt="12"></p>
+<p><img src="/2023/04/03/sql/12.png" alt="12"></p>
 <p>可以看出：qty是降序的，而jno在qty相同的情况下是升序的</p>
 <h4 id="LIMIT"><a href="#LIMIT" class="headerlink" title="LIMIT"></a>LIMIT</h4><p>LIMIT：用于规定要返回的记录的数目。</p>
 <p>格式：（MySQL中</p>
@@ -640,7 +640,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <span class="token keyword">FROM</span> table_name
 <span class="token keyword">LIMIT</span> number<span class="token punctuation">;</span> <span class="token comment">#number为返回记录的数目</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
-<p><img src="/./img/SQL/16.png" alt="16"></p>
+<p><img src="/2023/04/03/sql/16.png" alt="16"></p>
 <h4 id="AS-SQL-别名"><a href="#AS-SQL-别名" class="headerlink" title="AS(SQL 别名)"></a>AS(SQL 别名)</h4><p>通过SQL，可以为表名称或列名称指定别名。 </p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#列的 SQL 别名语法</span>
 <span class="token keyword">SELECT</span> column_name <span class="token keyword">AS</span> alias_name
@@ -689,7 +689,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li>table2：表2的名称。</li>
 <li>tablex.column_name：表中用于连接的列名。</li>
 </ul>
-<p><img src="/./img/SQL/17.png" alt="17"></p>
+<p><img src="/2023/04/03/sql/17.png" alt="17"></p>
 <h5 id="LEFT-JOIN"><a href="#LEFT-JOIN" class="headerlink" title="LEFT JOIN"></a>LEFT JOIN</h5><p>LEFT JOIN：从左表（table1）返回所有的行，即使右表（table2）中没有匹配。如果右表中没有匹配，则结果为 NULL。</p>
 <p>格式：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> column_name<span class="token punctuation">(</span>s<span class="token punctuation">)</span>
@@ -704,7 +704,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <span class="token keyword">LEFT</span> <span class="token keyword">OUTER</span> <span class="token keyword">JOIN</span> table2
 <span class="token keyword">ON</span> table1<span class="token punctuation">.</span>column_name<span class="token operator">=</span>table2<span class="token punctuation">.</span>column_name<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p><img src="/./img/SQL/18.png" alt="18"></p>
+<p><img src="/2023/04/03/sql/18.png" alt="18"></p>
 <h5 id="RIGHT-JOIN"><a href="#RIGHT-JOIN" class="headerlink" title="RIGHT JOIN"></a>RIGHT JOIN</h5><p>与LEFT JOIN相反，使用相同把left 改为 right即可。</p>
 <h5 id="FULL-JOIN"><a href="#FULL-JOIN" class="headerlink" title="FULL JOIN"></a>FULL JOIN</h5><p>FULL OUTER JOIN：关键字只要左表（table1）和右表（table2）其中一个表中存在匹配，则返回行；结合了 LEFT JOIN 和 RIGHT JOIN 的结果。</p>
 <p>格式：</p>
@@ -725,7 +725,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <span class="token keyword">UNION</span>
 <span class="token keyword">SELECT</span> column_name<span class="token punctuation">(</span>s<span class="token punctuation">)</span> <span class="token keyword">FROM</span> table2<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p><img src="/./img/SQL/19.png" alt="19"></p>
+<p><img src="/2023/04/03/sql/19.png" alt="19"></p>
 <h3 id="数据更新语句"><a href="#数据更新语句" class="headerlink" title="数据更新语句"></a>数据更新语句</h3><h4 id="插入：INSERT-INTO语句"><a href="#插入：INSERT-INTO语句" class="headerlink" title="插入：INSERT INTO语句"></a>插入：INSERT INTO语句</h4><p>INSERT INTO：用于向表中插入新记录。</p>
 <p>格式1 ：无需指定要插入数据的列名，只需提供被插入的值即可：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">INSERT</span> <span class="token keyword">INTO</span> table_name
@@ -738,7 +738,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <ul>
 <li>column为table_name表中的字段；</li>
 </ul>
-<p><img src="/./img/SQL/13.png" alt="13"></p>
+<p><img src="/2023/04/03/sql/13.png" alt="13"></p>
 <h4 id="更新：UPDATE语句"><a href="#更新：UPDATE语句" class="headerlink" title="更新：UPDATE语句"></a>更新：UPDATE语句</h4><p>UPDATE：用于更新表中<strong>已存在</strong>的记录。</p>
 <p>格式：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">UPDATE</span> table_name
@@ -751,7 +751,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li>value1, value2, …：要修改的值，可以为多个值；</li>
 <li>condition：修改条件，用于指定哪些数据要修改。</li>
 </ul>
-<p><img src="/./img/SQL/14.png" alt="14"></p>
+<p><img src="/2023/04/03/sql/14.png" alt="14"></p>
 <p><strong>Note：</strong>update更新数据时，切记不要忘记带where子句，否则你的表中的相应字段的值都会被修改。</p>
 <h4 id="删除：DELETE语句"><a href="#删除：DELETE语句" class="headerlink" title="删除：DELETE语句"></a>删除：DELETE语句</h4><p>DELETE：用于删除表中的行。</p>
 <p>格式：</p>
@@ -764,7 +764,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <li><p>condition：删除条件，用于指定哪些数据要删除。</p>
 </li>
 </ul>
-<p><img src="/./img/SQL/15.png" alt="15"></p>
+<p><img src="/2023/04/03/sql/15.png" alt="15"></p>
 <p><strong>Note：</strong></p>
 <ul>
 <li>delete删除数据时，切记不要忘记带where子句，否则你表中的所有记录都会被修改。</li>
@@ -775,7 +775,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">INSERT</span> <span class="token keyword">INTO</span> table2<span class="token punctuation">[</span><span class="token punctuation">(</span>column_name<span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
 <span class="token keyword">SELECT</span> <span class="token operator">*</span><span class="token punctuation">[</span>columns_name<span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token keyword">FROM</span> table1<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
-<p><img src="/./img/SQL/20.png" alt="20"></p>
+<p><img src="/2023/04/03/sql/20.png" alt="20"></p>
 <h3 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h3><h3 id="SQL函数"><a href="#SQL函数" class="headerlink" title="SQL函数"></a>SQL函数</h3>
                 
             </div>
@@ -802,7 +802,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://XiaozaYa.github.io/2023/04/03/sql/sql/">http://XiaozaYa.github.io/2023/04/03/sql/sql/</a>
+                    <a href="http://XiaozaYa.github.io/2023/04/03/sql/">http://XiaozaYa.github.io/2023/04/03/sql/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -892,7 +892,7 @@ constraint_name<span class="token punctuation">(</span>可选<span class="token 
                 <i class="far fa-dot-circle"></i>&nbsp;本篇
             </div>
             <div class="card">
-                <a href="/2023/04/03/sql/sql/">
+                <a href="/2023/04/03/sql/">
                     <div class="card-image">
                         
                         
