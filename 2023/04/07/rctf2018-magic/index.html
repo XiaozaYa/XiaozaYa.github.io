@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="My First Blog, XiaozaYa&#39;s Blog">
-    <meta name="description" content="Markdown简单使用">
+    <meta name="keywords" content="RCTF2018-magic, XiaozaYa&#39;s Blog">
+    <meta name="description" content="入口函数位置混淆、数据爆破、原始代码调用、setjmp/longjmp、rc4、_onexit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>My First Blog | XiaozaYa&#39;s Blog</title>
+    <title>RCTF2018-magic | XiaozaYa&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
     <style>
@@ -47,7 +47,9 @@
 
 
 
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
     <link rel="stylesheet" href="/css/post.css">
+
 
 
 
@@ -319,12 +321,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">My First Blog</h1>
+                    <h1 class="description center-align post-title">RCTF2018-magic</h1>
                 </div>
             </div>
         </div>
@@ -334,10 +336,12 @@
 
 
 
-<main class="container content">
+<main class="post-container content">
 
     
-    <!-- 文章内容详情 -->
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
 <div id="artDetail">
     <div class="card">
         <div class="card-content article-info">
@@ -346,8 +350,16 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Markdown/">
-                                <span class="chip bg-color">Markdown</span>
+                            <a href="/tags/VM%E9%80%86%E5%90%91/">
+                                <span class="chip bg-color">VM逆向</span>
+                            </a>
+                        
+                            <a href="/tags/setjmp-longjmp/">
+                                <span class="chip bg-color">setjmp/longjmp</span>
+                            </a>
+                        
+                            <a href="/tags/rc4/">
+                                <span class="chip bg-color">rc4</span>
                             </a>
                         
                     </div>
@@ -358,8 +370,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/Markdown/" class="post-category">
-                                Markdown
+                            <a href="/categories/CTF-RE/" class="post-category">
+                                CTF-RE
                             </a>
                         
                     </div>
@@ -371,28 +383,28 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-04-02
+                    2023-04-07
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-04
+                    2023-04-07
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    814
+                    1.4k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    2 分
+                    6 分
                 </div>
                 
 
@@ -415,62 +427,306 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="Markdown-标题"><a href="#Markdown-标题" class="headerlink" title="Markdown 标题"></a>Markdown 标题</h1><p>“#”   =&gt; 一级标题<br>“##” =&gt; 二级标题，以此类推，一共六级标题。</p>
-<h1 id="Markdown文本"><a href="#Markdown文本" class="headerlink" title="Markdown文本"></a>Markdown文本</h1><ul>
-<li>斜体：可以在需要标注为斜体文本前及斜体文本结尾，输入一个星号<code>*</code>或者一个下划线 <code>_</code>；<br>eg：<code>*斜体*</code> ⇒ <em>斜体</em>   <code>_斜体_</code>⇒ <em>斜体</em></li>
-<li>粗体：<code>**</code>或者<code>__</code></li>
-<li>斜粗体：<code>***</code>或者<code>___</code></li>
-</ul>
-<h1 id="Markdown列表"><a href="#Markdown列表" class="headerlink" title="Markdown列表"></a>Markdown列表</h1><p>1）无序列表：使用星号(<code>*</code>)、加号(<code>+</code>)或是减号(<code>-</code>)，再加一个空格作为列表标记；<br>2）有序列表：使用数字并加上 <code>.</code> 号，再加一个空格作为列表标记；<br>note：如果要控制列表的层级，则需要在符号 前使用 <code>tab</code>，如下：</p>
+                <blockquote>
+<p><strong>涉及知识点</strong></p>
+<blockquote>
+<p>入口函数位置混淆</p>
+</blockquote>
+<blockquote>
+<p>调用原始代码进行数据爆破</p>
+</blockquote>
+<blockquote>
+<p>setjmp/longjmp机制</p>
+</blockquote>
+<blockquote>
+<p>rc4密码算法</p>
+</blockquote>
+<blockquote>
+<p>onexit机制</p>
+</blockquote>
+</blockquote>
+<p>先运行发现输出错误信息</p>
+<p><img src="/2023/04/07/rctf2018-magic/0.png"></p>
+<p>IDA打开，分析main函数可知：在main函数前面还有其他函数(不是启动函数)，</p>
 <ul>
-<li>无序列表 1</li>
-<li>无序列表 2<ul>
-<li>无序列表 2.1</li>
-<li>无序列表 2.2</li>
+<li>swap_xor利用异或交换数据，并且传入的是地址，所以swap_xor(&amp;v7, &amp;v7)返回0，而在main函数其他地方也没有发现有输出的地方，所以main函数不是入口函数</li>
+<li>对main函数交叉引用跟踪到sub_4011B0函数</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/1.png"></p>
+<p>在sub_4011B0函数、main函数前分别下断点</p>
+<ul>
+<li>可以发现，main函数还没有执行，但报错信息已经输出</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/2.png"></p>
+<p>查看trace信息</p>
+<ul>
+<li>可以发现，在main函数前面sub_402218函数调用了puts函数，且sub_402357函数调用了sub_402218函数</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/3.png"></p>
+<p>跟到sub_402218函数</p>
+<ul>
+<li>可以看到该函数先对错误信息字符串解密，然后输出，再加密</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/4.png"></p>
+<p>对sub_402218交叉引用跟到sub_402357函数</p>
+<ul>
+<li>可以看到，当dword_4099D0[0]=0时，就会输出错误信息，所以在这里我们要让dword_4099D0[0]不等于0</li>
+<li>跟进sub_402268函数，发现其对dword_4099D[0]进行了相关赋值</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/5.png"></p>
+<p>跟入sub_402268函数(这里我已经打好了补丁)</p>
+<ul>
+<li>该函数的原始逻辑是：srand(v2[1])，所以我们要爆破时间戳</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/16.png"></p>
+<p>爆破时间戳</p>
+<ul>
+<li><p>这里直接调用程序里面的sub_402268函数进行爆破；Note：要给sub_402268中的其他函数赋一个地址</p>
+</li>
+<li><p>time:5B00E398                 </p>
+</li>
+<li><p>dword_4099D0[0]: 322CE7A4</p>
+</li>
+</ul>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;string.h&gt;
+#include "crypt.h"
+#include&lt;Windows.h&gt;
+
+typedef unsigned int(*check_time)();
+static UINT time = 0x5AFFE78F + 1; //时间戳种子在(0x5AFFE78F,0x5B28A8F]之间
+UINT mytime(int) { //遍历时间戳
+	return time++;
+}
+
+char byte_405020_bak[256] = { 0 };
+int main() {
+	
+	UINT64 * pTime64 = (UINT64 *)0x40A38C;
+	UINT64 * pSrand  = (UINT64 *)0x40A414;
+	UINT64 * pRand   = (UINT64 *)0x40A3FC;
+	UINT64 * pMemset = (UINT64 *)0x40A3DC;
+
+	HMODULE hmd = LoadLibrary(TEXT("your path\magic.exe"));
+	memcpy(byte_405020_bak, (void*)0x405020, 256);
+	check_time check = (check_time)0x402268;
+	*pTime64 = (UINT64)mytime;
+	*pSrand  = (UINT64)srand;
+	*pRand   = (UINT64)rand;
+	*pMemset = (UINT64)memset;
+
+	while (TRUE) {
+		memcpy((void*)0x405020, byte_405020_bak, 256);
+		UINT res = check();
+		if (res) {
+			printf("time:%20X\ndword_4099D0[0]:%9X", time-1, res);
+			break;
+		}
+	}
+	return 0;
+}
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>给程序打个补丁</p>
+<p><img src="/2023/04/07/rctf2018-magic/7.png"></p>
+<p>打好补丁后，在运行程序</p>
+<ul>
+<li>此时，第一关已经攻破</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/8.png"></p>
+<p>保持sub_4011B0函数、main函数前的断点，再在sub_402268函数前下个断点，我们继续动态调试</p>
+<ul>
+<li>sub_402357执行完后，回到sub_4032A0函数</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/9.png"></p>
+<ul>
+<li>继续往后跟，跟到sub_40318函数<ul>
+<li>发现onexit()函数，这个函数的作用是注册一个函数，使得程序在exit()的时候会调这个被注册的函数，这个被注册的函数就是sub_403260</li>
 </ul>
 </li>
 </ul>
-<h1 id="Markdown链接"><a href="#Markdown链接" class="headerlink" title="Markdown链接"></a>Markdown链接</h1><p>格式：<code>[链接名称](链接地址)</code>或者&lt;链接地址&gt;<br>eg:<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_61670993?spm=1018.2226.3001.5343">XiaozaYa</a>或者<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_61670993?spm=1018.2226.3001.5343">https://blog.csdn.net/qq_61670993?spm=1018.2226.3001.5343</a></p>
-<h1 id="Markdown引用"><a href="#Markdown引用" class="headerlink" title="Markdown引用"></a>Markdown引用</h1><p>格式：在符号 <code>&gt;</code> 后面书写文字，或者加一个空格再加文字；<br>eg：</p>
-<blockquote>
-<p>hello:<br>Welcome</p>
-</blockquote>
-<p>除正常引用外，还可以嵌套，一个 <code>&gt;</code> 符号在第一层，两个 <code>&gt;</code> 符号是第二层，以此类推，如下：</p>
-<blockquote>
-<p>这是一个引用:</p>
-<blockquote>
-<p>welcome</p>
-<blockquote>
-<p>快来玩啊！</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<h1 id="Markdown分割线"><a href="#Markdown分割线" class="headerlink" title="Markdown分割线"></a>Markdown分割线</h1><h2 id="格式：在一行中用三个-或者-来建立一个分隔线，同时需要在分隔线的上面空一行；如果不留空格，当用-时就会变成放大上面的字；eg-Welcome-我爱你！"><a href="#格式：在一行中用三个-或者-来建立一个分隔线，同时需要在分隔线的上面空一行；如果不留空格，当用-时就会变成放大上面的字；eg-Welcome-我爱你！" class="headerlink" title="格式：在一行中用三个 - 或者 * 来建立一个分隔线，同时需要在分隔线的上面空一行；如果不留空格，当用-时就会变成放大上面的字；eg:Welcome!***我爱你！"></a>格式：在一行中用三个 <code>-</code> 或者 <code>*</code> 来建立一个分隔线，同时需要在分隔线的上面空一行；如果不留空格，当用<code>-</code>时就会变成放大上面的字；<br>eg:<br>Welcome!<br>***<br>我爱你！</h2><hr>
-<hr>
-<h1 id="Markdown删除线"><a href="#Markdown删除线" class="headerlink" title="Markdown删除线"></a>Markdown删除线</h1><p>格式：在需要删除的文字前后各使用两个 <code>~</code>；<br>eg：<br><del>删除线</del></p>
-<h1 id="Markdown下划线"><a href="#Markdown下划线" class="headerlink" title="Markdown下划线"></a>Markdown下划线</h1><p>格式：在需要添加下划线的文字首部和尾部加上 <code>&lt;u&gt;文本&lt;/u&gt;</code>；<br>eg：<br><u>下划线</u></p>
-<h1 id="Markdown表格"><a href="#Markdown表格" class="headerlink" title="Markdown表格"></a>Markdown表格</h1><p>格式：表格使用 <code>|</code> 来分隔不同的单元格，使用 <code>-</code> 来分隔表头和其他行，如果想调整表格的左对齐、右对齐、居中对齐:</p>
+<p><img src="/2023/04/07/rctf2018-magic/10.png"></p>
 <ul>
-<li><code>:-</code>：将表头及单元格的内容左对齐；</li>
-<li><code>-:</code>：将表头及单元格的内容左对齐；</li>
-<li><code>:-:</code>：将表头及单元格的内容居中对齐；<br>eg：<br>|姓名|年龄|工作|<br>| :—– 	| :–: | ——-:|<br>| 小可爱 	|  18  | 吃可爱多 	 |<br>| 小小勇敢 	|  20  | 爬棵勇敢树 	 |<br>| 小小小机智 |  22  | 看一本机智书 |</li>
+<li>继续跟，会执行main函数，这里就不看了，因为main函数没啥用；main函数执行完后会调用exit函数(还记得上面的onexit🐎</li>
 </ul>
-<p>|姓名|年龄|工作|<br>| :—– 	| :–: | ——-:|<br>| 小可爱 	|  18  | 吃可爱多 	 |<br>| 小小勇敢 	|  20  | 爬棵勇敢树 	 |<br>| 小小小机智 |  22  | 看一本机智书 |</p>
-<h1 id="Markdown图片"><a href="#Markdown图片" class="headerlink" title="Markdown图片"></a>Markdown图片</h1><p>格式：<code>![图片描述](图片地址)</code><br>note：</p>
+<p><img src="/2023/04/07/rctf2018-magic/11.png"></p>
 <ul>
-<li>如果是行内图片则无图例，否则有图例；</li>
-<li>仅支持 https 的图片，图片粘贴到网页编辑器后，会自动上传到服务器；如果是本地编辑器，需要有一个相对路径用来存储保存的图片。</li>
-<li>支持 <code>jpg、png、gif、svg</code> 等图片格式，<strong>其中 svg 文件仅可在微信公众平台中使用</strong>。<br><img src="http://image.luokangyuan.com/4027734.jpeg" alt="图片:【heihei】"></li>
+<li>执行exit时，回调到sub_403260函数，这里跟进result就到都头了</li>
 </ul>
-<h1 id="Markdown脚注"><a href="#Markdown脚注" class="headerlink" title="Markdown脚注"></a>Markdown脚注</h1><p>格式：<code>[文字](脚注解释 "脚注名字")</code><br>eg：<br>脚注：<a href="%E8%84%9A%E6%B3%A8%E8%A7%A3%E9%87%8A" title="脚注名字">文字</a></p>
-<h1 id="Markdown代码块"><a href="#Markdown代码块" class="headerlink" title="Markdown代码块"></a>Markdown代码块</h1><p>格式：如果在一个行内需要引用代码，只要用反引号引起来就好；<br>eg：Use the <code>printf()</code> function.</p>
+<p><img src="/2023/04/07/rctf2018-magic/12.png"></p>
 <ul>
-<li>如果是在一个块内需要引用代码，则在需要高亮的代码块的前一行及后一行使用三个反引号，同时 <strong>第一行反引号后面表示代码块所使用的语言</strong>，如下：<pre class="line-numbers language-none"><code class="language-none">#include&lt;stdio.h&gt;
-int main(){
-	printf("Hello World\n");
-	return 0;
-}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
+<li>跟进sub_4023B1，这个函数就是上面的result，<ul>
+<li>首先对我们的输入进行rc4加密(rc4的算法特征很明显</li>
+<li>然后再进入虚拟机(sub_4029C7(data)函数)</li>
 </ul>
+</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/13.png"></p>
+<p>对虚拟机进行分析</p>
+<ul>
+<li><p>题型：给定了可执行程序和opcode，逆向emulator，结合opcode文件，推出flag</p>
+</li>
+<li><p>这个其实挺简单的，指令作用都特别明显</p>
+</li>
+<li><p>只是这里用了setjmp/longjmp机制(百度看一下，很简单)</p>
+</li>
+</ul>
+<p><img src="/2023/04/07/rctf2018-magic/17.png"></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token triple-quoted-string string">"""
+0ABh, 3, 0     reg[3] = 0
+0ABh, 4, 1Ah   reg[4] = 0x1A
+0ABh, 0, 'f'   reg[0] = 'f'
+s1:
+0AAh, 5, 2     reg[5] = reg[2]
+0A9h, 'S'      reg[5] += reg[3]
+0A0h, 5        reg[5] = reg[5][0]
+0ABh, 6, 0CCh  reg[6] = 0xCC
+0A9h, 'V'      reg[5] += reg[6]
+0ABh, 6, 0FFh  reg[6] = 0xFF
+0ACh, 'V'      reg[5] &amp;= reg[6]
+0AEh, 'P'      reg[5] ^= reg[0]
+0ADh, 0        reg[0] = ~LOBYTE(reg[0])
+0AAh, 6, 5     reg[6] = reg[5]
+0AAh, 5, 1     reg[5] = reg[1]
+0A9h, 'S'      reg[5] += reg[3]
+0A0h, 5        reg[5] = reg[5][0]
+0AFh, 'V', 0   
+          dword_409060 = 5;
+          dword_409064 = 6;
+          if ( !setjmp(::Buf) )
+            byte_405340[v7] = 5 / 0;  --&gt; 异常  --&gt; reg[5] =  reg[5] == reg[6]
+          v7 += 2;
+
+
+0A7h, 1
+        if reg[5]:
+          v7 += 1;
+        ++v7;
+        cmp reg[5] == 1
+        jz s2
+
+0CCh 
+
+s2:
+0A9h, '5'     reg[3] += reg[5]
+0AAh, 5, 3    reg[5] = reg[3]
+0AFh, 'T', 0   
+        if ( !setjmp(::Buf) )
+            byte_405340[v7] = 5 / 0;  --&gt; 异常 --&gt; reg[5] =  reg[5] == reg[4]
+          v7 += 2;
+        
+
+
+0A6h, 0D1h
+        if reg[5] == 0:
+          v7 += 1;
+        ++v7;
+        cmp reg[5] == 1
+        jz s1
+0CCh
+0, 0, 0, 0, 0, 0, 0
+"""</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>指令序列对应汇编</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token triple-quoted-string string">"""
+r1 = [
+  0x89, 0xC1, 0xEC, 0x50, 0x97, 0x3A, 0x57, 0x59, 0xE4, 0xE6, 
+  0xE4, 0x42, 0xCB, 0xD9, 0x08, 0x22, 0xAE, 0x9D, 0x7C, 0x07, 
+  0x80, 0x8F, 0x1B, 0x45, 0x04, 0xE8, 0x00, 0x00, 0x00, 0x00, 
+  0x00, 0x00
+]
+r2 = rc4_input
+mov r3, 0
+mov r4, 0x1A
+mov r0, 0x66
+
+s1:
+    mov r5, r2
+    add r5, r3
+    mov r5, byte ptr r5
+    mov r6, 0xCC
+    add r5, r6
+    mov r6, 0xFF
+    and r5, r6=0xFF
+    xor r5, r0
+    mov r0, ~LOBYTE(r0)
+    mov r6, r5
+    mov r5, r1
+    add r5, r3
+    mov r5, byte ptr r5
+    cmp r5, r6
+    jmp s2:
+    exit
+
+s2:
+    add r3, r5
+    mov r5, r3
+    cmp r5, r4
+    jmp s1
+    exit
+"""</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>指令序列对应python代码</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">rc4_input <span class="token operator">=</span> <span class="token string">"abcdefg"</span>
+r0 <span class="token operator">=</span> <span class="token number">0x66</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>rc4_input<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    r6 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>rc4_input<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">0xCC</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span> <span class="token number">0xFF</span><span class="token punctuation">)</span> <span class="token operator">^</span> r0
+    r0 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token operator">~</span>r0<span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token number">0xFF</span>
+    <span class="token keyword">if</span> r1<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">!=</span> r6<span class="token punctuation">:</span> <span class="token keyword">break</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>直接爆破rc4_input：</p>
+<ul>
+<li>得到238cbefd25d765f4b6b3b6fe174a2effc384ed21a4ab11096a5</li>
+</ul>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">r0 <span class="token operator">=</span> <span class="token number">0x66</span>
+r1 <span class="token operator">=</span> <span class="token punctuation">[</span>
+  <span class="token number">0x89</span><span class="token punctuation">,</span> <span class="token number">0xC1</span><span class="token punctuation">,</span> <span class="token number">0xEC</span><span class="token punctuation">,</span> <span class="token number">0x50</span><span class="token punctuation">,</span> <span class="token number">0x97</span><span class="token punctuation">,</span> <span class="token number">0x3A</span><span class="token punctuation">,</span> <span class="token number">0x57</span><span class="token punctuation">,</span> <span class="token number">0x59</span><span class="token punctuation">,</span> <span class="token number">0xE4</span><span class="token punctuation">,</span> <span class="token number">0xE6</span><span class="token punctuation">,</span> 
+  <span class="token number">0xE4</span><span class="token punctuation">,</span> <span class="token number">0x42</span><span class="token punctuation">,</span> <span class="token number">0xCB</span><span class="token punctuation">,</span> <span class="token number">0xD9</span><span class="token punctuation">,</span> <span class="token number">0x08</span><span class="token punctuation">,</span> <span class="token number">0x22</span><span class="token punctuation">,</span> <span class="token number">0xAE</span><span class="token punctuation">,</span> <span class="token number">0x9D</span><span class="token punctuation">,</span> <span class="token number">0x7C</span><span class="token punctuation">,</span> <span class="token number">0x07</span><span class="token punctuation">,</span> 
+  <span class="token number">0x80</span><span class="token punctuation">,</span> <span class="token number">0x8F</span><span class="token punctuation">,</span> <span class="token number">0x1B</span><span class="token punctuation">,</span> <span class="token number">0x45</span><span class="token punctuation">,</span> <span class="token number">0x04</span><span class="token punctuation">,</span> <span class="token number">0xE8</span><span class="token punctuation">,</span> <span class="token number">0x00</span><span class="token punctuation">,</span> <span class="token number">0x00</span><span class="token punctuation">,</span> <span class="token number">0x00</span><span class="token punctuation">,</span> <span class="token number">0x00</span><span class="token punctuation">,</span> 
+  <span class="token number">0x00</span><span class="token punctuation">,</span> <span class="token number">0x00</span>
+<span class="token punctuation">]</span>
+rc4_input <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token builtin">input</span> <span class="token operator">=</span> <span class="token string">""</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">26</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">for</span> j <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0x100</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        r <span class="token operator">=</span>  <span class="token punctuation">(</span><span class="token punctuation">(</span>j <span class="token operator">+</span> <span class="token number">0xCC</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span> <span class="token number">0xFF</span><span class="token punctuation">)</span> <span class="token operator">^</span> r0
+        <span class="token keyword">if</span> r1<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">==</span> r<span class="token punctuation">:</span>
+            rc4_input<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token builtin">hex</span><span class="token punctuation">(</span>j<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token keyword">break</span>
+    r0 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token operator">~</span>r0<span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token number">0xFF</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> rc4_input<span class="token punctuation">:</span>
+    <span class="token builtin">input</span> <span class="token operator">+=</span> i<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">:</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">input</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>然后直接rc4解密就行：密钥就是前面的dword_4099D0[0]，这里采用大佬的方法直接修改内存数据取解密，因为不知道dword_4099D0[0]有没有在其他地方改改，所以这样其实更加保险</p>
+<p>脚本如下:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> idaapi <span class="token keyword">import</span> <span class="token operator">*</span>
+rc4 <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0x23</span><span class="token punctuation">,</span><span class="token number">0x8c</span><span class="token punctuation">,</span><span class="token number">0xbe</span><span class="token punctuation">,</span><span class="token number">0xfd</span><span class="token punctuation">,</span><span class="token number">0x25</span><span class="token punctuation">,</span><span class="token number">0xd7</span><span class="token punctuation">,</span><span class="token number">0x65</span><span class="token punctuation">,</span><span class="token number">0xf4</span><span class="token punctuation">,</span><span class="token number">0xb6</span><span class="token punctuation">,</span><span class="token number">0xb3</span><span class="token punctuation">,</span><span class="token number">0xb6</span><span class="token punctuation">,</span><span class="token number">0xf</span><span class="token punctuation">,</span><span class="token number">0xe1</span><span class="token punctuation">,</span><span class="token number">0x74</span><span class="token punctuation">,</span><span class="token number">0xa2</span><span class="token punctuation">,</span><span class="token number">0xef</span><span class="token punctuation">,</span><span class="token number">0xfc</span><span class="token punctuation">,</span><span class="token number">0x38</span><span class="token punctuation">,</span><span class="token number">0x4e</span><span class="token punctuation">,</span><span class="token number">0xd2</span><span class="token punctuation">,</span><span class="token number">0x1a</span><span class="token punctuation">,</span><span class="token number">0x4a</span><span class="token punctuation">,</span><span class="token number">0xb1</span><span class="token punctuation">,</span><span class="token number">0x10</span><span class="token punctuation">,</span><span class="token number">0x96</span><span class="token punctuation">,</span><span class="token number">0xa5</span><span class="token punctuation">]</span>
+i <span class="token operator">=</span> <span class="token number">0</span>
+<span class="token keyword">for</span> addr <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span>data_addr<span class="token punctuation">,</span> data_addr <span class="token operator">+</span> <span class="token number">26</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment">#我这里data_addr = 0x60FD54</span>
+    idc<span class="token punctuation">.</span>patch_byte<span class="token punctuation">(</span>addr<span class="token punctuation">,</span> rc4<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span>
+    i <span class="token operator">=</span> i <span class="token operator">+</span> <span class="token number">1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>结果如下：</p>
+<p><img src="/2023/04/07/rctf2018-magic/14.png"></p>
+<p><img src="/2023/04/07/rctf2018-magic/15.png"></p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1170775">https://cloud.tencent.com/developer/article/1170775</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-742361-1-1.html">https://www.52pojie.cn/thread-742361-1-1.html</a></p>
 
                 
             </div>
@@ -497,7 +753,7 @@ int main(){
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://XiaozaYa.github.io/2023/04/02/start-blog/">http://XiaozaYa.github.io/2023/04/02/start-blog/</a>
+                    <a href="http://XiaozaYa.github.io/2023/04/07/rctf2018-magic/">http://XiaozaYa.github.io/2023/04/07/rctf2018-magic/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -535,8 +791,16 @@ int main(){
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Markdown/">
-                                    <span class="chip bg-color">Markdown</span>
+                                <a href="/tags/VM%E9%80%86%E5%90%91/">
+                                    <span class="chip bg-color">VM逆向</span>
+                                </a>
+                            
+                                <a href="/tags/setjmp-longjmp/">
+                                    <span class="chip bg-color">setjmp/longjmp</span>
+                                </a>
+                            
+                                <a href="/tags/rc4/">
+                                    <span class="chip bg-color">rc4</span>
                                 </a>
                             
                         </div>
@@ -582,84 +846,36 @@ int main(){
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2023/04/03/sql/">
+                <a href="/2023/04/07/rctf2018-magic/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/24.jpg" class="responsive-img" alt="SQL语法">
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="RCTF2018-magic">
                         
-                        <span class="card-title">SQL语法</span>
+                        <span class="card-title">RCTF2018-magic</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            SQL语法，以MySQL为例结合菜鸟教程，对学校数据库学习做简要记录。
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-03
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
-                                    数据库
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/SQL/">
-                        <span class="chip bg-color">SQL</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
-            </div>
-            <div class="card">
-                <a href="/2023/04/02/start-blog/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/4.jpg" class="responsive-img" alt="My First Blog">
-                        
-                        <span class="card-title">My First Blog</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            Markdown简单使用
+                            入口函数位置混淆、数据爆破、原始代码调用、setjmp/longjmp、rc4、_onexit
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-02
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-07
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Markdown/" class="post-category">
-                                    Markdown
+                            <a href="/categories/CTF-RE/" class="post-category">
+                                    CTF-RE
                                 </a>
                             
                             
@@ -670,8 +886,69 @@ int main(){
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Markdown/">
-                        <span class="chip bg-color">Markdown</span>
+                    <a href="/tags/VM%E9%80%86%E5%90%91/">
+                        <span class="chip bg-color">VM逆向</span>
+                    </a>
+                    
+                    <a href="/tags/setjmp-longjmp/">
+                        <span class="chip bg-color">setjmp/longjmp</span>
+                    </a>
+                    
+                    <a href="/tags/rc4/">
+                        <span class="chip bg-color">rc4</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2023/04/05/ddctf2018-hei-he-po-jie/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="DDCTF2018-黑盒破解">
+                        
+                        <span class="card-title">DDCTF2018-黑盒破解</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            详细记录一下自己做的第一个VM逆向题
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/CTF-RE/" class="post-category">
+                                    CTF-RE
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/CTF-RE/">
+                        <span class="chip bg-color">CTF-RE</span>
+                    </a>
+                    
+                    <a href="/tags/VM%E9%80%86%E5%90%91/">
+                        <span class="chip bg-color">VM逆向</span>
                     </a>
                     
                 </div>
@@ -746,6 +1023,87 @@ int main(){
 <script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
 
 
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('4'),
+            headingSelector: 'h1, h2, h3, h4, h5, h6'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
 
     
 
