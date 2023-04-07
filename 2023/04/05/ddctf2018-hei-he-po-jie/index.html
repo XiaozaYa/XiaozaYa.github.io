@@ -386,7 +386,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-05
+                    2023-04-07
                 </div>
                 
 
@@ -556,7 +556,7 @@ a1+8    ==&gt; DWORD -- str --&gt; "PaF0!&amp;Prv}H{ojDQ#7v="
 
 <p>这里我们再回到sub_40113D这个函数，即对byte_603F00交叉引用跟踪到sub_40113D函数</p>
 <ul>
-<li>这里，就可以有想法了，我们的目标是输入<code>Binggo</code>，而这里输出str字符串，并且在上面可以看出：<code>#</code>，<code>；</code>对应的函数是可以修改str字符串的，所以我们只需要构造一个Passcode输入，把str字符串修改为<code>Binggo</code>即可，但是这里需要注意，str字符串长度为20比<code>Binggo</code>长度大，所以最后还有构造一个<code>\x00</code>去截断。</li>
+<li>这里，就可以有想法了，我们的目标是输出<code>Binggo</code>，而这里输出str字符串，并且在上面可以看出：<code>#</code>，<code>；</code>对应的函数是可以修改str字符串的，所以我们只需要构造一个Passcode输入，把str字符串修改为<code>Binggo</code>即可，但是这里需要注意，str字符串长度为20比<code>Binggo</code>长度大，所以最后还有构造一个<code>\x00</code>去截断。</li>
 </ul>
 <p><img src="/2023/04/05/ddctf2018-hei-he-po-jie/6.png"></p>
 <p>构造Passcode</p>
@@ -583,9 +583,11 @@ s <span class="token operator">=</span> <span class="token string">""</span>
         s <span class="token operator">+=</span> <span class="token string">'t'</span>
     s <span class="token operator">+=</span> <span class="token builtin">chr</span><span class="token punctuation">(</span>temp<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"80"</span>
 s <span class="token operator">+=</span> <span class="token string">"#"</span> <span class="token operator">+</span> <span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">3</span> <span class="token operator">+</span> <span class="token number">48</span> <span class="token operator">-</span> <span class="token number">7</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"1"</span> <span class="token comment">#构造\x00截断</span>
-s <span class="token operator">+=</span> <span class="token string">"uuuuuuEs"</span> <span class="token comment">#把str_index移动到str最开始的位置</span>
+s <span class="token operator">+=</span> <span class="token string">"uuuuuuEs"</span> <span class="token comment">#通过u把str_index移动到str最开始的位置，并通过E进入check()函数，s则绕过*(a1 + 664) == 's'检查</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span>
 <span class="token comment">#s = "$t/80$C)80$CI80$CX80$Cg80$Cj80#J1uuuuuuEs"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/2023/04/05/ddctf2018-hei-he-po-jie/7.png"></p>
 
                 
             </div>
