@@ -440,7 +440,7 @@
 <li><code>Signal Fram</code>e 被保存在<strong>用户的地址空间中，所以用户是可以读写的</strong>。</li>
 <li>由于内核与信号处理程序无关 (kernel agnostic about signal handlers)，它并不会去记录这个 <code>signal</code> 对应的 <code>Signal Frame</code>，所以<strong>当执行 sigreturn 系统调用时，此时的 Signal Frame 并不一定是之前内核为用户进程保存的 Signal Frame</strong>。</li>
 </ul>
-<p>也就是说我们可以伪造一个<code>Signal Frame</code>，然后主动去执行 <code>sigreturn</code> 系统调用，这时内核会以为我们是从<code>singal hanlde</code>r返回的，所以就会恢复进程上下文，这时就可以修改所有寄存器的值为我们伪造<code>Sinal Frame</code>中的值。</p>
+<p>也就是说我们可以伪造一个<code>Signal Frame</code>，然后主动去执行 <code>sigreturn</code> 系统调用，这时内核会以为我们是从<code>singal hanlder</code>返回的，所以就会恢复进程上下文，这时就可以修改所有寄存器的值为我们伪造<code>Sinal Frame</code>中的值。</p>
 <h5 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h5><p>1、如下图，我们在栈中伪造一个<code>Sinal Frame</code>，当我们执行 <code>sigreturn</code> 系统调用时，寄存器中的值就会被修改：</p>
 <pre class="line-numbers language-c" data-language="c"><code class="language-c">rax<span class="token operator">=</span><span class="token number">59</span>
 rdi<span class="token operator">=</span><span class="token operator">&amp;</span><span class="token string">"/bin/sh"</span>
@@ -594,7 +594,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 
 <p><strong>exp2</strong></p>
 <ul>
-<li>我看可以看到在下面的syscall之后，有一个 mov eax,0 的操作，所以我们直接跳到0x40011c8那就可以直接向<code>nkctf</code>的位置写入<code>/bin/sh\x00</code>字符串了</li>
+<li>可以看到在下面的syscall之后，有一个 mov eax,0 的操作，所以我们直接跳到0x40011c8那就可以直接向<code>nkctf</code>的位置写入<code>/bin/sh\x00</code>字符串了</li>
 </ul>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
 context<span class="token punctuation">(</span>os <span class="token operator">=</span> <span class="token string">'linux'</span><span class="token punctuation">,</span> arch <span class="token operator">=</span> <span class="token string">'amd64'</span><span class="token punctuation">)</span>
