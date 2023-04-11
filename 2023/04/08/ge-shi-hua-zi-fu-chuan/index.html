@@ -420,7 +420,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p>[TOC]</p>
-<h3 id="原理介绍"><a href="#原理介绍" class="headerlink" title="原理介绍"></a>原理介绍</h3><h4 id="格式字符串-函数"><a href="#格式字符串-函数" class="headerlink" title="格式字符串(函数"></a>格式字符串(函数</h4><p>格式化字符串函数可以接受可变数量的参数，并将<strong>第一个参数作为格式化字符串，根据其来解析之后的参数</strong>。一般来说，格式化字符串在利用的时候主要分为以下三个部分：</p>
+<h3 id="原理介绍"><a href="#原理介绍" class="headerlink" title="原理介绍"></a>原理介绍</h3><h4 id="格式化字符串-函数"><a href="#格式化字符串-函数" class="headerlink" title="格式化字符串(函数"></a>格式化字符串(函数</h4><p>格式化字符串函数可以接受可变数量的参数，并将<strong>第一个参数作为格式化字符串，根据其来解析之后的参数</strong>。一般来说，格式化字符串在利用的时候主要分为以下三个部分：</p>
 <ul>
 <li>格式化字符串函数</li>
 <li>格式化字符串</li>
@@ -453,7 +453,7 @@
 </ul>
 </li>
 </ul>
-<h4 id="格式化字符串漏洞"><a href="#格式化字符串漏洞" class="headerlink" title="格式化字符串漏洞"></a>格式化字符串漏洞</h4><p>格式化字符串函数是根据格式化字符串函数来进行解析的。**那么相应的<font color="red">要被解析的参数的个数由这个格式化字符串所控制</font>**。比如说’%s’表明我们会输出一个字符串参数。</p>
+<h4 id="格式化字符串漏洞"><a href="#格式化字符串漏洞" class="headerlink" title="格式化字符串漏洞"></a>格式化字符串漏洞</h4><p>格式化字符串函数是根据格式化字符串来进行解析的。**那么相应的<font color="red">要被解析的参数的个数由这个格式化字符串所控制</font>**。比如说’%s’表明我们会输出一个字符串参数。</p>
 <p>eg：</p>
 <pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
 
@@ -556,7 +556,7 @@
 <p><img src="/2023/04/08/ge-shi-hua-zi-fu-chuan/6.png"></p>
 <p><strong>需要注意的是，上面给出的方法，都是依次获得栈中的每个参数，我们可以直接获取栈中被视为第 n+1 个参数的值：<code>%n$x</code></strong> – <font color="red">n针对的是格式化字符串的参数</font></p>
 <ul>
-<li><strong>注意区别<font color="red">格式字符串</font>的参数与<font color="red">格式化字符串函数</font>的参数</strong></li>
+<li><strong>注意区别<font color="red">格式化字符串</font>的参数与<font color="red">格式化字符串函数</font>的参数</strong></li>
 </ul>
 <p>如输入<code>%6$p</code></p>
 <ul>
@@ -903,30 +903,29 @@ payload <span class="token operator">=</span> fmt_str<span class="token punctuat
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/04/08/ge-shi-hua-zi-fu-chuan/">
+                <a href="/2023/04/09/canary/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="格式化字符串">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="Canary">
                         
-                        <span class="card-title">格式化字符串</span>
+                        <span class="card-title">Canary</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            格式化字符串的基本利用(主要是栈上的格式化字符串利用
+                            Canary概述及其绕过方法
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-08
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-09
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -939,12 +938,11 @@ payload <span class="token operator">=</span> fmt_str<span class="token punctuat
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/">
-                        <span class="chip bg-color">格式化字符串漏洞</span>
+                    <a href="/tags/Canary%E7%BB%95%E8%BF%87/">
+                        <span class="chip bg-color">Canary绕过</span>
                     </a>
                     
                 </div>
@@ -1179,7 +1177,7 @@ payload <span class="token operator">=</span> fmt_str<span class="token punctuat
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">15.7k</span>
+                        class="white-color">17.1k</span>
             
             
             
