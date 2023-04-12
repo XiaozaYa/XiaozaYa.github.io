@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Canary, XiaozaYa&#39;s Blog">
+    <meta name="keywords" content="Canary攻击原理篇, XiaozaYa&#39;s Blog">
     <meta name="description" content="Canary概述及其绕过方法">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Canary | XiaozaYa&#39;s Blog</title>
+    <title>Canary攻击原理篇 | XiaozaYa&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
     <style>
@@ -321,12 +321,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/16.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Canary</h1>
+                    <h1 class="description center-align post-title">Canary攻击原理篇</h1>
                 </div>
             </div>
         </div>
@@ -591,7 +591,7 @@ io<span class="token punctuation">.</span>sendlineafter<span class="token punctu
 io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><img src="/2023/04/09/canary/2-7.png"></p>
-<h4 id="2018-网鼎杯-guess"><a href="#2018-网鼎杯-guess" class="headerlink" title="2018 网鼎杯 - guess"></a>2018 网鼎杯 - guess</h4><p>前置知识：在linux应用程序运行时，内存的最高端是环境/参数节（environment/arguments section） 用来存储系统环境变量的一份复制文件，进程在运行时可能需要。 例如，运行中的进程，可以通过环境变量来访问路径、shell 名称、主机名等信息。 该节是可写的，因此在格式化字符串（format string）和缓冲区溢出（buffer overflow）攻击中都可以攻击该节。 *environ指针指向栈地址(环境变量位置)，有时它也成为攻击的对象，泄露栈地址，篡改栈空间地址，进而劫持控制流。</p>
+<h4 id="2018-网鼎杯-guess"><a href="#2018-网鼎杯-guess" class="headerlink" title="2018 网鼎杯 - guess"></a>2018 网鼎杯 - guess</h4><p>前置知识：在linux应用程序运行时，内存的最高端是环境/参数节（environment/arguments section） 用来存储系统环境变量的一份复制文件，进程在运行时可能需要。 例如，运行中的进程，可以通过环境变量来访问路径、shell 名称、主机名等信息。 该节是可写的，因此在格式化字符串和缓冲区溢出攻击中都可以攻击该节。 *environ指针指向栈地址(环境变量位置)，有时它也成为攻击的对象，泄露栈地址，篡改栈空间地址，进而劫持控制流。</p>
 <p><strong>_environ：</strong></p>
 <ul>
 <li><p><strong>在Linux C中，environ是一个全局变量，它储存着系统的环境变量。</strong></p>
