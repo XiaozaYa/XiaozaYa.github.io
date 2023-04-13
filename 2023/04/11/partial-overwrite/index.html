@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="partial overwrite, XiaozaYa&#39;s Blog">
-    <meta name="description" content="">
+    <meta name="description" content="程序开启了ASLR、PIE保护，如何利用相关漏洞">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -348,9 +348,17 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/PIE-%E7%BB%95%E8%BF%87/">
+                                <span class="chip bg-color">PIE`绕过`</span>
+                            </a>
+                        
+                            <a href="/tags/%E5%9C%B0%E5%9D%80%E9%9A%8F%E6%9C%BA%E5%8C%96/">
+                                <span class="chip bg-color">地址随机化</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
@@ -385,7 +393,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    0
+                    102
                 </div>
                 
 
@@ -415,7 +423,10 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <p>[TOC]</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>partial overwrite 这种技巧在很多地方都适用, 这里是栈上的 partial overwrite 。</p>
+<p>我们知道, 在开启了随机化（ASLR，PIE）后, <strong>无论高位的地址如何变化，低 12 位的页内偏移始终是固定的</strong>, 也就是说如果我们能更改低位的偏移, 就可以在一定程度上控制程序的执行流, 绕过 PIE 保护。</p>
+
                 
             </div>
             <hr/>
@@ -478,7 +489,15 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/PIE-%E7%BB%95%E8%BF%87/">
+                                    <span class="chip bg-color">PIE`绕过`</span>
+                                </a>
+                            
+                                <a href="/tags/%E5%9C%B0%E5%9D%80%E9%9A%8F%E6%9C%BA%E5%8C%96/">
+                                    <span class="chip bg-color">地址随机化</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -800,7 +819,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">20.9k</span>
+                        class="white-color">21.6k</span>
             
             
             
