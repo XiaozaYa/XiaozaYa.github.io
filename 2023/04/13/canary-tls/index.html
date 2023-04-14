@@ -397,7 +397,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.8k
+                    1.7k
                 </div>
                 
 
@@ -510,12 +510,13 @@ count <span class="token operator">=</span> <span class="token number">1</span>
 
 <p><img src="/2023/04/13/canary-tls/3.png"></p>
 <p>问题2：要想找到one_gadget，得先知道libc_base，所以这里需要泄漏puts的got表项内容，但是我们只有一次输入，所以我们得构造一条ROP链先泄漏出libc，然后在向bss段读取one_gadget，最后栈迁移过去执行one_gadget。</p>
-<p>最终exp：(远程，本地都没通，用官方exp也没同，可能是libc的问题，但是我的glibc-all-in-one出了些问题，不想搞了)</p>
+<p>最终exp：(远程，本地都没通，用官方exp也没同，可能是libc的问题，但是我的glibc-all-in-one出了些问题，搞了很久，不想搞了)</p>
 <p>总结一波：</p>
 <ul>
-<li>针对于这种多线程的题目，修改TLS的canary，绕过canary。对于栈迁移，在有read函数的情况下，可以利用栈迁移的思想，到bss段，一般是bss+0x300的位置开始写。如果read后面有puts函数或者printf函数，就可以泄露出ebp的值，从而确定栈顶指针，从而写到栈中，然后ebp写esp的地址，leave就会跳到esp去执行我们写入的东西。</li>
-<li>前提是溢出长度足够大</li>
+<li>针对多线程，我们可以修改TLS的canary，从而绕过canary（前提是溢出长度足够大。</li>
+<li>对于栈迁移，在有read函数的情况下，可以利用栈迁移到bss段，一般是bss+0x300的位置开始写。如果可以泄漏栈地址，就可以直接写到栈中，然后ebp写esp的地址，leave就会跳到esp去执行我们写入的东西。</li>
 </ul>
+<p>exp：</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
 context<span class="token punctuation">.</span>log_level <span class="token operator">=</span> <span class="token string">'debug'</span>
 
