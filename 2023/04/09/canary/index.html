@@ -881,7 +881,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 <h2 id="数组下标越界绕过Canary"><a href="#数组下标越界绕过Canary" class="headerlink" title="数组下标越界绕过Canary"></a>数组下标越界绕过Canary</h2><h3 id="原理-5"><a href="#原理-5" class="headerlink" title="原理"></a>原理</h3><p>当程序中存在数组，没有对边界进行检查时，如果我们可以对数组进行对应位置修改，我们就可以绕过canary检测，直接修改返回地址。所以如果可以对arr数组任意位置进行修改，这就存在数组下标溢出。</p>
 <p>以下图为例，数组大小为3，但是没有对数组的下标进行检查，这时返回地址就相当于arr[5]，如果我们对arr[5]进行修改就是对返回地址进行修改。</p>
 <p><img src="/2023/04/09/canary/0.png"></p>
-<h2 id="覆盖-TLS-中储存的-Canary-值-（具体见Canary-TLS-Blog"><a href="#覆盖-TLS-中储存的-Canary-值-（具体见Canary-TLS-Blog" class="headerlink" title="覆盖 TLS 中储存的 Canary 值 （具体见Canary-TLS Blog"></a>覆盖 TLS 中储存的 Canary 值 （具体见Canary-TLS Blog</h2><h3 id="原理-6"><a href="#原理-6" class="headerlink" title="原理"></a>原理</h3><p><strong>已知 Canary 储存在 TLS 中，在函数返回前会使用这个值进行对比。当溢出尺寸较大时，可以同时覆盖栈上储存的 Canary 和 TLS 储存的 Canary 实现绕过。</strong></p>
+<h2 id="覆盖-TLS-中储存的-Canary-值-（具体见Canary-TLS-Blog"><a href="#覆盖-TLS-中储存的-Canary-值-（具体见Canary-TLS-Blog" class="headerlink" title="覆盖 TLS 中储存的 Canary 值 （具体见Canary-TLS Blog"></a>覆盖 TLS 中储存的 Canary 值 （具体见Canary-TLS Blog</h2><h3 id="原理-6"><a href="#原理-6" class="headerlink" title="原理"></a>原理</h3><p><strong>已知 Canary 储存在 TLS 中，在函数返回前会使用这个值进行对比。当溢出尺寸较大时，可以同时覆盖栈上储存的 Canary 和 TLS 储存的 Canary 实现绕过。（一般是针对子线程</strong></p>
 <p>如果我们溢出的足够大，大到能够覆盖到fs/gs寄存器对应偏移位的值，我们就可以修改canary为我们设计好的值，这样在程序检测时就会和我们匹配的值进行检测，从而绕过canary保护。在初始化canary时，<strong>fs寄存器指向的位置是TLS结构体</strong>，而fs指向的位置加上0x28偏移的位置取出来的canary就在TLS结构体里面。</p>
 
                 
@@ -1264,7 +1264,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">21.6k</span>
+                        class="white-color">23.4k</span>
             
             
             
