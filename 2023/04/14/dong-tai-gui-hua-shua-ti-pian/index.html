@@ -466,7 +466,7 @@ public:
 <li>判断s[i+1,…,j-1]是否是回文串，若是则s[i…j]也是回文串</li>
 </ul>
 <p>定义<code>dp[i][j]</code>：表示s[i,…,j]是否是回文串</p>
-<p>状态转移方程：j-1 - (i+1) + 1 = j-i-1&gt;=2 ==&gt; j-i&gt;=3(保证s[i+1,…,j-1]子串的长度不小于2)<br>$$<br>dp[i][j]= \begin{cases}<br>false,&amp; \text{s[i] != s[j]}<br>\ dp[i+1][j-1], &amp; \text{s[i] = s[j]}<br>\end{cases}<br>$$<br>边界条件：</p>
+<p>状态转移方程：j-1 - (i+1) + 1 = j-i-1&gt;=2 ==&gt; j-i&gt;=3(保证s[i+1,…,j-1]子串的长度不小于2)<br>$$<br>dp[i][j]= \begin{cases}<br>false,&amp; \text{s[i] != s[j]}<br>\\ dp[i+1][j-1], &amp; \text{s[i] = s[j]}<br>\end{cases}<br>$$<br>边界条件：</p>
 <ul>
 <li>长度为1的子串<code>dp[i][i]</code>肯定是回文串，<code>dp[i][i]=true</code></li>
 <li>长度为2的子串，<code>dp[i][i+1] = (s[i]==s[i+1]?true:false)</code></li>
