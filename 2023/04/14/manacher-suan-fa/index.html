@@ -389,7 +389,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    767
+                    763
                 </div>
                 
 
@@ -458,17 +458,15 @@
 <li><p>2、若i&lt;R，做出此时<code>R</code>关于<code>C</code>的对称的<code>L</code>，<code>i</code>关于<code>C</code>的对称点<code>i'</code>，<strong>注意这里C与i的为位置关系不确定。</strong></p>
 <p>此时在回文半径数组P中我们可以找到<code>i'</code>的回文半径，所以可以确定<code>i'</code>的回文区域</p>
 <ul>
-<li><p>若[Li,Ri] 是 [L,R]的一个子集，则<code>i</code>的回文长度与<code>i'</code>的回文半径相等（简单的对称性易知</p>
+<li>若[Li,Ri] 是 [L,R]的一个子集，则<code>i</code>的回文长度与<code>i'</code>的回文半径相等（简单的对称性易知</li>
+</ul>
+<p><img src="/2023/04/14/manacher-suan-fa/1.png"></p>
 <ul>
-<li><img src="/2023/04/14/manacher-suan-fa/1.png"></li>
+<li>若Li&lt;L，Ri&lt;=R，则<code>i</code>的回文半径为<code>R-i</code></li>
 </ul>
-</li>
-<li><h2 id="若Li-lt-L，Ri-lt-x3D-R，则i的回文半径为R-i-证明如下："><a href="#若Li-lt-L，Ri-lt-x3D-R，则i的回文半径为R-i-证明如下：" class="headerlink" title="若Li<L，Ri<=R，则i的回文半径为R-i- 证明如下："></a>若Li&lt;L，Ri&lt;=R，则<code>i</code>的回文半径为<code>R-i</code><br>- 证明如下：</h2><ul>
-<li><img src="/2023/04/14/manacher-suan-fa/2.png"></li>
-</ul>
-</li>
-<li><p>若Li=L，则<code>i</code>的回文半径至少为<code>R-i</code></p>
-</li>
+<p><img src="/2023/04/14/manacher-suan-fa/2.png"></p>
+<ul>
+<li>若Li=L，则<code>i</code>的回文半径至少为<code>R-i</code></li>
 </ul>
 </li>
 </ul>
