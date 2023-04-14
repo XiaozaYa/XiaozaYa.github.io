@@ -4,11 +4,11 @@
   
     
     <entry>
-      <title>动态规划</title>
-      <link href="/2023/04/14/dong-tai-gui-hua/"/>
-      <url>/2023/04/14/dong-tai-gui-hua/</url>
+      <title>动态规划刷题篇</title>
+      <link href="/2023/04/14/dong-tai-gui-hua-shua-ti-pian/"/>
+      <url>/2023/04/14/dong-tai-gui-hua-shua-ti-pian/</url>
       
-        <content type="html"><![CDATA[<p>[TOC]</p><h1 id="板子总结"><a href="#板子总结" class="headerlink" title="板子总结"></a>板子总结</h1><h2 id="背包系列"><a href="#背包系列" class="headerlink" title="背包系列"></a>背包系列</h2><h1 id="题目篇"><a href="#题目篇" class="headerlink" title="题目篇"></a>题目篇</h1><h2 id="最长回文子串"><a href="#最长回文子串" class="headerlink" title="最长回文子串"></a><a href="https://leetcode.cn/problems/longest-palindromic-substring/">最长回文子串</a></h2>]]></content>
+        <content type="html"><![CDATA[<p>[TOC]</p><h1 id="最长回文子串"><a href="#最长回文子串" class="headerlink" title="最长回文子串"></a><a href="https://leetcode.cn/problems/longest-palindromic-substring/">最长回文子串</a></h1><h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><h2 id="暴力解法"><a href="#暴力解法" class="headerlink" title="暴力解法"></a>暴力解法</h2><h2 id="中心扩展"><a href="#中心扩展" class="headerlink" title="中心扩展"></a>中心扩展</h2><h2 id="Manacher算法"><a href="#Manacher算法" class="headerlink" title="Manacher算法"></a>Manacher算法</h2>]]></content>
       
       
       <categories>
@@ -20,9 +20,32 @@
       
         <tags>
             
-            <tag> 动态规划 </tag>
+            <tag> 动态规划题目记录 </tag>
             
-            <tag> 算法 </tag>
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>动态规划板子篇</title>
+      <link href="/2023/04/14/dong-tai-gui-hua-ban-zi-pian/"/>
+      <url>/2023/04/14/dong-tai-gui-hua-ban-zi-pian/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> 算法 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 动态规划模型 </tag>
             
         </tags>
       
