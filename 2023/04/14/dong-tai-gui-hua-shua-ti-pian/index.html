@@ -382,21 +382,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-14
+                    2023-04-15
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1k
+                    1.6k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    4 分
+                    7 分
                 </div>
                 
 
@@ -546,6 +546,90 @@ public:
 
 <p>$$<br>时间复杂度：O(n^2)==空间复杂度：O(1)<br>$$</p>
 <h2 id="Manacher算法"><a href="#Manacher算法" class="headerlink" title="Manacher算法"></a>Manacher算法</h2><p>见Manacher算法博文&gt;_&lt;!!!</p>
+<h1 id="正则表达式匹配"><a href="#正则表达式匹配" class="headerlink" title="正则表达式匹配"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/regular-expression-matching/">正则表达式匹配</a></h1><p>定义<code>dp[i][j]</code>：表示 s 的前 i 个字符是否能被 p 的前 j 个字符匹配；</p>
+<p>状态转移方程：</p>
+<ul>
+<li><p>若<code>p[j-1] == s[i-1] || p[j-1] == '.'</code>，<code>dp[i][j] = dp[i-1][j-1]</code></p>
+</li>
+<li><p>若<code>p[i-1] == '*'</code></p>
+<ul>
+<li><p>若<code>p[j-2] != s[i-1] &amp;&amp; p[j-2] != '.'</code>，<code>dp[i][j] = dp[i][j-2]</code></p>
+</li>
+<li><p>若<code>p[j-2] == s[i-1] || p[j-2] == '.'</code>，<code>dp[i][j] = dp[i][j-2]||dp[i-1][j]</code></p>
+<ul>
+<li><p>分析如下：</p>
+</li>
+<li><pre><code class="apl">eg：
+s：a a a a
+         i
+         
+p：a a b a *
+           j
+我们知道a*表示a出现0次或者多次，那么分情况讨论
+1）a出现0次，则相当于：
+s：a a a a
+         i
+p：a a b 
+       j-2
+所以：dp[i][j] = dp[i][j-2]
+
+2）a出现多次，则相当于：
+这里相当于i回退一个(跟完全背包很像)
+s：a a a a
+         i
+p：a a b a *
+           j
+所以：dp[i][j] = dp[i-1][j]
+
+上面两种情况，有一种情况匹配即可！！！
+<pre class="line-numbers language-none"><code class="language-none">
+- others：`dp[i][j] = false`
+
+边界条件：
+
+- `dp[0][0] = true，dp[0][1] = false`
+
+- 当 i = 0，j &gt;= 2时：
+  - `dp[0][j] = p[j-1] == '*' ? dp[0][j-2] : false`，因为 s 为空，所以我们只能让 p 中的 * 不断的消去字符
+- 当 i !=0，j = 0时：`dp[i][0] = false`
+
+这里也可以通过状态转移方程去大致确定边界条件：
+
+- 比如在这里，我们求`dp[i][j]`，时用到了`dp[i-1][j-1],dp[i][j-2],dp[i-1][j]`，且下标出现了 `i-1`,`j-1`,`j-2`，所以 i ,j 都从1开始，为啥 j 不从2开始呢？因为用到`j-2`的条件是`p[j-1] = '*'`，而`p[0]不可能为*`，所以当 j = 1时，不会使用`j-2`。所以 i，j都从1开始，那么显然`dp[0][j],dp[i][0]`等值就需要我们一开始就去填充。
+- 所以代码中的`memset(dp, false, (m+1)*(n+1))`就包含了给`dp[i][0]赋值，给others情况赋值`
+
+coding：
+
+```c++
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int m = s.length();
+        int n = p.length();
+        bool dp[m+1][n+1];
+        memset(dp, false, (m+1)*(n+1));
+        dp[0][0] = true;
+        for(int j = 2; j &lt;= n; j++)
+            dp[0][j] = dp[0][j-2] &amp;&amp; p[j-1] == '*';
+        for(int i = 1; i &lt;= m; i++){
+            for(int j = 1; j&lt;= n ; j++){
+                if(p[j-1] == s[i-1] || p[j-1] == '.') dp[i][j] = dp[i-1][j-1];
+                else if(p[j-1] == '*') {
+                    if(p[j-2] != s[i-1] &amp;&amp; p[j-2] != '.') dp[i][j] = dp[i][j-2];
+                    else dp[i][j] = dp[i][j-2] || dp[i-1][j];
+                }
+            }
+        }
+        return dp[m][n];
+    }
+};<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
                 
             </div>
@@ -934,7 +1018,7 @@ public:
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">25.6k</span>
+                        class="white-color">26.2k</span>
             
             
             
