@@ -389,14 +389,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.6k
+                    1.9k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    7 分
+                    8 分
                 </div>
                 
 
@@ -553,25 +553,27 @@ public:
 </li>
 <li><p>若<code>p[i-1] == '*'</code></p>
 <ul>
-<li><p>若<code>p[j-2] != s[i-1] &amp;&amp; p[j-2] != '.'</code>，<code>dp[i][j] = dp[i][j-2]</code></p>
+<li>若<code>p[j-2] != s[i-1] &amp;&amp; p[j-2] != '.'</code>，<code>dp[i][j] = dp[i][j-2]</code></li>
+<li>若<code>p[j-2] == s[i-1] || p[j-2] == '.'</code>，<code>dp[i][j] = dp[i][j-2]||dp[i-1][j]</code><ul>
+<li>分析如下：</li>
+</ul>
 </li>
-<li><p>若<code>p[j-2] == s[i-1] || p[j-2] == '.'</code>，<code>dp[i][j] = dp[i][j-2]||dp[i-1][j]</code></p>
-<ul>
-<li><p>分析如下：</p>
+</ul>
 </li>
-<li><pre><code class="c++">/*
+</ul>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">/*
 eg：
 s：a a a a
-         i
-         
+		 i
+		 
 p：a a b a *
-           j
+		   j
 我们知道a*表示a出现0次或者多次，那么分情况讨论
 1）a出现0次，则相当于：
 s：a a a a
-         i
+		 i
 p：a a b 
-       j-2
+	   j-2
 所以：dp[i][j] = dp[i][j-2]
 
 2）a出现多次，则相当于：
@@ -583,27 +585,32 @@ p：a a b a *
 所以：dp[i][j] = dp[i-1][j]
 
 上面两种情况，有一种情况匹配即可！！！
-*/
-<pre class="line-numbers language-none"><code class="language-none">
-- others：`dp[i][j] = false`
+*/<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-边界条件：
 
-- `dp[0][0] = true，dp[0][1] = false`
 
-- 当 i = 0，j &gt;= 2时：
-  - `dp[0][j] = p[j-1] == '*' ? dp[0][j-2] : false`，因为 s 为空，所以我们只能让 p 中的 * 不断的消去字符
-- 当 i !=0，j = 0时：`dp[i][0] = false`
-
-这里也可以通过状态转移方程去大致确定边界条件：
-
-- 比如在这里，我们求`dp[i][j]`，时用到了`dp[i-1][j-1],dp[i][j-2],dp[i-1][j]`，且下标出现了 `i-1`,`j-1`,`j-2`，所以 i ,j 都从1开始，为啥 j 不从2开始呢？因为用到`j-2`的条件是`p[j-1] = '*'`，而`p[0]不可能为*`，所以当 j = 1时，不会使用`j-2`。所以 i，j都从1开始，那么显然`dp[0][j],dp[i][0]`等值就需要我们一开始就去填充。
-- 所以代码中的`memset(dp, false, (m+1)*(n+1))`就包含了给`dp[i][0]赋值，给others情况赋值`
-
-coding：
-
-```c++
-class Solution {
+<ul>
+<li>others：<code>dp[i][j] = false</code></li>
+</ul>
+<p>边界条件：</p>
+<ul>
+<li><p><code>dp[0][0] = true，dp[0][1] = false</code></p>
+</li>
+<li><p>当 i = 0，j &gt;= 2时：</p>
+<ul>
+<li><code>dp[0][j] = p[j-1] == '*' ? dp[0][j-2] : false</code>，因为 s 为空，所以我们只能让 p 中的 * 不断的消去字符</li>
+</ul>
+</li>
+<li><p>当 i !=0，j = 0时：<code>dp[i][0] = false</code></p>
+</li>
+</ul>
+<p>这里也可以通过状态转移方程去大致确定边界条件：</p>
+<ul>
+<li>比如在这里，我们求<code>dp[i][j]</code>，时用到了<code>dp[i-1][j-1],dp[i][j-2],dp[i-1][j]</code>，且下标出现了 <code>i-1</code>,<code>j-1</code>,<code>j-2</code>，所以 i ,j 都从1开始，为啥 j 不从2开始呢？因为用到<code>j-2</code>的条件是<code>p[j-1] = '*'</code>，而<code>p[0]不可能为*</code>，所以当 j = 1时，不会使用<code>j-2</code>。所以 i，j都从1开始，那么显然<code>dp[0][j],dp[i][0]</code>等值就需要我们一开始就去填充。</li>
+<li>所以代码中的<code>memset(dp, false, (m+1)*(n+1))</code>就包含了给<code>dp[i][0]赋值，给others情况赋值</code></li>
+</ul>
+<p>coding：</p>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class Solution {
 public:
     bool isMatch(string s, string p) {
         int m = s.length();
@@ -624,14 +631,41 @@ public:
         }
         return dp[m][n];
     }
-};<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-</code></pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+};<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h1 id="括号生成"><a href="#括号生成" class="headerlink" title="括号生成"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/generate-parentheses/submissions/">括号生成</a></h1><h2 id="暴力解法-1"><a href="#暴力解法-1" class="headerlink" title="暴力解法"></a>暴力解法</h2><p>n值很小，直接dfs暴力解：</p>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">//l表示当前左括号的数量，r表示当前右括号的数量
+//如何l==n且r==n说明成功生成一个括号组合
+//如果l&lt;r即当前左括号已经小于右括号的数量，那么也就没必要继续下去了
+	//比如'()))',那么不管后面怎么添加左右括号，前面都无法匹配了，也就无效组合
+//左右括号应当各一半，所以l&gt;n或r&gt;n直接无效
+//每次有两种情况，添加一个左括号或者右括号
+class Solution {
+public:
+    void dfs(vector&lt;string&gt; &amp;ans, string s, int l, int r, int n){
+        if(l == n &amp;&amp; r == n){
+            ans.push_back(s);
+            return;
+        }
+
+        if(l &lt; r || l &gt; n || r &gt; n) return;
+
+        dfs(ans, s + '(', l + 1, r, n);
+        dfs(ans, s + ')', l, r + 1, n);
+    }
+
+    vector&lt;string&gt; generateParenthesis(int n) {
+        vector&lt;string&gt; ans;
+        dfs(ans, "", 0, 0, n);
+        return ans;
+    }
+};<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="动态规划-1"><a href="#动态规划-1" class="headerlink" title="动态规划"></a>动态规划</h2><p><del>&lt;!_!&gt;，实在是太菜了，根本想不到dp呢，只会暴力&gt;-&lt;</del></p>
 
                 
             </div>
@@ -1020,7 +1054,7 @@ public:
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">26.2k</span>
+                        class="white-color">26.5k</span>
             
             
             
