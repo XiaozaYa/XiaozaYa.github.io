@@ -751,7 +751,7 @@ public:
 
 
 
-<h1 id="跳跃游戏"><a href="#跳跃游戏" class="headerlink" title="跳跃游戏"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/jump-game/submissions/">跳跃游戏</a></h1><p>分析可知：我们只需要关注nums[i] == 0的位置，对于nums[i] == 0的位置，如果 i 前面的如何一个位置都无法跳过 i (即跳到 i 前面)，那么就无法到达最终下标；</p>
+<h1 id="跳跃游戏"><a href="#跳跃游戏" class="headerlink" title="跳跃游戏"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/jump-game/submissions/">跳跃游戏</a></h1><p>分析可知：我们只需要关注nums[i] == 0的位置，对于nums[i] == 0的位置，如果 i 前面的任何一个位置都无法跳过 i (即跳到 i 前面)，那么就无法到达最终下标；</p>
 <p><del>这里我们从后往前遍历，为什么从后往前呢？其实都行</del></p>
 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class Solution {
 public:
@@ -1167,7 +1167,7 @@ public:
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">29.2k</span>
+                        class="white-color">36.2k</span>
             
             
             

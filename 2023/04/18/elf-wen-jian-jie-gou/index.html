@@ -1,0 +1,1547 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="ELF文件结构, XiaozaYa&#39;s Blog">
+    <meta name="description" content="ELF文件结构简述">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>ELF文件结构 | XiaozaYa&#39;s Blog</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <style>
+        body{
+            background-image: url(https://cdn.jsdelivr.net/gh/Tokisaki-Galaxy/res/site/medias/background.jpg);
+            background-repeat:no-repeat;
+            background-size: 100% 100%;
+            background-attachment:fixed;
+        }
+    </style>
+
+
+
+    <!-- bg-cover style     -->
+
+
+
+<link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+<link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+<link rel="stylesheet" type="text/css" href="/css/matery.css">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<link rel="stylesheet" type="text/css" href="/css/dark.css" media="none" onload="if(media!='all')media='all'">
+
+
+
+
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+    <link rel="stylesheet" href="/css/post.css">
+
+
+
+
+    
+
+
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">XiaozaYa&#39;s Blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+  <li>
+    <a href="javascript:;" class="waves-effect waves-light" onclick="switchNightMode()" title="深色/浅色模式" >
+      <i id="sum-moon-icon" class="fas fa-sun" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">XiaozaYa&#39;s Blog</div>
+        <div class="logo-desc">
+            
+            Currently studying in Information Security at Wuhan University
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/XiaozaYa" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/XiaozaYa" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">ELF文件结构</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/ELF/">
+                                <span class="chip bg-color">ELF</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E3%80%8A%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E3%80%8B/" class="post-category">
+                                《程序员的自我修养》
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2023-04-18
+                </div>
+                
+
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
+                    2023-04-18
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    4.6k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    18 分
+                </div>
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p>[TOC]</p>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>ELF （Executable and Linkable Format）文件，也就是在 Linux 中的目标文件，从结构上讲，它是<strong>已经编译后的可执行文件格式，但是还没有经过链接的过程，和真正的可执行文件在结构上稍有不同</strong>。但目标文件一般和可执行文件格式一起采用一种格式存储，从广义上看，可以把目标文件与可执行文件看成是一种类型的文件，主要有以下四种种类型：</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>ELF文件类型</strong></th>
+<th align="center"><strong>说明</strong></th>
+<th align="center"><strong>示例</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">可重定位文件（Relocatable）</td>
+<td align="center">这类文件包含了代码和数据，可以被用来链接成可执行文件或共享目标文件，静态链接库可可以归为这一类。</td>
+<td align="center">Linux的.o</td>
+</tr>
+<tr>
+<td align="center">可执行文件（Excutable File）</td>
+<td align="center">这类文件包含了可直接执行的程序，比如ELF可执行文件，一般都没有扩展名。</td>
+<td align="center">比如/bin/bash文件</td>
+</tr>
+<tr>
+<td align="center">共享目标文件（Shared Object File）</td>
+<td align="center">这类文件包含了代码和数据，这种文件是我们所称的库文件。</td>
+<td align="center">Linux的.so，如/lib/glibc-2.5.so</td>
+</tr>
+<tr>
+<td align="center">核心转储文件（Core Dump File）</td>
+<td align="center">当进程意外终止时，系统可以将该进程的地址空间的内容及终止时的一些其他信息转储到核心转储文件。</td>
+<td align="center">Linux下的core dump</td>
+</tr>
+</tbody></table>
+<p>对于共享目标文件：</p>
+<ul>
+<li>共享目标文件（Shared Object File），包含代码和数据，这种文件是我们所称的库文件，一般以 <code>.so</code> 结尾。一般情况下，它有以下两种使用情景：<ul>
+<li>链接器（Link eDitor, ld）可能会处理它和其它可重定位文件以及共享目标文件，生成另外一个目标文件。</li>
+<li>动态链接器（Dynamic Linker）将它与可执行文件以及其它共享目标组合在一起生成进程镜像。</li>
+</ul>
+</li>
+</ul>
+<p>目标文件由汇编器和链接器创建，是文本程序的二进制形式，可以直接在处理器上运行。那些需要虚拟机才能够执行的程序 (Java) 不属于这一范围。</p>
+<h1 id="ELF文件格式"><a href="#ELF文件格式" class="headerlink" title="ELF文件格式"></a>ELF文件格式</h1><p><strong>目标文件既会参与程序链接又会参与程序执行</strong>。出于方便性和效率考虑，根据过程的不同，目标文件格式提供了其内容的两种并行视图，如下</p>
+<p><img src="/2023/04/18/elf-wen-jian-jie-gou/object_file_format.png" alt="img"></p>
+<p>首先，我们来<strong>关注一下链接视图</strong>。</p>
+<p>文件开始处是 ELF 头部（ <strong>ELF Header</strong>），它给出了整个文件的组织情况。</p>
+<p>如果程序头部表（Program Header Table）存在的话，它会告诉系统如何创建进程。<strong>用于生成进程的目标文件必须具有程序头部表，但是重定位文件不需要这个表。</strong></p>
+<p>节区部分包含在链接视图中要使用的大部分信息：指令、数据、符号表、重定位信息等等。</p>
+<p><strong>节区头部表（Section Header Table）包含了描述文件节区的信息，每个节区在表中都有一个表项，会给出节区名称、节区大小等信息。用于链接的目标文件必须有节区头部表，其它目标文件则无所谓，可以有，也可以没有。</strong></p>
+<p>这里给出一个关于链接视图比较形象的展示：</p>
+<p><img src="/2023/04/18/elf-wen-jian-jie-gou/elf-layout.png" alt="img"></p>
+<p>对于<strong>执行视图</strong>来说，其主要的不同点在于没有了 section，而有了多个 segment。其实这里的 segment 大都是来源于链接视图中的 section。</p>
+<p>注意:</p>
+<blockquote>
+<p>尽管图中是按照 ELF 头，程序头部表，节区，节区头部表的顺序排列的。但实际上除了 ELF 头部表以外，其它部分都没有严格的顺序。</p>
+</blockquote>
+<h1 id="SimpleSection-o目标文件解析"><a href="#SimpleSection-o目标文件解析" class="headerlink" title="SimpleSection.o目标文件解析"></a>SimpleSection.o目标文件解析</h1><p>我们通过调试来学习ELF的文件结构：</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token comment">/* SimpleSction.c
+Linux :
+	编译命令：gcc -c SimpleSection.c -m32
+*/</span>
+<span class="token keyword">int</span> <span class="token function">printf</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> format <span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">int</span> global_init_var <span class="token operator">=</span> <span class="token number">84</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span> global_uninit_var2<span class="token punctuation">;</span>
+
+<span class="token keyword">int</span> <span class="token function">func</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%d\n"</span><span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">static</span> <span class="token keyword">int</span> static_init_var <span class="token operator">=</span> <span class="token number">85</span><span class="token punctuation">;</span>
+        <span class="token keyword">static</span> <span class="token keyword">int</span> static_uninit_var2<span class="token punctuation">;</span>
+        <span class="token keyword">int</span> a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> b<span class="token punctuation">;</span>
+        <span class="token function">func</span><span class="token punctuation">(</span>static_init_var <span class="token operator">+</span> static_uninit_var2 <span class="token operator">+</span> a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>通过objdump这个工具查看一下编译后的.o文件</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">
+simpleSection.o:     <span class="token function">file</span> <span class="token function">format</span> elf32-i386
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  <span class="token number">0</span> .group        00000008  00000000  00000000  00000034  <span class="token number">2</span>**2
+                  CONTENTS, READONLY, GROUP, LINK_ONCE_DISCARD
+  <span class="token number">1</span> .text         00000081  00000000  00000000  0000003c  <span class="token number">2</span>**0
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  <span class="token number">2</span> .data         00000008  00000000  00000000  000000c0  <span class="token number">2</span>**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  <span class="token number">3</span> .bss          00000008  00000000  00000000  000000c8  <span class="token number">2</span>**2
+                  ALLOC
+  <span class="token number">4</span> .rodata       00000004  00000000  00000000  000000c8  <span class="token number">2</span>**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  <span class="token number">5</span> .text.__x86.get_pc_thunk.ax 00000004  00000000  00000000  000000cc  <span class="token number">2</span>**0
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  <span class="token number">6</span> .comment      0000002c  00000000  00000000  000000d0  <span class="token number">2</span>**0
+                  CONTENTS, READONLY
+  <span class="token number">7</span> .note.GNU-stack 00000000  00000000  00000000  000000fc  <span class="token number">2</span>**0
+                  CONTENTS, READONLY
+  <span class="token number">8</span> .eh_frame     0000007c  00000000  00000000  000000fc  <span class="token number">2</span>**2
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>可以看到.<strong>text段、.data段、.bss段、只读数据段（.rodata）、注释信息段（.comment）、堆栈提示段（.note.GNU-stack）、gcc处理异常产生的段（.eh_frame），.group段</strong>。几个重要的段的属性：</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>属性名</strong></th>
+<th align="center"><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">size</td>
+<td align="center">段的大小</td>
+</tr>
+<tr>
+<td align="center">File Offset</td>
+<td align="center">段在文件中的偏移</td>
+</tr>
+<tr>
+<td align="center">CONTENTS</td>
+<td align="center">表示改段在文件中存在</td>
+</tr>
+</tbody></table>
+<p>通过objdump可以看到bss段标注的是ALLOC，说明bss段不是在文件中的，堆栈提示段的size大小为0，也认为他不在ELF文件中。</p>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>代码段</th>
+<th>程序源代码编译后的机器指令</th>
+<th>.code /.text段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据段</td>
+<td>已初始化的全局变量和局部静态变量</td>
+<td>.data段</td>
+</tr>
+<tr>
+<td>BSS段</td>
+<td>未初始化的全局变量和局部变量</td>
+<td>.bss段</td>
+</tr>
+</tbody></table>
+</blockquote>
+<h2 id="文件头–ELF-Header"><a href="#文件头–ELF-Header" class="headerlink" title="文件头–ELF Header"></a>文件头–ELF Header</h2><p>可以使用： <code>readelf -h simpleSection.o</code>查看ELF Header</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ELF Header:
+  Magic:   7f <span class="token number">45</span> 4c <span class="token number">46</span> 01 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF32
+  Data:                              <span class="token number">2</span>'s complement, little endian
+  Version:                           <span class="token number">1</span> <span class="token punctuation">(</span>current<span class="token punctuation">)</span>
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       <span class="token number">0</span>
+  Type:                              REL <span class="token punctuation">(</span>Relocatable <span class="token function">file</span><span class="token punctuation">)</span>
+  Machine:                           Intel <span class="token number">80386</span>
+  Version:                           0x1
+  Entry point address:               0x0
+  Start of program headers:          <span class="token number">0</span> <span class="token punctuation">(</span>bytes into <span class="token function">file</span><span class="token punctuation">)</span>
+  Start of section headers:          <span class="token number">1012</span> <span class="token punctuation">(</span>bytes into <span class="token function">file</span><span class="token punctuation">)</span>
+  Flags:                             0x0
+  Size of this header:               <span class="token number">52</span> <span class="token punctuation">(</span>bytes<span class="token punctuation">)</span>
+  Size of program headers:           <span class="token number">0</span> <span class="token punctuation">(</span>bytes<span class="token punctuation">)</span>
+  Number of program headers:         <span class="token number">0</span>
+  Size of section headers:           <span class="token number">40</span> <span class="token punctuation">(</span>bytes<span class="token punctuation">)</span>
+  Number of section headers:         <span class="token number">15</span>
+  Section header string table index: <span class="token number">14</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>从输出结果可以看到ELF的文件头定义了<strong>ELF魔数、文件机器字节长度、数据存储方式、版本、运行平台、ABI版本、ELF重定位类型、硬件平台、硬件平台版本、入口地址、程序入口和长度、段表的位置和长度及段的数量</strong>等。</p>
+<h3 id="数据形式"><a href="#数据形式" class="headerlink" title="数据形式"></a>数据形式</h3><p>ELF 文件格式支持 8 位 / 32 位体系结构。当然，这种格式是可以扩展的，也可以支持更小的或者更大位数的处理器架构。因此，目标文件会包含一些控制数据，这部分数据表明了目标文件所使用的架构，这也使得它可以被通用的方式来识别和解释。目标文件中的其它数据采用目的处理器的格式进行编码，与在何种机器上创建没有关系。这里其实想表明的意思目标文件可以进行交叉编译，我们可以在 x86 平台生成 arm 平台的可执行代码。</p>
+<p>目标文件中的所有数据结构都遵从 “自然” 大小和对齐规则。如下</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>长度</th>
+<th>对齐方式</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Elf32_Addr</td>
+<td>4</td>
+<td>4</td>
+<td>无符号程序地址</td>
+</tr>
+<tr>
+<td>Elf32_Half</td>
+<td>2</td>
+<td>2</td>
+<td>无符号半整型</td>
+</tr>
+<tr>
+<td>Elf32_Off</td>
+<td>4</td>
+<td>4</td>
+<td>无符号文件偏移</td>
+</tr>
+<tr>
+<td>Elf32_Sword</td>
+<td>4</td>
+<td>4</td>
+<td>有符号大整型</td>
+</tr>
+<tr>
+<td>Elf32_Word</td>
+<td>4</td>
+<td>4</td>
+<td>无符号大整型</td>
+</tr>
+<tr>
+<td>unsigned char</td>
+<td>1</td>
+<td>1</td>
+<td>无符号小整型</td>
+</tr>
+</tbody></table>
+<p>如果必要，数据结构可以包含显式地补齐来确保 4 字节对象按 4 字节对齐，强制数据结构的大小是 4 的整数倍等等。数据同样适用是对齐的。因此，包含一个 Elf32_Addr 类型成员的结构体会在文件中的 4 字节边界处对齐。</p>
+<p>为了具有可移植性，ELF 文件不使用位域。</p>
+<h2 id="节-段-表–Section-Header-Table"><a href="#节-段-表–Section-Header-Table" class="headerlink" title="节(段)表–Section Header Table"></a>节(段)表–<strong>Section Header Table</strong></h2><p>前面讲了ELF文件中有很多的段，但是如果没有人管他们就会很乱套，这个时候这些段的头头段表（Section Header Table）出现了，段表就是确保这些段的基本属性的结构。<strong>段表是ELF文件除头文件意外最重要的结构，描述了ELF的各个段的信息，比如每个段的段名、长度、在文件中的偏移、读写权限等。编译器、链接器和装载器都是依靠段表来定位和访问各个段的属性的。</strong>前面使用objdump列出了simpleSction.o的主要段，其实是不全的，可以使用readelf工具查看完整的段结构：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token operator">!</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">(</span>./ELF%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/1.png<span class="token punctuation">)</span><span class="token operator">!</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">(</span>./ELF%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/1.png<span class="token punctuation">)</span>There are <span class="token number">15</span> section headers, starting at offset 0x3f4:
+
+Section Headers:
+  <span class="token punctuation">[</span>Nr<span class="token punctuation">]</span> Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  <span class="token punctuation">[</span> <span class="token number">0</span><span class="token punctuation">]</span>                   NULL            00000000 000000 000000 00      <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">0</span>
+  <span class="token punctuation">[</span> <span class="token number">1</span><span class="token punctuation">]</span> .group            GROUP           00000000 000034 000008 04     <span class="token number">12</span>  <span class="token number">12</span>  <span class="token number">4</span>
+  <span class="token punctuation">[</span> <span class="token number">2</span><span class="token punctuation">]</span> .text             PROGBITS        00000000 00003c 000081 00  AX  <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">1</span>
+  <span class="token punctuation">[</span> <span class="token number">3</span><span class="token punctuation">]</span> .rel.text         REL             00000000 000310 000048 08   I <span class="token number">12</span>   <span class="token number">2</span>  <span class="token number">4</span>
+  <span class="token punctuation">[</span> <span class="token number">4</span><span class="token punctuation">]</span> .data             PROGBITS        00000000 0000c0 000008 00  WA  <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">4</span>
+  <span class="token punctuation">[</span> <span class="token number">5</span><span class="token punctuation">]</span> .bss              NOBITS          00000000 0000c8 000008 00  WA  <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">4</span>
+  <span class="token punctuation">[</span> <span class="token number">6</span><span class="token punctuation">]</span> .rodata           PROGBITS        00000000 0000c8 000004 00   A  <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">1</span>
+  <span class="token punctuation">[</span> <span class="token number">7</span><span class="token punctuation">]</span> .text.__x86.<span class="token punctuation">[</span><span class="token punctuation">..</span>.<span class="token punctuation">]</span> PROGBITS        00000000 0000cc 000004 00 AXG  <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">1</span>
+  <span class="token punctuation">[</span> <span class="token number">8</span><span class="token punctuation">]</span> .comment          PROGBITS        00000000 0000d0 00002c 01  MS  <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">1</span>
+  <span class="token punctuation">[</span> <span class="token number">9</span><span class="token punctuation">]</span> .note.GNU-stack   PROGBITS        00000000 0000fc 000000 00      <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">1</span>
+  <span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span> .eh_frame         PROGBITS        00000000 0000fc 00007c 00   A  <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">4</span>
+  <span class="token punctuation">[</span><span class="token number">11</span><span class="token punctuation">]</span> .rel.eh_frame     REL             00000000 000358 000018 08   I <span class="token number">12</span>  <span class="token number">10</span>  <span class="token number">4</span>
+  <span class="token punctuation">[</span><span class="token number">12</span><span class="token punctuation">]</span> .symtab           SYMTAB          00000000 000178 000100 <span class="token number">10</span>     <span class="token number">13</span>   <span class="token number">9</span>  <span class="token number">4</span>
+  <span class="token punctuation">[</span><span class="token number">13</span><span class="token punctuation">]</span> .strtab           STRTAB          00000000 000278 000098 00      <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">1</span>
+  <span class="token punctuation">[</span><span class="token number">14</span><span class="token punctuation">]</span> .shstrtab         STRTAB          00000000 000370 000082 00      <span class="token number">0</span>   <span class="token number">0</span>  <span class="token number">1</span>
+Key to Flags:
+  W <span class="token punctuation">(</span>write<span class="token punctuation">)</span>, A <span class="token punctuation">(</span>alloc<span class="token punctuation">)</span>, X <span class="token punctuation">(</span>execute<span class="token punctuation">)</span>, M <span class="token punctuation">(</span>merge<span class="token punctuation">)</span>, S <span class="token punctuation">(</span>strings<span class="token punctuation">)</span>, I <span class="token punctuation">(</span>info<span class="token punctuation">)</span>,
+  L <span class="token punctuation">(</span>link order<span class="token punctuation">)</span>, O <span class="token punctuation">(</span>extra OS processing required<span class="token punctuation">)</span>, G <span class="token punctuation">(</span>group<span class="token punctuation">)</span>, T <span class="token punctuation">(</span>TLS<span class="token punctuation">)</span>,
+  C <span class="token punctuation">(</span>compressed<span class="token punctuation">)</span>, x <span class="token punctuation">(</span>unknown<span class="token punctuation">)</span>, o <span class="token punctuation">(</span>OS specific<span class="token punctuation">)</span>, E <span class="token punctuation">(</span>exclude<span class="token punctuation">)</span>,
+  D <span class="token punctuation">(</span>mbind<span class="token punctuation">)</span>, p <span class="token punctuation">(</span>processor specific<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>readelf输出的结果就是ELF文件段表的内容，<strong>段表是一个以”Elf32_Shdr“结构体为元素的数组。数组元素的个数等于段的个数，每个”Elf32_Shdr“结构体对应一个段。</strong>”Elf32_Shdr“又被称为段描述符（Section Descriptor），”Elf32_Shdr“的各个成员的含义如下图：</p>
+<p><img src="/2023/04/18/elf-wen-jian-jie-gou/1.png" alt="Elf32_Shdr结构体"></p>
+<h3 id="sh-type"><a href="#sh-type" class="headerlink" title="sh_type"></a>sh_type</h3><p>段的类型（sh_type）。<strong>段名只是在链接和编译过程中有意义，但它并不能真正表示段的类型。</strong>而且段名是可以通过代码更改的，对于编译器和链接器来说，主要决定短的属性的是段的类型（sh_type）和标志位（sh_flag），段的类型相关常量以SHT_开头，其中 SHT 是 <strong>Section Header Table</strong> 的简写：</p>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="center">取值</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">SHT_NULL</td>
+<td align="center">0</td>
+<td align="left">该类型节区是非活动的，这种类型的节头中的其它成员取值无意义。</td>
+</tr>
+<tr>
+<td align="left">SHT_PROGBITS</td>
+<td align="center">1</td>
+<td align="left">该类型节区包含程序定义的信息，它的格式和含义都由程序来决定。</td>
+</tr>
+<tr>
+<td align="left">SHT_SYMTAB</td>
+<td align="center">2</td>
+<td align="left">该类型节区包含一个符号表（<strong>SYMbol TABle</strong>）。目前目标文件对每种类型的节区都只 能包含一个，不过这个限制将来可能发生变化。 一般，SHT_SYMTAB 节区提供用于链接编辑（指 ld 而言） 的符号，尽管也可用来实现动态链接。</td>
+</tr>
+<tr>
+<td align="left">SHT_STRTAB</td>
+<td align="center">3</td>
+<td align="left">该类型节区包含字符串表（ <strong>STRing TABle</strong> ）。</td>
+</tr>
+<tr>
+<td align="left">SHT_RELA</td>
+<td align="center">4</td>
+<td align="left">该类型节区包含显式指定位数的重定位项（ <strong>RELocation entry with Addends</strong> ），例如，32 位目标文件中的 Elf32_Rela 类型。此外，目标文件可能拥有多个重定位节区。</td>
+</tr>
+<tr>
+<td align="left">SHT_HASH</td>
+<td align="center">5</td>
+<td align="left">该类型节区包含符号哈希表（ <strong>HASH table</strong> ）。</td>
+</tr>
+<tr>
+<td align="left">SHT_DYNAMIC</td>
+<td align="center">6</td>
+<td align="left">该类型节区包含动态链接的信息（ <strong>DYNAMIC linking</strong> ）。</td>
+</tr>
+<tr>
+<td align="left">SHT_NOTE</td>
+<td align="center">7</td>
+<td align="left">该类型节区包含以某种方式标记文件的信息（<strong>NOTE</strong>）。</td>
+</tr>
+<tr>
+<td align="left">SHT_NOBITS</td>
+<td align="center">8</td>
+<td align="left">该类型节区不占用文件的空间，其它方面和 SHT_PROGBITS 相似。尽管该类型节区不包含任何字节，其对应的节头成员 sh_offset 中还是会包含概念性的文件偏移。</td>
+</tr>
+<tr>
+<td align="left">SHT_REL</td>
+<td align="center">9</td>
+<td align="left">该类型节区包含重定位表项（<strong>RELocation entry without Addends</strong>），不过并没有指定位数。例如，32 位目标文件中的 Elf32_rel 类型。目标文件中可以拥有多个重定位节区。</td>
+</tr>
+<tr>
+<td align="left">SHT_SHLIB</td>
+<td align="center">10</td>
+<td align="left">该类型此节区被保留，不过其语义尚未被定义。</td>
+</tr>
+<tr>
+<td align="left">SHT_DYNSYM</td>
+<td align="center">11</td>
+<td align="left">作为一个完整的符号表，它可能包含很多对动态链接而言不必 要的符号。因此，目标文件也可以包含一个 SHT_DYNSYM 节区，其中保存动态链接符号的一个最小集合，以节省空间。</td>
+</tr>
+<tr>
+<td align="left">SHT_LOPROC</td>
+<td align="center">0X70000000</td>
+<td align="left">此值指定保留给处理器专用语义的下界（ <strong>LOw PROCessor-specific semantics</strong> ）。</td>
+</tr>
+<tr>
+<td align="left">SHT_HIPROC</td>
+<td align="center">OX7FFFFFFF</td>
+<td align="left">此值指定保留给处理器专用语义的上界（ <strong>HIgh PROCessor-specific semantics</strong> ）。</td>
+</tr>
+<tr>
+<td align="left">SHT_LOUSER</td>
+<td align="center">0X80000000</td>
+<td align="left">此值指定保留给应用程序的索引下界。</td>
+</tr>
+<tr>
+<td align="left">SHT_HIUSER</td>
+<td align="center">0X8FFFFFFF</td>
+<td align="left">此值指定保留给应用程序的索引上界。</td>
+</tr>
+</tbody></table>
+<h3 id="sh-flags"><a href="#sh-flags" class="headerlink" title="sh_flags"></a>sh_flags</h3><p>节头中 <code>sh_flags</code> 字段的每一个比特位都可以给出其相应的标记信息，其定义了对应的节区的内容是否可以被修改、被执行等信息。如果一个标志位被设置，则该位取值为 1，未定义的位都为 0。目前已定义值如下，其他值保留。</p>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="left">值</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">SHF_WRITE</td>
+<td align="left">0x1</td>
+<td align="left">这种节包含了进程运行过程中可以被写的数据。</td>
+</tr>
+<tr>
+<td align="left">SHF_ALLOC</td>
+<td align="left">0x2</td>
+<td align="left">这种节在进程运行时占用内存。对于不占用目标文件的内存镜像空间的某些控制节，该属性处于关闭状态 (off)。</td>
+</tr>
+<tr>
+<td align="left">SHF_EXECINSTR</td>
+<td align="left">0x4</td>
+<td align="left">这种节包含可执行的机器指令（<strong>EXECutable INSTRuction</strong>）。</td>
+</tr>
+<tr>
+<td align="left">SHF_MASKPROC</td>
+<td align="left">0xf0000000</td>
+<td align="left">所有在这个掩码中的比特位用于特定处理器语义。</td>
+</tr>
+</tbody></table>
+<h3 id="sh-link-amp-sh-info"><a href="#sh-link-amp-sh-info" class="headerlink" title="sh_link &amp; sh_info"></a>sh_link &amp; sh_info</h3><p>当节区类型的不同的时候，sh_link 和 sh_info 也会具有不同的含义，如果段的类型是链接相关的（不论是动态链接还是静态链接），比如重定位表、符号表等，那么sh_link和sh_info这两个成员所包含的意义如下，对于其他类型的段，这两个成员没有意义：。</p>
+<table>
+<thead>
+<tr>
+<th align="left">sh_type</th>
+<th align="left">sh_link</th>
+<th align="left">sh_info</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">SHT_DYNAMIC</td>
+<td align="left">节区中使用的字符串表的节头索引</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">SHT_HASH</td>
+<td align="left">此哈希表所使用的符号表的节头索引</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">SHT_REL/SHT_RELA</td>
+<td align="left">与符号表相关的节头索引</td>
+<td align="left">重定位应用到的节的节头索引</td>
+</tr>
+<tr>
+<td align="left">SHT_SYMTAB/SHT_DYNSYM</td>
+<td align="left">操作系统特定信息，Linux 中的 ELF 文件中该项指向符号表中符号所对应的字符串节区在 Section Header Table 中的偏移。</td>
+<td align="left">操作系统特定信息</td>
+</tr>
+<tr>
+<td align="left">other</td>
+<td align="left"><code>SHN_UNDEF</code></td>
+<td align="left">0</td>
+</tr>
+</tbody></table>
+<h2 id="重定位表"><a href="#重定位表" class="headerlink" title="重定位表"></a>重定位表</h2><p>在通过前面使用readelf查看时，发现有一个叫做.rel.text的段，类型是”SHT_REL“，是一个重定位表（Relocation Table）。<strong>链接器在处理目标文件时，需要对目标文件中的的位置进行重定位，即代码段和数据段中那些绝对地址的引用位置。这些重定位信息都记录在ELF文件的重定位表中。每个段都有一个重定位表，例如”.rel.text“是”text“段的重定位表。</strong></p>
+<p>一个重定位表是ELF中的一个段，这个段的类型是”SHT_REL“类型，<strong>”sh_link“表示符号表的下标，它的”sh_info“表示它作用于哪个段</strong>。比如”.rel.text“作用于”.text“段，而”.text“段的下标为”1“，那么”.rel.text“的”sh_info“为”1“。</p>
+<h2 id="字符串表"><a href="#字符串表" class="headerlink" title="字符串表"></a>字符串表</h2><p>ELF文件中用到很多字符串，如段名、变量名、函数名等。但是字符串长度不一，所以将这些字符串存放到一个表中，然后使用字符串在表中的偏移来引用：</p>
+<p>偏移	+0	+1	+2	+3	+4	+5	+6	+7	+8	+9<br>+0	    \0	 h	   e	  l	    l	   o	 w	  o	  r	   l<br>+10	  d	 \0	  M	 y	   v	   a	  r	   i	  a       b<br>+20	  l	   e	  \0							<br>对应偏移的字符串为：</p>
+<p>偏移	字符串<br>0		空字符串<br>1		helloworld<br>6		world<br>12	  Myvariable<br>这样在ELF文件中，引用字符串只需给出一个数字下标就行，单个字符串都以\0结尾，所以不需要考虑长度问题。ELF中两个表为：</p>
+<ul>
+<li>字符串表（String Table）：常见段名为”.strtab“</li>
+<li>段表字符串表（Section Header String Table）：常见段名为”.shstrtab“</li>
+</ul>
+<p>通过分析ELF文件头，可以得到段表和段表字符串表的位置。</p>
+<h1 id="链接的接口——符号"><a href="#链接的接口——符号" class="headerlink" title="链接的接口——符号"></a>链接的接口——符号</h1><p><strong>链接过程本质是把多个不同的文件通过函数和变量引用的方式链接起来</strong>。</p>
+<p>举个栗子：目标文件B需要用到目标文件A中的函数”func“，那么成目标文件A定义（define）了函数”func“，目标文件B引用（reference）了目标文件A中的函数”func“。这两个概念同样适用于变量。<strong>在连接中，将函数和变量统称为符号（Symbol），函数名或变量名就是符号名（Symbol Name）</strong></p>
+<p>在链接过程中可以将符号看做粘合剂，所以符号需要统一管理，**每个目标文件中都会有一个相应的符号表（Symbol Table），表中记录了目标文件所用到的所有符号，每个定义的符号有一个对应的值，叫做符号值（Symbol Value），<font color="red">符号是就是变量和函数的地址</font>**，下面是符号表中所有符号的分类：</p>
+<ul>
+<li><strong>定义在本目标文件的全局符号，可以被其他目标引用，例如SimpleSection.o中的”func1“、”main“和”global_init_var“。</strong></li>
+<li><strong>在本目标文件中引用的全局符号，却没有定义在本目标文件，一般叫做外部符号（External Symbol），例如：SimpleSection.o中的”printf“</strong></li>
+<li>段名，这种符号往往由编译器产生，它的值就是该段的起始地址，例如SimpleSection.o中的”.text“、”.data“等</li>
+<li>局部符号，这类符号只在编译单元内部可见。例如：SimpleSection.o里面的”static_var“和”static_var2“</li>
+<li>行号信息，即目标文件指令与源代码中代码行对应关系，可选</li>
+</ul>
+<p>值得关注的是前两个，在链接过程中只关心全局符号的链接，局部符号、段名、行号都是次要的。</p>
+<h2 id="ELF符号表结构"><a href="#ELF符号表结构" class="headerlink" title="ELF符号表结构"></a>ELF符号表结构</h2><p>ELF文件中的符号表往往是文件中的一个段，段名一般叫”.symtab“。表结构是一个Elf32_Sym结构的数组，每个Elf32_Sym结构对应一个符号。Elf32_Sym结构定义如下：</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">typedef</span> <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+  Elf32_Word st_name<span class="token punctuation">;</span>
+  Elf32_Addr st_value<span class="token punctuation">;</span>
+  Elf32_Word st_size<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span> st_info<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span> sy_other<span class="token punctuation">;</span>
+  Elf32_Half st_shndx<span class="token punctuation">;</span>
+<span class="token punctuation">}</span> Elf32_Sym<span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>成员定义如下：</p>
+<ul>
+<li>st_name：符号名。这个成员包含了该符号名在字符串表中的下标</li>
+<li>st_value：符号相对应的值。这个值和符号有关，可能是一个绝对值，也可能是一个地址等，不同的符号对应的值含义不同</li>
+<li>st_size：符号大小，对于包含数据的符号，这个值是该数据类型的大小，比如一个double类型的符号占用8个字节，如果该值为0，则表示该符号大小为0或位置</li>
+<li>st_info：符号类型和绑定信息</li>
+<li>st_other：该成员目前为0，没用</li>
+<li>st_shndx：符号所在段</li>
+</ul>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">XiaozaYa</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://XiaozaYa.github.io/2023/04/18/elf-wen-jian-jie-gou/">http://XiaozaYa.github.io/2023/04/18/elf-wen-jian-jie-gou/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">XiaozaYa</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/ELF/">
+                                    <span class="chip bg-color">ELF</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2023/04/18/elf-wen-jian-jie-gou/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="ELF文件结构">
+                        
+                        <span class="card-title">ELF文件结构</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            ELF文件结构简述
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-18
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E3%80%8A%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%E3%80%8B/" class="post-category">
+                                    《程序员的自我修养》
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/ELF/">
+                        <span class="chip bg-color">ELF</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2023/04/17/tmux/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="tmux使用手册">
+                        
+                        <span class="card-title">tmux使用手册</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            tmux的简单使用
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-17
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/tmux/" class="post-category">
+                                    tmux
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Tmux%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">
+                        <span class="chip bg-color">Tmux使用手册</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE' || selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: XiaozaYa&#39;s Blog<br />'
+            + '文章作者: QiBin Zhou<br />'
+            + '文章链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('2'),
+            headingSelector: 'h1, h2, h3, h4, h5, h6'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+
+    <footer class="page-footer bg-color">
+
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 15px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2023</span>
+            
+            <a href="/about" target="_blank">QiBin Zhou</a>
+            |&nbsp;Welcome to &nbsp;<a href="https://blog.csdn.net/qq_61670993" target="_blank">CSDN</a>
+            |&nbsp;&nbsp;<a href="https://github.com/XiaozaYa" target="_blank">GitHub</a>
+            <br>
+            
+                &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                        class="white-color">36.2k</span>
+            
+            
+            
+                
+            
+            
+            
+           
+
+            <!-- 运行天数提醒. -->
+            
+                <span id="sitetime"> Loading ...</span>
+                <script>
+                    var calcSiteTime = function () {
+                        var seconds = 1000;
+                        var minutes = seconds * 60;
+                        var hours = minutes * 60;
+                        var days = hours * 24;
+                        var years = days * 365;
+                        var today = new Date();
+                        var startYear = "2023";
+                        var startMonth = "4";
+                        var startDate = "1";
+                        var startHour = "21";
+                        var startMinute = "33";
+                        var startSecond = "0";
+                        var todayYear = today.getFullYear();
+                        var todayMonth = today.getMonth() + 1;
+                        var todayDate = today.getDate();
+                        var todayHour = today.getHours();
+                        var todayMinute = today.getMinutes();
+                        var todaySecond = today.getSeconds();
+                        var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                        var diff = t2 - t1;
+                        var diffYears = Math.floor(diff / years);
+                        var diffDays = Math.floor((diff / days) - diffYears * 365);
+
+                        // 区分是否有年份.
+                        var language = 'zh-CN';
+                        if (startYear === String(todayYear)) {
+                            document.getElementById("year").innerHTML = todayYear;
+                            var daysTip = 'This site has been running for ' + diffDays + ' days';
+                            if (language === 'zh-CN') {
+                                daysTip = '本站已运行 ' + diffDays + ' 天';
+                            } else if (language === 'zh-HK') {
+                                daysTip = '本站已運行 ' + diffDays + ' 天';
+                            }
+                            document.getElementById("sitetime").innerHTML = daysTip;
+                        } else {
+                            document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                            var yearsAndDaysTip = 'This site has been running for ' + diffYears + ' years and '
+                                + diffDays + ' days';
+                            if (language === 'zh-CN') {
+                                yearsAndDaysTip = '本站已运行 ' + diffYears + ' 年 ' + diffDays + ' 天';
+                            } else if (language === 'zh-HK') {
+                                yearsAndDaysTip = '本站已運行 ' + diffYears + ' 年 ' + diffDays + ' 天';
+                            }
+                            document.getElementById("sitetime").innerHTML = yearsAndDaysTip;
+                        }
+                    }
+
+                    calcSiteTime();
+                </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/XiaozaYa" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:https://github.com/XiaozaYa" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=2353567071" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 2353567071" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 白天和黑夜主题 -->
+<div class="stars-con">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>  
+</div>
+
+<script>
+    function switchNightMode() {
+        $('<div class="Cuteen_DarkSky"><div class="Cuteen_DarkPlanet"></div></div>').appendTo($('body')),
+        setTimeout(function () {
+            $('body').hasClass('DarkMode') 
+            ? ($('body').removeClass('DarkMode'), localStorage.setItem('isDark', '0'), $('#sum-moon-icon').removeClass("fa-sun").addClass('fa-moon')) 
+            : ($('body').addClass('DarkMode'), localStorage.setItem('isDark', '1'), $('#sum-moon-icon').addClass("fa-sun").removeClass('fa-moon')),
+            
+            setTimeout(function () {
+            $('.Cuteen_DarkSky').fadeOut(1e3, function () {
+                $(this).remove()
+            })
+            }, 2e3)
+        })
+    }
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
