@@ -5,9 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="ret2_dl_runtime_resolve, XiaozaYa&#39;s Blog">
-    <meta name="description" content="[TOC]
-参考文章https://hollk.blog.csdn.net/article/details/106996893
-https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x">
+    <meta name="description" content="高级ROP--ret2_dl_runtime_resolve浅析">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -447,7 +445,7 @@ jump __dl_runtime_resolve<span aria-hidden="true" class="line-numbers-rows"><spa
 <p><strong><code>func@plt</code>的第一条指令是一条通过GOT间接跳转的指令，<code>func@GOT</code>表示GOT中保存func()这个函数相应的项。若链接器在初始化阶段已经初始化该项，并且将func()的地址填入该项，那么这个跳转指令的结果就是我们所期望的，跳转到func()，实现函数正确调用。但是为了实现延迟绑定，链接器在初始化并没有将func()的地址填入到该项，而是将第二条指令<code>push n</code>的地址填入到func@GOT中，这个步骤不需要任何符号，所以代价很低。</strong></p>
 <ul>
 <li>第一条指令的效果是跳转到提二条指令，相当于没有任何操作。</li>
-<li>第二条指令将一个数字n压入栈中，这个数字是func这个符号引用在重定位表”.rel.plt“中的下标</li>
+<li>第二条指令将一个数字n压入栈中，这个数字是func这个符号引用在重定位表<code>.rel.plt</code>中的下标</li>
 <li>第三条push指令将模块的ID压入到栈中</li>
 <li>第四条跳转到<code>_dl_runtime_resolve()</code><ul>
 <li>也就是在实现前面提到的<code>lookup(module, function)</code>这个函数的调用：先将所需要决议符号的下标压入栈，在将模块ID压入栈，然后调用动态链接器的<code>_dl_runtime_resolve()</code>函数来完成符号解析和重定位工作。**_dl_runtime_resolve()在进行一系列工作以后将func()的真正地址填入到func@GOT中**</li>
@@ -457,8 +455,8 @@ jump __dl_runtime_resolve<span aria-hidden="true" class="line-numbers-rows"><spa
 </ul>
 <p>ELF将GOT拆分两个表叫做<code>.got</code>和<code>.got.plt</code>。</p>
 <ul>
-<li><code>.got</code>用来保存全局变量引用地址;</li>
-<li><code>.got.plt</code>用来保存函数引用地址，所有外部函数的引用全部分离出来放在”.got.plt“中。另外”.got.plt“还有特殊的提房就是他的前三项：<ul>
+<li><strong><code>.got</code>用来保存全局变量引用地址</strong>;</li>
+<li><strong><code>.got.plt</code>用来保存函数引用地址，所有外部函数的引用全部分离出来放在<code>.got.plt</code>中。另外<code>.got.plt</code>还有特殊的地方就是它的前三项：</strong><ul>
 <li>第一项是<code>.dynamic</code>段的地址，这个段描述了本模块动态链接相关的信息</li>
 <li>第二项保存的是本模块的ID</li>
 <li>第三项保存的是<code>_dl_runtime_resolve()</code>的地址</li>
@@ -515,7 +513,10 @@ jump PLT0<span aria-hidden="true" class="line-numbers-rows"><span></span><span><
 </tr>
 </tbody></table>
 <p>从上面给出的定义来看，<code>.dynamic</code>段里面保存的信息有点像ELF文件头，只是前面看到的ELF文件头中保存的是静态链接时相关的内容，比如静态链接时用到的符号表、重定位表，这里换成了动态链接下所使用的相关信息。所以“.dynamic”段可以堪称是动态链接下ELF文件的“文件头”</p>
-<p><strong>动态符号表：</strong><br>为了管理动态链接这些模块之间的符号导入导出关系，ELF有一个叫动态符号表（Dynamic Symbol Table）的段来保存这些信息，段名叫<code>.dynsym</code>。**<code>.dynsym</code>只保存与动态链接相关的符号，不保存模块内部符号，比如模块私有变量**</p>
+<p>我们可以使用<code>readelf -d filename</code>查看文件的<code>.dynamic</code>段：</p>
+<p>可以看到红色区域分别是<code>.dynstr</code>,<code>dynsym</code>,<code>.rel.plt</code>的基地址</p>
+<p><img src="/2023/04/19/ret2-dl-runtime-resolve/20.png"></p>
+<p><strong>动态符号表 – <code>.dynsym</code>：</strong><br>为了管理动态链接这些模块之间的符号导入导出关系，ELF有一个叫动态符号表（Dynamic Symbol Table）的段来保存这些信息，段名叫<code>.dynsym</code>。**<code>.dynsym</code>只保存与动态链接相关的符号，不保存模块内部符号，比如模块私有变量，而<code>.symtab</code>表包含所有符号，包括<code>.dynsym</code>中的符号**</p>
 <p>动态符号表也需要一些辅助表，比如保存符号名的字符串表——动态符号字符串表<code>.dynstr</code>（Dynamic String Table）。由于动态链接下需要在程序运行时查找符号，为了加快符号的查找过程，还需要辅助的符号哈希表“.hash”</p>
 <p><strong>动态链接重定位表：</strong><br>共享对象需要重定位的主要原因是导入符号的存在。动态链接下，无论是可执行文件或共享对象，一旦它依赖于其他共享对象，也就是说有导入的符号时，它的代码或数据中就会有对于导入符号的引用。在编译时这些导入符号的地址未知，在动态链接中，导入符号的地址在运行时才确定，所以需要在运行时将这些导入符号的引用修正，即需要重定位。</p>
 <p>动态链接重定位相关结构：<br>动态链接的文件中，也有类似静态链接的重定位表，分别叫做<code>.rel.dyn</code>和<code>.rel.plt</code>，分别相当于静态链接下的<code>.rel.text</code>和<code>.rel.data</code>。</p>
@@ -549,12 +550,12 @@ jump PLT0<span aria-hidden="true" class="line-numbers-rows"><span></span><span><
 <li>在<code>.dynamic</code>中可以在0x44偏移处找到<code>.dynstr</code>（动态字符串表）的基地址</li>
 <li>在0x4c偏移处可以找到<code>.dynsym</code>（动态符号表）的基地址</li>
 <li>在0x84偏移处可以找到<code>.rel.plt</code>（重定位表）的基地址</li>
-<li><code>.rel.plt</code>（重定位表）的基地址加上二参<code>reloc_index</code>的重定位索引值（可以看做偏移）可以得到函数对应的Elf32_Rel结构体指针</li>
+<li><code>.rel.plt</code>（重定位表）的基地址加上二参<code>reloc_index</code>的重定位索引值（可以看做偏移）可以得到函数对应的<code>Elf32_Rel</code>结构体指针</li>
 <li><code>Elf32_Rel</code>结构体中有两个成员变量：<code>r_offset</code>和<code>r_info</code>，将<code>r_info</code>右移8可以得到函数在<code>.dynsym</code>（符号表）中的下标</li>
 <li><code>.dynsym</code>（符号表）的基地址加上函数在<code>.dynsym</code>的下标，可以得到函数名在<code>.dynstr</code>（字符串表）中的偏移<code>name_offset</code></li>
 <li><code>.dynstr</code>（字符串表）的基地址加上<code>name_offset</code>就可以找到函数名了</li>
 </ul>
-<p>上述就是_dl_runtime_resolve的执行流程，也是在EXP中伪造篡改的过程。</p>
+<p>上述就是<code>_dl_runtime_resolve</code>的执行流程，也是在EXP中伪造篡改的过程。</p>
 <blockquote>
 <p>1、为什么<code>.rel.plt</code>（重定位表）加上二参<code>reloc_index</code>就能找到结构体指针？</p>
 <p><code>.rel.plt</code>结构体：</p>
@@ -648,30 +649,30 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 <p><img src="/2023/04/19/ret2-dl-runtime-resolve/4.png"></p>
 <p>接下来程序会顺着往下执行<code>push link_map</code>,然后jmp到<code>_dl_runtime_resovle</code>函数，从而起到和直接调用write函数一样的作用。</p>
 <p>在bss段中数据布局如下：</p>
-<pre class="line-numbers language-c" data-language="c"><code class="language-c">  低地址位 	
+<pre class="line-numbers language-c" data-language="c"><code class="language-c">   低地址位 	
 <span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>
 <span class="token operator">|</span>        plt0         <span class="token operator">|</span>  <span class="token operator">&lt;</span><span class="token operator">--</span><span class="token operator">--</span>ret
 <span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>
-   			<span class="token operator">|</span>      write_index    <span class="token operator">|</span> write函数在<span class="token punctuation">.</span>rel<span class="token punctuation">.</span>plt的重定位索引
-   			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>
-   			<span class="token operator">|</span>         dead        <span class="token operator">|</span> write函数返回地址
-   			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>
-   			<span class="token operator">|</span>          <span class="token number">1</span>          <span class="token operator">|</span> write函数<span class="token number">1</span>参
-   			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>
-   			<span class="token operator">|</span>      <span class="token operator">/</span>bin<span class="token operator">/</span>sh<span class="token punctuation">;</span>地址    <span class="token operator">|</span> write函数<span class="token number">2</span>参<span class="token punctuation">,</span><span class="token operator">/</span>bin<span class="token operator">/</span>sh<span class="token punctuation">;</span>字符串所在地址
-   			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>                 
-   			<span class="token operator">|</span>          <span class="token number">7</span>          <span class="token operator">|</span> write函数<span class="token number">3</span>参     
-   			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>                              
-   			<span class="token operator">|</span>        AAAA         <span class="token operator">|</span>  填充           
-   			<span class="token operator">|</span>        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>         <span class="token operator">|</span>  填充          
-   			<span class="token operator">|</span>        AAAA         <span class="token operator">|</span>  填充            
-   			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>                
-   			<span class="token operator">|</span>      <span class="token operator">/</span>bin<span class="token operator">/</span>sh<span class="token punctuation">;</span>       <span class="token operator">|</span> <span class="token operator">/</span>bin<span class="token operator">/</span>sh<span class="token punctuation">;</span>字符串
-   			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span> 
-   			<span class="token operator">|</span>        AAAA         <span class="token operator">|</span>
-   			<span class="token operator">|</span>        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>         <span class="token operator">|</span>              
-   			<span class="token operator">|</span>        AAAA         <span class="token operator">|</span>           
-  高地址位 	 <span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">+</span>
+    			<span class="token operator">|</span>      write_index    <span class="token operator">|</span> write函数在<span class="token punctuation">.</span>rel<span class="token punctuation">.</span>plt的重定位索引
+    			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>
+    			<span class="token operator">|</span>         dead        <span class="token operator">|</span> write函数返回地址
+    			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>
+    			<span class="token operator">|</span>          <span class="token number">1</span>          <span class="token operator">|</span> write函数<span class="token number">1</span>参
+    			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>
+    			<span class="token operator">|</span>      <span class="token operator">/</span>bin<span class="token operator">/</span>sh<span class="token punctuation">;</span>地址    <span class="token operator">|</span> write函数<span class="token number">2</span>参<span class="token punctuation">,</span><span class="token operator">/</span>bin<span class="token operator">/</span>sh<span class="token punctuation">;</span>字符串所在地址
+    			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>                 
+    			<span class="token operator">|</span>          <span class="token number">7</span>          <span class="token operator">|</span> write函数<span class="token number">3</span>参     
+    			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>                              
+    			<span class="token operator">|</span>        AAAA         <span class="token operator">|</span>  填充           
+    			<span class="token operator">|</span>        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>         <span class="token operator">|</span>  填充          
+    			<span class="token operator">|</span>        AAAA         <span class="token operator">|</span>  填充            
+    			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span>                
+    			<span class="token operator">|</span>      <span class="token operator">/</span>bin<span class="token operator">/</span>sh<span class="token punctuation">;</span>       <span class="token operator">|</span> <span class="token operator">/</span>bin<span class="token operator">/</span>sh<span class="token punctuation">;</span>字符串
+    			<span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">+</span> 
+    			<span class="token operator">|</span>        AAAA         <span class="token operator">|</span>
+    			<span class="token operator">|</span>        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>         <span class="token operator">|</span>              
+    			<span class="token operator">|</span>        AAAA         <span class="token operator">|</span>           
+   高地址位 	 <span class="token operator">+</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">+</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 </blockquote>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
@@ -1208,7 +1209,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 <ul>
 <li><p>我们可以控制my_reloc_index，使得：<code>.rel.plt</code>  + <code>reloc_index</code> 指向我们伪造的<code>Elf32_Rel</code>结构体</p>
 </li>
-<li><p>然后我们在伪造的<code>Elf32_Rel</code>结构体中精心设置<code>r_inf0</code>，使得<code>.dynsym</code> + <code>r_info&gt;&gt;8</code>指向我们伪造的<code>.dynsym</code>表项</p>
+<li><p>然后我们在伪造的<code>Elf32_Rel</code>结构体中精心设置<code>r_info</code>，使得<code>.dynsym + r_info&gt;&gt;8</code>指向我们伪造的<code>.dynsym</code>表项</p>
 </li>
 <li><p>然后我们在伪造的<code>.dynsym</code>表项中伪造<code>name_offset</code>偏移，使得<code>.dynstr</code>+<code>name_offset</code>指向我们伪造的函数名<code>st_name = system\x00</code></p>
 </li>
@@ -1332,54 +1333,40 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/04/19/ret2-dl-runtime-resolve/">
+                <a href="/2023/04/20/gdouctf-wp/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="ret2_dl_runtime_resolve">
+                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="GDOUCTF-WP">
                         
-                        <span class="card-title">ret2_dl_runtime_resolve</span>
+                        <span class="card-title">GDOUCTF-WP</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            GDOUCTF-WP
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-19
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-20
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/CTF-PWN/" class="post-category">
-                                    CTF-PWN
+                            <a href="/categories/CTF-WP/" class="post-category">
+                                    CTF-WP
                                 </a>
                             
                             
                         </span>
                     </div>
-                </div>
-
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/">
-                        <span class="chip bg-color">动态链接</span>
-                    </a>
-                    
-                    <a href="/tags/ret2dlresolve/">
-                        <span class="chip bg-color">ret2dlresolve</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -1608,7 +1595,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">45.4k</span>
+                        class="white-color">46.7k</span>
             
             
             
