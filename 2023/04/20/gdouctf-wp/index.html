@@ -385,14 +385,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.3k
+                    1.9k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    6 分
+                    9 分
                 </div>
                 
 
@@ -416,7 +416,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p>[TOC]</p>
-<h1 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h1><h2 id="ezshellcode"><a href="#ezshellcode" class="headerlink" title="ezshellcode"></a>ezshellcode</h2><ul>
+<h1 id="PWN"><a href="#PWN" class="headerlink" title="PWN"></a>PWN</h1><h2 id="ezshellcode"><a href="#ezshellcode" class="headerlink" title="ezshellcode"></a>ezshellcode</h2><ul>
 <li>使用mprotect()函数给bss段赋了rwx权限</li>
 <li>限制shellcode长度小于37个字节</li>
 </ul>
@@ -572,6 +572,130 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 
 
 
+<h1 id="RE"><a href="#RE" class="headerlink" title="RE"></a>RE</h1><h2 id="Check-your-luck"><a href="#Check-your-luck" class="headerlink" title="Check_your_luck"></a>Check_your_luck</h2><p>z3求解方程组</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> z3 <span class="token keyword">import</span> <span class="token operator">*</span>
+
+v<span class="token punctuation">,</span> w<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> z <span class="token operator">=</span> Ints<span class="token punctuation">(</span><span class="token string">'v w x y z'</span><span class="token punctuation">)</span>
+ans <span class="token operator">=</span> Solver<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ans<span class="token punctuation">.</span>add<span class="token punctuation">(</span>v <span class="token operator">*</span> <span class="token number">23</span> <span class="token operator">+</span> w <span class="token operator">*</span> <span class="token operator">-</span><span class="token number">32</span> <span class="token operator">+</span> x <span class="token operator">*</span> <span class="token number">98</span> <span class="token operator">+</span> y <span class="token operator">*</span> <span class="token number">55</span> <span class="token operator">+</span> z <span class="token operator">*</span> <span class="token number">90</span> <span class="token operator">==</span> <span class="token number">333322</span><span class="token punctuation">)</span>
+ans<span class="token punctuation">.</span>add<span class="token punctuation">(</span>v <span class="token operator">*</span> <span class="token number">123</span> <span class="token operator">+</span> w <span class="token operator">*</span> <span class="token operator">-</span><span class="token number">322</span> <span class="token operator">+</span> x <span class="token operator">*</span> <span class="token number">68</span> <span class="token operator">+</span> y <span class="token operator">*</span> <span class="token number">67</span> <span class="token operator">+</span> z <span class="token operator">*</span> <span class="token number">32</span> <span class="token operator">==</span> <span class="token number">707724</span><span class="token punctuation">)</span>
+ans<span class="token punctuation">.</span>add<span class="token punctuation">(</span>v <span class="token operator">*</span> <span class="token number">266</span> <span class="token operator">+</span> w <span class="token operator">*</span> <span class="token operator">-</span><span class="token number">34</span> <span class="token operator">+</span> x <span class="token operator">*</span> <span class="token number">43</span> <span class="token operator">+</span> y <span class="token operator">*</span> <span class="token number">8</span> <span class="token operator">+</span> z <span class="token operator">*</span> <span class="token number">32</span> <span class="token operator">==</span> <span class="token number">1272529</span><span class="token punctuation">)</span>
+ans<span class="token punctuation">.</span>add<span class="token punctuation">(</span>v <span class="token operator">*</span> <span class="token number">343</span> <span class="token operator">+</span> w <span class="token operator">*</span> <span class="token operator">-</span><span class="token number">352</span> <span class="token operator">+</span> x <span class="token operator">*</span> <span class="token number">58</span> <span class="token operator">+</span> y <span class="token operator">*</span> <span class="token number">65</span> <span class="token operator">+</span> z <span class="token operator">*</span> <span class="token number">5</span> <span class="token operator">==</span> <span class="token number">1672457</span><span class="token punctuation">)</span>
+ans<span class="token punctuation">.</span>add<span class="token punctuation">(</span>v <span class="token operator">*</span> <span class="token number">231</span> <span class="token operator">+</span> w <span class="token operator">*</span> <span class="token operator">-</span><span class="token number">321</span> <span class="token operator">+</span> x <span class="token operator">*</span> <span class="token number">938</span> <span class="token operator">+</span> y <span class="token operator">*</span> <span class="token number">555</span> <span class="token operator">+</span> z <span class="token operator">*</span> <span class="token number">970</span> <span class="token operator">==</span> <span class="token number">3372367</span><span class="token punctuation">)</span>
+
+check <span class="token operator">=</span> ans<span class="token punctuation">.</span>check<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token comment">#4、检测是否有解（有解sat、无解unsat）</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>check<span class="token punctuation">)</span>
+model <span class="token operator">=</span> ans<span class="token punctuation">.</span>model<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token comment">#5、取出所有结果，一个ModelRef类，</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>model<span class="token punctuation">)</span>
+
+<span class="token string">"NSSCTF{4544_123_677_1754_777}"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="tea"><a href="#tea" class="headerlink" title="tea"></a>tea</h2><p>魔改tea，可以找到key和密文</p>
+<ul>
+<li>key = [2233, 4455, 6677, 8899]</li>
+<li>密文v8：</li>
+</ul>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">v8<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x1A800BDA</span><span class="token punctuation">;</span>
+v8<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0xF7A6219B</span><span class="token punctuation">;</span>
+v8<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x491811D8</span><span class="token punctuation">;</span>
+v8<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0xF2013328</span><span class="token punctuation">;</span>
+v8<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x156C365B</span><span class="token punctuation">;</span>
+v8<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x3C6EAAD8</span><span class="token punctuation">;</span>
+v8<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x84D4BF28</span><span class="token punctuation">;</span>
+v8<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0xF11A7EE7</span><span class="token punctuation">;</span>
+v8<span class="token punctuation">[</span><span class="token number">8</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x3313B252</span><span class="token punctuation">;</span>
+v8<span class="token punctuation">[</span><span class="token number">9</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0xDD9FE279</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>加密算法如下：<strong>注意do_while循环一共执行了33次</strong></p>
+<p><img src="/2023/04/20/gdouctf-wp/6.png"></p>
+<p>将解密后的数据<strong>逐字节输出</strong>：</p>
+<p><img src="/2023/04/20/gdouctf-wp/7.png"></p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;Windows.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdint.h&gt;</span></span>
+
+<span class="token keyword">int</span> <span class="token function">sub_140011900</span><span class="token punctuation">(</span><span class="token class-name">uint32_t</span> <span class="token operator">*</span>a1<span class="token punctuation">,</span> <span class="token class-name">uint32_t</span> <span class="token operator">*</span>key<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token keyword">int</span> v3<span class="token punctuation">;</span> <span class="token comment">// [rsp+44h] [rbp+24h]</span>
+	<span class="token keyword">int</span> i<span class="token punctuation">;</span> <span class="token comment">// [rsp+64h] [rbp+44h]</span>
+	<span class="token keyword">unsigned</span> <span class="token keyword">int</span> v5<span class="token punctuation">;</span> <span class="token comment">// [rsp+84h] [rbp+64h]</span>
+	<span class="token keyword">unsigned</span> <span class="token keyword">int</span> v6<span class="token punctuation">;</span> <span class="token comment">// [rsp+C4h] [rbp+A4h]</span>
+
+	<span class="token keyword">for</span> <span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">8</span><span class="token punctuation">;</span> i <span class="token operator">&gt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token operator">--</span>i<span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		v5 <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+		v6 <span class="token operator">=</span> <span class="token number">0xF462900</span> <span class="token operator">*</span> <span class="token punctuation">(</span>i <span class="token operator">+</span> <span class="token number">33</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//do_while一共执行了33次哦</span>
+		v3 <span class="token operator">=</span> i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+		<span class="token keyword">do</span>
+		<span class="token punctuation">{</span>
+			<span class="token operator">++</span>v5<span class="token punctuation">;</span>
+			v6 <span class="token operator">-=</span> <span class="token number">0xF462900</span><span class="token punctuation">;</span>
+			a1<span class="token punctuation">[</span>v3<span class="token punctuation">]</span> <span class="token operator">-=</span> <span class="token punctuation">(</span>v6 <span class="token operator">+</span> key<span class="token punctuation">[</span><span class="token punctuation">(</span>v6 <span class="token operator">&gt;&gt;</span> <span class="token number">11</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">^</span> <span class="token punctuation">(</span>a1<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>a1<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">&gt;&gt;</span> <span class="token number">5</span><span class="token punctuation">)</span> <span class="token operator">^</span> <span class="token punctuation">(</span><span class="token number">16</span> <span class="token operator">*</span> a1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+			a1<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-=</span> v6 <span class="token operator">^</span> <span class="token punctuation">(</span>a1<span class="token punctuation">[</span>v3<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>a1<span class="token punctuation">[</span>v3<span class="token punctuation">]</span> <span class="token operator">&gt;&gt;</span> <span class="token number">5</span><span class="token punctuation">)</span> <span class="token operator">^</span> <span class="token punctuation">(</span><span class="token number">16</span> <span class="token operator">*</span> a1<span class="token punctuation">[</span>v3<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">^</span> <span class="token punctuation">(</span>v6 <span class="token operator">+</span> key<span class="token punctuation">[</span>v6<span class="token operator">&amp;</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+			
+			
+		<span class="token punctuation">}</span> <span class="token keyword">while</span> <span class="token punctuation">(</span>v5 <span class="token operator">&lt;=</span> <span class="token number">0x20</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+	<span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token class-name">uint32_t</span> key<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token number">2233</span><span class="token punctuation">,</span> <span class="token number">4455</span><span class="token punctuation">,</span> <span class="token number">6677</span><span class="token punctuation">,</span> <span class="token number">8899</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+	<span class="token class-name">uint32_t</span> v8<span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x1A800BDA</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0xF7A6219B</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x491811D8</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0xF2013328</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x156C365B</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x3C6EAAD8</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x84D4BF28</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0xF11A7EE7</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">8</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x3313B252</span><span class="token punctuation">;</span>
+	v8<span class="token punctuation">[</span><span class="token number">9</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0xDD9FE279</span><span class="token punctuation">;</span>
+	<span class="token function">sub_140011900</span><span class="token punctuation">(</span>v8<span class="token punctuation">,</span> key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> k <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> k <span class="token operator">&lt;</span> <span class="token number">10</span><span class="token punctuation">;</span> <span class="token operator">++</span>k<span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> m <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span> m <span class="token operator">&gt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token operator">--</span>m<span class="token punctuation">)</span>
+			<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%c"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>v8<span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">&gt;&gt;</span> <span class="token punctuation">(</span><span class="token number">8</span> <span class="token operator">*</span> m<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span> <span class="token number">0xff</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+	<span class="token comment">//HZCTF{hzCtf_94_re666fingcry5641qq}</span>
+	<span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="doublegame-–-暂时有点没搞懂这个迷宫的逻辑"><a href="#doublegame-–-暂时有点没搞懂这个迷宫的逻辑" class="headerlink" title="doublegame – 暂时有点没搞懂这个迷宫的逻辑"></a>doublegame – 暂时有点没搞懂这个迷宫的逻辑</h2><p>迷宫题套了个贪吃蛇：flag = HZCTF{md5(path)+score}</p>
+<p><img src="/2023/04/20/gdouctf-wp/8.png"></p>
+<p>找到贪吃蛇分数比较逻辑：score = 13371337</p>
+<p><img src="/2023/04/20/gdouctf-wp/9.png"></p>
+<p>迷宫地图：</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token number">000000000000000000000</span>
+<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>     <span class="token number">0</span>     <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">00000</span> <span class="token number">00000</span> <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">0</span>               <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">000</span> <span class="token number">000</span> <span class="token number">0</span> <span class="token number">000</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">0</span>     <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>   <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">00000</span> <span class="token number">000</span> <span class="token number">000</span> <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>     <span class="token number">0</span>   <span class="token number">0</span> <span class="token number">0</span>    
+<span class="token number">0</span> <span class="token number">000</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">000</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span>     <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">00000</span> <span class="token number">000</span> <span class="token number">000</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span>     <span class="token number">0</span>       <span class="token number">0</span>   <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">000</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">000</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token operator">*</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">0000000</span> <span class="token number">0</span> <span class="token number">000</span> <span class="token number">00000</span>
+@   <span class="token number">0</span>   <span class="token number">0</span> <span class="token number">0</span>         <span class="token number">0</span>
+<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">00000000000</span>
+<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>             <span class="token number">0</span>
+<span class="token number">000</span> <span class="token number">0</span> <span class="token number">00000</span> <span class="token number">0</span> <span class="token number">000</span> <span class="token number">000</span>
+<span class="token number">0</span>         <span class="token number">0</span> <span class="token number">0</span>   <span class="token number">0</span>   <span class="token number">0</span>
+<span class="token number">000000000000000000000</span>
+<span class="token comment">/*dddssssddwwwwddssddwwwwwwddddssaassddddwwwwddwwwwddd*/</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -679,43 +803,49 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/04/20/gdouctf-wp/">
+                <a href="/2023/04/21/tea/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="GDOUCTF-WP">
+                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="TEA">
                         
-                        <span class="card-title">GDOUCTF-WP</span>
+                        <span class="card-title">TEA</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            GDOUCTF-WP
+                            TEA加密算法及其变形
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-20
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-21
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/CTF-WP/" class="post-category">
-                                    CTF-WP
+                            <a href="/categories/Crypto/" class="post-category">
+                                    Crypto
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
-
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/TEA%E3%80%81XTEA%E3%80%81XXTEA/">
+                        <span class="chip bg-color">TEA、XTEA、XXTEA</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
@@ -947,7 +1077,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">46.7k</span>
+                        class="white-color">48.2k</span>
             
             
             
