@@ -1,0 +1,1177 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="volatility内存取证, XiaozaYa&#39;s Blog">
+    <meta name="description" content="volatility简单使用">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>volatility内存取证 | XiaozaYa&#39;s Blog</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <style>
+        body{
+            background-image: url(https://cdn.jsdelivr.net/gh/Tokisaki-Galaxy/res/site/medias/background.jpg);
+            background-repeat:no-repeat;
+            background-size: 100% 100%;
+            background-attachment:fixed;
+        }
+    </style>
+
+
+
+    <!-- bg-cover style     -->
+
+
+
+<link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+<link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+<link rel="stylesheet" type="text/css" href="/css/matery.css">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<link rel="stylesheet" type="text/css" href="/css/dark.css" media="none" onload="if(media!='all')media='all'">
+
+
+
+
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+    <link rel="stylesheet" href="/css/post.css">
+
+
+
+
+    
+
+
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">XiaozaYa&#39;s Blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+  <li>
+    <a href="javascript:;" class="waves-effect waves-light" onclick="switchNightMode()" title="深色/浅色模式" >
+      <i id="sum-moon-icon" class="fas fa-sun" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">XiaozaYa&#39;s Blog</div>
+        <div class="logo-desc">
+            
+            Currently studying in Information Security at Wuhan University
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/XiaozaYa" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/XiaozaYa" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/5.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">volatility内存取证</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/volatility/">
+                                <span class="chip bg-color">volatility</span>
+                            </a>
+                        
+                            <a href="/tags/%E5%86%85%E5%AD%98%E5%8F%96%E8%AF%81/">
+                                <span class="chip bg-color">内存取证</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E5%86%85%E5%AD%98%E5%8F%96%E8%AF%81/" class="post-category">
+                                内存取证
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2023-04-21
+                </div>
+                
+
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
+                    2023-04-21
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    1.9k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    7 分
+                </div>
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p>[TOC]</p>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Volatility是一款非常强大的内存取证工具,它是由来自全世界的数百位知名安全专家合作开发的一套工具, 可以用于windows,linux,mac osx,android等系统内存取证。Volatility是一款开源内存取证框架，能够对导出的内存镜像进行分析，通过获取内核数据结构，使用插件获取内存的详细情况以及系统的运行状态。</p>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><h2 id="命令格式"><a href="#命令格式" class="headerlink" title="命令格式"></a>命令格式</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">vol.py <span class="token parameter variable">-f</span> <span class="token punctuation">[</span>image<span class="token punctuation">]</span> <span class="token parameter variable">--profile</span><span class="token operator">=</span><span class="token punctuation">[</span>profile<span class="token punctuation">]</span> <span class="token punctuation">[</span>plugin<span class="token punctuation">]</span>
+image: 内存镜像文件名
+profile: 操作系统
+plugin: 插件参数<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>所以在分析之前我们需要确定镜像的操作系统，命令如下：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">vol.py <span class="token parameter variable">-f</span> <span class="token punctuation">[</span>image<span class="token punctuation">]</span> imageinfo<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="/2023/04/21/volatility-nei-cun-qu-zheng/0.png"></p>
+<h2 id="常见命令插件"><a href="#常见命令插件" class="headerlink" title="常见命令插件"></a>常见命令插件</h2><h3 id="注册表相关"><a href="#注册表相关" class="headerlink" title="注册表相关"></a>注册表相关</h3><h4 id="printkey"><a href="#printkey" class="headerlink" title="printkey"></a><code>printkey</code></h4><p><strong>：显示指定注册表中包含的子项、值、数据和数据类型，它默认情况下会打印指定注册表项的信息</strong></p>
+<ul>
+<li><strong>查看内存镜像中的用户(通过注册表项中的SAM键查看该计算机创建的用户信息)：<code>printkey -K "SAM\Domains\Account\Users\Names"</code></strong></li>
+</ul>
+<p><img src="/2023/04/21/volatility-nei-cun-qu-zheng/1.png"></p>
+<h4 id="hashdump"><a href="#hashdump" class="headerlink" title="hashdump"></a><code>hashdump</code></h4><p><strong>：提取和解密存储在注册表中的缓存域凭证(cached domain credentials),(即查看用户名密码信息，密码信息是hash值，需要john爆破)</strong></p>
+<p><img src="/2023/04/21/volatility-nei-cun-qu-zheng/2.png"></p>
+<h4 id="lsadump"><a href="#lsadump" class="headerlink" title="lsadump"></a><code>lsadump</code></h4><p><strong>：从注册表中转储<code>LSA secrets</code>，它会显示诸如默认密码(针对启用了自动登录的系统)，<code>RDP</code>公钥和<code>DPAPI</code>使用的凭证等信息</strong></p>
+<p><img src="/2023/04/21/volatility-nei-cun-qu-zheng/3.png"></p>
+<h4 id="hivescan"><a href="#hivescan" class="headerlink" title="hivescan"></a><code>hivescan</code></h4><p><strong>：查找内存中的CMHIVE(registry hives，注册表配置单元)，单独只用这一个插件用处不大，一般用比它更进一步的插件，比如hivelist</strong></p>
+<h4 id="hivelist"><a href="#hivelist" class="headerlink" title="hivelist"></a><code>hivelist</code></h4><p><strong>：在内存中查找注册表配置单元的虚拟地址以及磁盘上相应配置单元的完整路径</strong></p>
+<h4 id="hivedump"><a href="#hivedump" class="headerlink" title="hivedump"></a><code>hivedump</code></h4><p><strong>：递归列出配置单元中所有子项</strong></p>
+<h4 id="userassist"><a href="#userassist" class="headerlink" title="userassist"></a><code>userassist</code></h4><p><strong>：获取UserAssist键。Windows在系统注册表数据库中维护UserAssit键来跟踪执行的程序，这些键中存储了执行次数和上次执行的时间</strong></p>
+<h4 id="shellbags"><a href="#shellbags" class="headerlink" title="shellbags"></a><code>shellbags</code></h4><p><strong>：解析并打印从注册表中获取的Shellbag信息。其中shellbag是一组注册表项，被windows用来维护使用资源管理器时文件夹的大小、视图、图表和位置；即使在删除目录以后，Shellbags仍会保留目录的信息，可以用来枚举过去装入的卷，删除的文件和用户操作，重建用户活动</strong></p>
+<h4 id="shimcache"><a href="#shimcache" class="headerlink" title="shimcache"></a><code>shimcache</code></h4><p><strong>：该插件分析应用程序兼容性缓冲区缓存注册表项(Application Compatibility Shim Cache)。Shim是用APIHook来实现Windows的各项兼容性的</strong></p>
+<h4 id="getservicesids"><a href="#getservicesids" class="headerlink" title="getservicesids"></a><code>getservicesids</code></h4><p><strong>：计算出服务的SID(Security Identifier)并以Python格式输出以供将来使用</strong></p>
+<h4 id="dumpregistry"><a href="#dumpregistry" class="headerlink" title="dumpregistry"></a><code>dumpregistry</code></h4><p><strong>：将注册表配置单元转储到磁盘</strong></p>
+<h3 id="进程与DLLs相关"><a href="#进程与DLLs相关" class="headerlink" title="进程与DLLs相关"></a>进程与DLLs相关</h3><h4 id="pslist"><a href="#pslist" class="headerlink" title="pslist"></a><code>pslist</code></h4><p><strong>：列举出系统进程，该插件通过遍历PsActiveProcessHead指向的双向链表，来列举出系统进程，<font color="green">但它不能检测到隐藏或者解链的进程，<code>psscan</code>可以</font></strong></p>
+<p><img src="/2023/04/21/volatility-nei-cun-qu-zheng/4.png"></p>
+<h4 id="psscan"><a href="#psscan" class="headerlink" title="psscan"></a><code>psscan</code></h4><p><strong>：使用池标签扫描(_POOL_HEADER)来枚举进程，可以找到先前已终止(不活动)的进程以及被rootkit隐藏或解链的进程</strong></p>
+<h4 id="pstree"><a href="#pstree" class="headerlink" title="pstree"></a><code>pstree</code></h4><p><strong>：以树的形式查看进程列表，和<code>pslist</code>一样，也无法检测隐藏或解链的进程</strong></p>
+<h4 id="psdispscan"><a href="#psdispscan" class="headerlink" title="psdispscan"></a><code>psdispscan</code></h4><p><strong>：和<code>psscan</code>相似，只不过它是通过扫描DISPATCHER_HEADER，来枚举进程</strong></p>
+<h4 id="dlllist"><a href="#dlllist" class="headerlink" title="dlllist"></a><code>dlllist</code></h4><p><strong>：显示已加载的dll</strong> </p>
+<h4 id="dlldump"><a href="#dlldump" class="headerlink" title="dlldump"></a><code>dlldump</code></h4><p><strong>：从进程的内存空间提取DLL并转储到磁盘分析</strong></p>
+<h4 id="handles"><a href="#handles" class="headerlink" title="handles"></a><code>handles</code></h4><p><strong>：显示进程中打开的句柄</strong></p>
+<h4 id="getsids"><a href="#getsids" class="headerlink" title="getsids"></a><code>getsids</code></h4><p><strong>：查看与进程关联的SID(Security Identifiers，安全标识符)</strong></p>
+<h4 id="cmdscan"><a href="#cmdscan" class="headerlink" title="cmdscan"></a><code>cmdscan</code></h4><p><strong>：该插件搜索<font color="red">win7以前</font>的操作系统版本上的conhost.exe来查找攻击者通过控制台输入的命令</strong></p>
+<h4 id="consoles"><a href="#consoles" class="headerlink" title="consoles"></a><code>consoles</code></h4><p><strong>：该插件和cmdscan类似，区别在于cmdscan是通过扫描COMMAND_HISTORY，而且只能打印攻击者输入的命令，而consoles是通过扫描CONSOLE_INFORMARION，而且不仅可以打印输入的命令，还能收集整个屏幕缓冲区，比如不止能看到命令，还可以看到攻击者看到了什么，比如dir命令列出的所有文件和目录等等操作</strong></p>
+<h4 id="privs"><a href="#privs" class="headerlink" title="privs"></a><code>privs</code></h4><p><strong>：显示哪些进程权限默认存在、启用或默认启用</strong></p>
+<h4 id="envars"><a href="#envars" class="headerlink" title="envars"></a><code>envars</code></h4><p><strong>：显示进程的环境变量</strong></p>
+<h4 id="verinfo"><a href="#verinfo" class="headerlink" title="verinfo"></a><code>verinfo</code></h4><p><strong>：显示PE文件中嵌入的版本信息</strong></p>
+<h4 id="enumfunc"><a href="#enumfunc" class="headerlink" title="enumfunc"></a><code>enumfunc</code></h4><p><strong>：枚举进程，dll和内核驱动程序它们的导入导出函数</strong></p>
+<h3 id="进程内存相关"><a href="#进程内存相关" class="headerlink" title="进程内存相关"></a>进程内存相关</h3><h4 id="memmap"><a href="#memmap" class="headerlink" title="memmap"></a><code>memmap</code></h4><p><strong>：给定进程特定的DTB，memmap可以显示出驻留在内存的page，即显示页面的虚拟地址，页面的相应物理偏移量和页面的大小</strong></p>
+<h4 id="memdump"><a href="#memdump" class="headerlink" title="memdump"></a><code>memdump</code></h4><p><strong>：将内存中所有的驻留页面转储到单个文件中</strong></p>
+<h4 id="procdum"><a href="#procdum" class="headerlink" title="procdum"></a><code>procdum</code></h4><p><strong>：转储进程的可执行文件</strong></p>
+<h4 id="vadinfo"><a href="#vadinfo" class="headerlink" title="vadinfo"></a><code>vadinfo</code></h4><p><strong>：显示关于进程的VAD(Virtual Address Descriptor，虚拟地址描述符)节点的扩展信息</strong></p>
+<h4 id="vadwalk"><a href="#vadwalk" class="headerlink" title="vadwalk"></a><code>vadwalk</code></h4><p><strong>：以表格形式检查进程的VAD节点</strong></p>
+<h4 id="vadtree"><a href="#vadtree" class="headerlink" title="vadtree"></a><code>vadtree</code></h4><p><strong>：以树的形式显示VAD节点</strong></p>
+<h4 id="vaddump"><a href="#vaddump" class="headerlink" title="vaddump"></a><code>vaddump</code></h4><p><strong>：提取用VAD节点描述的页面，和memdump类似，区别在于属于每个VAD节点的页面被放置到单独的文件中(根据开始和结束地址命名)，而不是像memdump，dump出一个大的集成文件</strong></p>
+<h4 id="evtlogs"><a href="#evtlogs" class="headerlink" title="evtlogs"></a><code>evtlogs</code></h4><p><strong>：从内存中提取并解析二进制事件文件(event log)，适用于XP和2003</strong></p>
+<h4 id="iehistory"><a href="#iehistory" class="headerlink" title="iehistory"></a><code>iehistory</code></h4><p><strong>：<font color="red">查看系统浏览器的浏览记录</font>；恢复ie历史记录index.dat缓存的文件。可以找到基本的访问链接(通过FTP和HTTP)，重定向链接和已经删除的条目。适用于任何加载和使用wininet.dll库的任何进程，不仅仅限于Internet Explore</strong></p>
+<h3 id="核心内存和对象相关"><a href="#核心内存和对象相关" class="headerlink" title="核心内存和对象相关"></a>核心内存和对象相关</h3><h4 id="modules"><a href="#modules" class="headerlink" title="modules"></a><code>modules</code></h4><p><strong>：查看系统上加载的内核驱动程序列表，它通过遍历PsLoadedModuleList指向的LDR_DATA_TABLE_ENTRY结构的双向链表。类似于pslist。但是它找不到隐藏/未链接的内核驱动程序，但modscan可以</strong></p>
+<h4 id="modscan"><a href="#modscan" class="headerlink" title="modscan"></a><code>modscan</code></h4><p><strong>：通过池标签扫描来查找LDR_DATA_TABLE_ENTRY结构，可以找到以前卸载的驱动程序和已经被rootkit隐藏/解链的驱动程序</strong></p>
+<h4 id="moddump"><a href="#moddump" class="headerlink" title="moddump"></a><code>moddump</code></h4><p><strong>：将内核驱动程序提取到文件</strong></p>
+<h4 id="ssdt"><a href="#ssdt" class="headerlink" title="ssdt"></a><code>ssdt</code></h4><p><strong>：列出Native和GUI SSDT中的函数，它能显示SSDT中的每个条目的索引</strong></p>
+<h4 id="driverscan"><a href="#driverscan" class="headerlink" title="driverscan"></a><code>driverscan</code></h4><p><strong>：使用池标签扫描在物理内存中查找DRIVER_OBJECT，这是查找内核模块的另一个方法，但不是每个内核模块都有DRIVER_OBJECT</strong></p>
+<h4 id="filescan"><a href="#filescan" class="headerlink" title="filescan"></a><code>filescan</code></h4><p><strong>：扫描所有的文件列表；使用池标签扫描在物理内存中查找FILE_OBJECT，这样一来即使rookit将文件隐藏在磁盘上，并且rootkit hook了某些API函数来隐藏系统上打开的句柄，该插件还是可以找到rootkit打开的文件</strong></p>
+<h4 id="mutantscan"><a href="#mutantscan" class="headerlink" title="mutantscan"></a><code>mutantscan</code></h4><p><strong>：使用池标签扫描在物理内存中查找KMUTANT对象</strong></p>
+<h4 id="symlinkscan"><a href="#symlinkscan" class="headerlink" title="symlinkscan"></a><code>symlinkscan</code></h4><p><strong>：扫描符号链接对象(symbolic link objects)并输出其信息</strong></p>
+<h4 id="thrdscan"><a href="#thrdscan" class="headerlink" title="thrdscan"></a><code>thrdscan</code></h4><p><strong>：使用池标签扫描在物理内存中查找ETHREAD对象，可以用来找到隐藏的进程</strong></p>
+<h4 id="dumpfiles"><a href="#dumpfiles" class="headerlink" title="dumpfiles"></a><code>dumpfiles</code></h4><p><strong>：遍历VAD并提取所有映射为DataSectionObject，ImageSectionObject或SharedCacheMap文件</strong></p>
+<ul>
+<li><pre><code class="bash">vol.py -f [image] --profile=[profile] dumpfiles -Q 0xaddr -D ./
+-Q指定偏移量 0xaddr
+-D指定目录 ./
+</code></pre>
+</li>
+</ul>
+<h4 id="unloadedmodules"><a href="#unloadedmodules" class="headerlink" title="unloadedmodules"></a><code>unloadedmodules</code></h4><p><strong>：Windows会存储最近卸载的驱动程序的信息以供调试，该模块可以看出系统上到底发生了什么</strong></p>
+<h3 id="网络相关"><a href="#网络相关" class="headerlink" title="网络相关"></a>网络相关</h3><h4 id="connections"><a href="#connections" class="headerlink" title="connections"></a><code>connections</code></h4><p><strong>：获取内存中处于活动状态的TCP连接</strong></p>
+<h4 id="connscan"><a href="#connscan" class="headerlink" title="connscan"></a><code>connscan</code></h4><p><strong>：使用池标签扫描查找_TCPT_OBJECT结构，它可以找到除了活动连接以外，已经终止的链接</strong></p>
+<h4 id="sockets"><a href="#sockets" class="headerlink" title="sockets"></a><code>sockets</code></h4><p><strong>：检测任何协议(TCP, UDP, RAW等)的侦听套接字(listening sockets)</strong></p>
+<h4 id="sockscan"><a href="#sockscan" class="headerlink" title="sockscan"></a><code>sockscan</code></h4><p><strong>：使用池标签扫描查找_ADDERSS_OBJECT结构，类似connscan，可以从先前的socket中提取残留的数据等</strong></p>
+<h4 id="netscan"><a href="#netscan" class="headerlink" title="netscan"></a><code>netscan</code></h4><p><strong>：在内存转储中扫描网络，它将查找TCP端点、TCP侦听器、UDP端点和UDP侦听器，可以获取系统IP</strong></p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">XiaozaYa</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://XiaozaYa.github.io/2023/04/21/volatility-nei-cun-qu-zheng/">http://XiaozaYa.github.io/2023/04/21/volatility-nei-cun-qu-zheng/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">XiaozaYa</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/volatility/">
+                                    <span class="chip bg-color">volatility</span>
+                                </a>
+                            
+                                <a href="/tags/%E5%86%85%E5%AD%98%E5%8F%96%E8%AF%81/">
+                                    <span class="chip bg-color">内存取证</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2023/04/22/nkctf2023-wp/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="nkctf2023-wp">
+                        
+                        <span class="card-title">nkctf2023-wp</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            nkctf2023赛题复现，只有本地环境
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-22
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/CTF-WP/" class="post-category">
+                                    CTF-WP
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2023/04/21/tea/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="TEA">
+                        
+                        <span class="card-title">TEA</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            TEA加密算法及其变形
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-21
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Crypto/" class="post-category">
+                                    Crypto
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/TEA%E3%80%81XTEA%E3%80%81XXTEA/">
+                        <span class="chip bg-color">TEA、XTEA、XXTEA</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE' || selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: XiaozaYa&#39;s Blog<br />'
+            + '文章作者: QiBin Zhou<br />'
+            + '文章链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('2'),
+            headingSelector: 'h1, h2, h3, h4, h5, h6'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+
+    <footer class="page-footer bg-color">
+
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 15px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2023</span>
+            
+            <a href="/about" target="_blank">QiBin Zhou</a>
+            |&nbsp;Welcome to &nbsp;<a href="https://blog.csdn.net/qq_61670993" target="_blank">CSDN</a>
+            |&nbsp;&nbsp;<a href="https://github.com/XiaozaYa" target="_blank">GitHub</a>
+            <br>
+            
+                &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                        class="white-color">53.5k</span>
+            
+            
+            
+                
+            
+            
+            
+           
+
+            <!-- 运行天数提醒. -->
+            
+                <span id="sitetime"> Loading ...</span>
+                <script>
+                    var calcSiteTime = function () {
+                        var seconds = 1000;
+                        var minutes = seconds * 60;
+                        var hours = minutes * 60;
+                        var days = hours * 24;
+                        var years = days * 365;
+                        var today = new Date();
+                        var startYear = "2023";
+                        var startMonth = "4";
+                        var startDate = "1";
+                        var startHour = "21";
+                        var startMinute = "33";
+                        var startSecond = "0";
+                        var todayYear = today.getFullYear();
+                        var todayMonth = today.getMonth() + 1;
+                        var todayDate = today.getDate();
+                        var todayHour = today.getHours();
+                        var todayMinute = today.getMinutes();
+                        var todaySecond = today.getSeconds();
+                        var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                        var diff = t2 - t1;
+                        var diffYears = Math.floor(diff / years);
+                        var diffDays = Math.floor((diff / days) - diffYears * 365);
+
+                        // 区分是否有年份.
+                        var language = 'zh-CN';
+                        if (startYear === String(todayYear)) {
+                            document.getElementById("year").innerHTML = todayYear;
+                            var daysTip = 'This site has been running for ' + diffDays + ' days';
+                            if (language === 'zh-CN') {
+                                daysTip = '本站已运行 ' + diffDays + ' 天';
+                            } else if (language === 'zh-HK') {
+                                daysTip = '本站已運行 ' + diffDays + ' 天';
+                            }
+                            document.getElementById("sitetime").innerHTML = daysTip;
+                        } else {
+                            document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                            var yearsAndDaysTip = 'This site has been running for ' + diffYears + ' years and '
+                                + diffDays + ' days';
+                            if (language === 'zh-CN') {
+                                yearsAndDaysTip = '本站已运行 ' + diffYears + ' 年 ' + diffDays + ' 天';
+                            } else if (language === 'zh-HK') {
+                                yearsAndDaysTip = '本站已運行 ' + diffYears + ' 年 ' + diffDays + ' 天';
+                            }
+                            document.getElementById("sitetime").innerHTML = yearsAndDaysTip;
+                        }
+                    }
+
+                    calcSiteTime();
+                </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/XiaozaYa" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:https://github.com/XiaozaYa" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=2353567071" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 2353567071" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 白天和黑夜主题 -->
+<div class="stars-con">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>  
+</div>
+
+<script>
+    function switchNightMode() {
+        $('<div class="Cuteen_DarkSky"><div class="Cuteen_DarkPlanet"></div></div>').appendTo($('body')),
+        setTimeout(function () {
+            $('body').hasClass('DarkMode') 
+            ? ($('body').removeClass('DarkMode'), localStorage.setItem('isDark', '0'), $('#sum-moon-icon').removeClass("fa-sun").addClass('fa-moon')) 
+            : ($('body').addClass('DarkMode'), localStorage.setItem('isDark', '1'), $('#sum-moon-icon').addClass("fa-sun").removeClass('fa-moon')),
+            
+            setTimeout(function () {
+            $('.Cuteen_DarkSky').fadeOut(1e3, function () {
+                $(this).remove()
+            })
+            }, 2e3)
+        })
+    }
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
