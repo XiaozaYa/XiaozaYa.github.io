@@ -389,14 +389,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5.8k
+                    6k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    23 分
+                    24 分
                 </div>
                 
 
@@ -425,6 +425,7 @@
 <li>PHP 文件可包含文本、HTML、JavaScript代码和 PHP 代码</li>
 <li><strong>PHP 代码在服务器上执行，结果以纯 HTML 形式返回给浏览器</strong></li>
 <li>PHP 文件的默认文件扩展名是 “.php”</li>
+<li>用户定义的函数和语言关键字对大小写不敏感。</li>
 </ul>
 <h1 id="PHP基本知识"><a href="#PHP基本知识" class="headerlink" title="PHP基本知识"></a>PHP基本知识</h1><h2 id="PHP语法"><a href="#PHP语法" class="headerlink" title="PHP语法"></a>PHP语法</h2><p>PHP 脚本可以放在文档中的任何位置；PHP 文件通常包含 HTML 标签和一些 PHP 脚本代码。</p>
 <ul>
@@ -1180,7 +1181,47 @@ $cars[2]="Toyota";
 <span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><img src="/2023/04/25/php/7.png"></p>
-<h2 id="类与对象"><a href="#类与对象" class="headerlink" title="类与对象"></a>类与对象</h2><h2 id="魔术常量"><a href="#魔术常量" class="headerlink" title="魔术常量"></a>魔术常量</h2><p>PHP 向它运行的任何脚本提供了大量的预定义常量。</p>
+<h2 id="类与对象"><a href="#类与对象" class="headerlink" title="类与对象"></a>类与对象</h2><p>其实跟C++差不多，没啥好说的&gt;_&lt;</p>
+<p>PHP 定义类通常语法格式如下：</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token keyword">class</span> <span class="token class-name-definition class-name">phpClass</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> <span class="token variable">$var1</span><span class="token punctuation">;</span>
+  <span class="token keyword">protected</span> <span class="token variable">$var2</span> <span class="token operator">=</span> <span class="token string double-quoted-string">"constant string"</span><span class="token punctuation">;</span>
+  
+  <span class="token keyword">function</span> <span class="token function-definition function">myfunc</span> <span class="token punctuation">(</span><span class="token variable">$arg1</span><span class="token punctuation">,</span> <span class="token variable">$arg2</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+     <span class="token punctuation">[</span><span class="token operator">.</span><span class="token operator">.</span><span class="token punctuation">]</span>
+  <span class="token punctuation">}</span>
+  <span class="token punctuation">[</span><span class="token operator">.</span><span class="token operator">.</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>解析如下：</p>
+<ul>
+<li><p>类使用 <strong>class</strong> 关键字后加上类名定义。</p>
+</li>
+<li><p>类名后的一对大括号({})内可以定义变量和方法。</p>
+</li>
+<li><p><strong>类的变量使用 var 来声明</strong>, 变量也可以初始化值 - - - var 定义，则被视为公有。</p>
+</li>
+<li><p>函数定义类似 PHP 函数的定义，但函数只能通过该类及其实例化的对象访问。</p>
+</li>
+<li><p>变量 <strong>$this</strong> 代表自身的对象。</p>
+</li>
+</ul>
+<p><strong>构造函数</strong></p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token keyword type-declaration">void</span> <span class="token function">__construct</span> <span class="token punctuation">(</span><span class="token punctuation">[</span> <span class="token keyword type-declaration">mixed</span> <span class="token variable">$args</span> <span class="token punctuation">[</span><span class="token punctuation">,</span> $<span class="token operator">...</span> <span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>析构函数</strong></p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token keyword type-declaration">void</span> <span class="token function">__destruct</span> <span class="token punctuation">(</span> <span class="token keyword type-declaration">void</span> <span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>继承</strong></p>
+<p>PHP 使用关键字 <strong>extends</strong> 来继承一个类，PHP 不支持多继承，格式如下：</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token keyword">class</span> <span class="token class-name-definition class-name">Child</span> <span class="token keyword">extends</span> <span class="token keyword">Parent</span> <span class="token punctuation">{</span>
+   <span class="token comment">// 代码部分</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>可以对父类的public 和 protected的方法进行重写</p>
+<h2 id="魔术常量"><a href="#魔术常量" class="headerlink" title="魔术常量"></a>魔术常量</h2><p>PHP 向它运行的任何脚本提供了大量的预定义常量。</p>
 <p><code>__LINE__</code>：文件中的当前行号；</p>
 <p><code>__FILE__</code>：文件的完整路径和文件名；如果用在被包含文件中，则返回被包含的文件名；</p>
 <p>自 PHP 4.0.2 起，<strong>FILE</strong> 总是包含一个绝对路径（如果是符号连接，则是解析后的绝对路径），而在此之前的版本有时会包含一个相对路径。</p>
@@ -1577,7 +1618,7 @@ $cars[2]="Toyota";
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">63.2k</span>
+                        class="white-color">63.4k</span>
             
             
             
