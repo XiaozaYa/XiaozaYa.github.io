@@ -389,14 +389,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    8.8k
+                    10.4k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    35 分
+                    42 分
                 </div>
                 
 
@@ -1590,11 +1590,10 @@ echo "浏览量：". $_SESSION['views'];
 <p>unset() 函数用于释放指定的 session 变量：</p>
 <pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
 <span class="token function">session_start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">isset</span><span class="token punctuation">(</span><span class="token variable">$_SESSION</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'views'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token punctuation">{</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">isset</span><span class="token punctuation">(</span><span class="token variable">$_SESSION</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'views'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">unset</span><span class="token punctuation">(</span><span class="token variable">$_SESSION</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'views'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
-<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>您也可以通过调用 session_destroy() 函数彻底销毁 session：</p>
 <blockquote>
@@ -1603,6 +1602,271 @@ echo "浏览量：". $_SESSION['views'];
 <pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
 <span class="token function">session_destroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h2><ul>
+<li>简单的 “die()” 语句</li>
+<li>自定义错误和错误触发器</li>
+<li>错误报告</li>
+</ul>
+<p><strong>die</strong></p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">file_exists</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"welcome.txt"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">die</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"文件不存在"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token variable">$file</span><span class="token operator">=</span><span class="token function">fopen</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"welcome.txt"</span><span class="token punctuation">,</span><span class="token string double-quoted-string">"r"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p><strong>自定义错误处理器</strong></p>
+<ul>
+<li>定义错误处理函数</li>
+<li>设置错误处理函数</li>
+<li>触发错误</li>
+</ul>
+<p><strong>定义错误处理函数</strong></p>
+<p>创建一个自定义的错误处理器非常简单。我们很简单地创建了一个专用函数，可以在 PHP 中发生错误时调用该函数。</p>
+<p>该函数必须有能力处理至少两个参数 (error level 和 error message)，但是可以接受最多五个参数（可选的：file, line-number 和 error context）：</p>
+<p>语法：</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token function">error_function</span><span class="token punctuation">(</span>error_level<span class="token punctuation">,</span>error_message<span class="token punctuation">,</span>error_file<span class="token punctuation">,</span>error_line<span class="token punctuation">,</span>error_context<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<table>
+<thead>
+<tr>
+<th align="left">参数</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">error_level</td>
+<td align="left">必需。为用户定义的错误规定错误报告级别。必须是一个数字。参见下面的表格：错误报告级别。</td>
+</tr>
+<tr>
+<td align="left">error_message</td>
+<td align="left">必需。为用户定义的错误规定错误消息。</td>
+</tr>
+<tr>
+<td align="left">error_file</td>
+<td align="left">可选。规定错误发生的文件名。</td>
+</tr>
+<tr>
+<td align="left">error_line</td>
+<td align="left">可选。规定错误发生的行号。</td>
+</tr>
+<tr>
+<td align="left">error_context</td>
+<td align="left">可选。规定一个数组，包含了当错误发生时在用的每个变量以及它们的值。</td>
+</tr>
+</tbody></table>
+<p><strong>错误报告级别</strong></p>
+<p>这些错误报告级别是用户自定义的错误处理程序处理的不同类型的错误：</p>
+<table>
+<thead>
+<tr>
+<th align="left">值</th>
+<th align="left">常量</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">2</td>
+<td align="left">E_WARNING</td>
+<td align="left">非致命的 run-time 错误。不暂停脚本执行。</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">E_NOTICE</td>
+<td align="left">run-time 通知。在脚本发现可能有错误时发生，但也可能在脚本正常运行时发生。</td>
+</tr>
+<tr>
+<td align="left">256</td>
+<td align="left">E_USER_ERROR</td>
+<td align="left">致命的用户生成的错误。这类似于程序员使用 PHP 函数 trigger_error() 设置的 E_ERROR。</td>
+</tr>
+<tr>
+<td align="left">512</td>
+<td align="left">E_USER_WARNING</td>
+<td align="left">非致命的用户生成的警告。这类似于程序员使用 PHP 函数 trigger_error() 设置的 E_WARNING。</td>
+</tr>
+<tr>
+<td align="left">1024</td>
+<td align="left">E_USER_NOTICE</td>
+<td align="left">用户生成的通知。这类似于程序员使用 PHP 函数 trigger_error() 设置的 E_NOTICE。</td>
+</tr>
+<tr>
+<td align="left">4096</td>
+<td align="left">E_RECOVERABLE_ERROR</td>
+<td align="left">可捕获的致命错误。类似 E_ERROR，但可被用户定义的处理程序捕获。（参见 set_error_handler()）</td>
+</tr>
+<tr>
+<td align="left">8191</td>
+<td align="left">E_ALL</td>
+<td align="left">所有错误和警告。（在 PHP 5.4 中，E_STRICT 成为 E_ALL 的一部分）</td>
+</tr>
+</tbody></table>
+<p>现在，让我们创建一个处理错误的函数：</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token keyword">function</span> <span class="token function-definition function">customError</span><span class="token punctuation">(</span><span class="token variable">$errno</span><span class="token punctuation">,</span> <span class="token variable">$errstr</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">echo</span> <span class="token string double-quoted-string">"&lt;b&gt;Error:&lt;/b&gt; [<span class="token interpolation"><span class="token variable">$errno</span></span>] <span class="token interpolation"><span class="token variable">$errstr</span></span>&lt;br&gt;"</span><span class="token punctuation">;</span>
+    <span class="token keyword">echo</span> <span class="token string double-quoted-string">"脚本结束"</span><span class="token punctuation">;</span>
+    <span class="token keyword">die</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的代码是一个简单的错误处理函数。当它被触发时，它会取得错误级别和错误消息。然后它会输出错误级别和消息，并终止脚本。</p>
+<p>现在，我们已经创建了一个错误处理函数，我们需要确定在何时触发该函数。</p>
+<p><strong>设置错误处理程序</strong></p>
+<p>PHP 的默认错误处理程序是内建的错误处理程序。我们打算把上面的函数改造为脚本运行期间的默认错误处理程序。</p>
+<p>可以修改错误处理程序，使其仅应用到某些错误，这样脚本就能以不同的方式来处理不同的错误。然而，在本例中，我们打算针对所有错误来使用我们自定义的错误处理程序：</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token function">set_error_handler</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"customError"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>由于我们希望我们的自定义函数能处理所有错误，set_error_handler() 仅需要一个参数，可以添加第二个参数来规定错误级别。</p>
+<p>eg：</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token comment">// 错误处理函数</span>
+<span class="token keyword">function</span> <span class="token function-definition function">customError</span><span class="token punctuation">(</span><span class="token variable">$errno</span><span class="token punctuation">,</span> <span class="token variable">$errstr</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">echo</span> <span class="token string double-quoted-string">"&lt;b&gt;Error:&lt;/b&gt; [<span class="token interpolation"><span class="token variable">$errno</span></span>] <span class="token interpolation"><span class="token variable">$errstr</span></span>"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// 设置错误处理函数</span>
+<span class="token function">set_error_handler</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"customError"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 触发错误</span>
+<span class="token keyword">echo</span><span class="token punctuation">(</span><span class="token variable">$test</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+输出：Error: [8] Undefined variable: test
+*/</span>
+<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>触发错误</strong></p>
+<p>在脚本中用户输入数据的位置，当用户的输入无效时触发错误是很有用的。在 PHP 中，这个任务由 trigger_error() 函数完成。</p>
+<p>eg：</p>
+<p>在本例中，如果 “test” 变量大于 “1”，就会发生错误：</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token variable">$test</span><span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$test</span><span class="token operator">&gt;</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">trigger_error</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"变量值必须小于等于 1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>以上代码的输出如下所示：</p>
+<pre class="line-numbers language-none"><code class="language-none">Notice: 变量值必须小于等于 1 in /www/test/runoob.php on line 5<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>您可以在脚本中任何位置触发错误，通过添加的第二个参数，您能够规定所触发的错误类型。</p>
+<p>可能的错误类型：</p>
+<ul>
+<li>E_USER_ERROR - 致命的用户生成的 run-time 错误。错误无法恢复。脚本执行被中断。</li>
+<li>E_USER_WARNING - 非致命的用户生成的 run-time 警告。脚本执行不被中断。</li>
+<li>E_USER_NOTICE - 默认。用户生成的 run-time 通知。在脚本发现可能有错误时发生，但也可能在脚本正常运行时发生。</li>
+</ul>
+<p>eg：</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token comment">// 错误处理函数</span>
+<span class="token keyword">function</span> <span class="token function-definition function">customError</span><span class="token punctuation">(</span><span class="token variable">$errno</span><span class="token punctuation">,</span> <span class="token variable">$errstr</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">echo</span> <span class="token string double-quoted-string">"&lt;b&gt;Error:&lt;/b&gt; [<span class="token interpolation"><span class="token variable">$errno</span></span>] <span class="token interpolation"><span class="token variable">$errstr</span></span>&lt;br&gt;"</span><span class="token punctuation">;</span>
+    <span class="token keyword">echo</span> <span class="token string double-quoted-string">"脚本结束"</span><span class="token punctuation">;</span>
+    <span class="token keyword">die</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// 设置错误处理函数</span>
+<span class="token function">set_error_handler</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"customError"</span><span class="token punctuation">,</span><span class="token constant">E_USER_WARNING</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 触发错误</span>
+<span class="token variable">$test</span><span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$test</span><span class="token operator">&gt;</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">trigger_error</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"变量值必须小于等于 1"</span><span class="token punctuation">,</span><span class="token constant">E_USER_WARNING</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/*
+输出：
+Error: [512] 变量值必须小于等于 1
+脚本结束
+*/</span>
+<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p><strong>try、throw 和 catch</strong></p>
+<p>适当的处理异常代码应该包括：</p>
+<ol>
+<li>try - 使用异常的函数应该位于 “try” 代码块内。如果没有触发异常，则代码将照常继续执行。但是如果异常被触发，会抛出一个异常。</li>
+<li>throw - 里规定如何触发异常。每一个 “throw” 必须对应至少一个 “catch”。</li>
+<li>catch - “catch” 代码块会捕获异常，并创建一个包含异常信息的对象。</li>
+</ol>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token comment">// 创建一个有异常处理的函数</span>
+<span class="token keyword">function</span> <span class="token function-definition function">checkNum</span><span class="token punctuation">(</span><span class="token variable">$number</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token variable">$number</span><span class="token operator">&gt;</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">Exception</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"变量值必须小于等于 1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> <span class="token constant boolean">true</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+    
+<span class="token comment">// 在 try 块 触发异常</span>
+<span class="token keyword">try</span> <span class="token punctuation">{</span>
+    <span class="token function">checkNum</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 如果抛出异常，以下文本不会输出</span>
+    <span class="token keyword">echo</span> <span class="token string single-quoted-string">'如果输出该内容，说明 $number 变量'</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// 捕获异常</span>
+<span class="token keyword">catch</span><span class="token punctuation">(</span><span class="token class-name">Exception</span> <span class="token variable">$e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">echo</span> <span class="token string single-quoted-string">'Message: '</span> <span class="token operator">.</span><span class="token variable">$e</span><span class="token operator">-&gt;</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token comment">/*
+输出：Message: 变量值必须小于等于 1
+*/</span>
+<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>自定义Exception类</strong></p>
+<p>我们简单地创建了一个专门的类，当 PHP 中发生异常时，可调用其函数。<strong>该类必须是 exception 类的一个扩展。</strong></p>
+<p>这个自定义的 customException 类继承了 PHP 的 exception 类的所有属性，您可向其添加自定义的函数。</p>
+<p>创建 customException 类：</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token keyword">class</span> <span class="token class-name-definition class-name">customException</span> <span class="token keyword">extends</span> <span class="token class-name">Exception</span>
+<span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function-definition function">errorMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token comment">// 错误信息</span>
+        <span class="token variable">$errorMsg</span> <span class="token operator">=</span> <span class="token string single-quoted-string">'错误行号 '</span><span class="token operator">.</span><span class="token variable">$this</span><span class="token operator">-&gt;</span><span class="token function">getLine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">.</span><span class="token string single-quoted-string">' in '</span><span class="token operator">.</span><span class="token variable">$this</span><span class="token operator">-&gt;</span><span class="token function">getFile</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token operator">.</span><span class="token string single-quoted-string">': &lt;b&gt;'</span><span class="token operator">.</span><span class="token variable">$this</span><span class="token operator">-&gt;</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">.</span><span class="token string single-quoted-string">'&lt;/b&gt; 不是一个合法的 E-Mail 地址'</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token variable">$errorMsg</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+ 
+<span class="token variable">$email</span> <span class="token operator">=</span> <span class="token string double-quoted-string">"someone@example...com"</span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">try</span>
+<span class="token punctuation">{</span>
+    <span class="token comment">// 检测邮箱</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">filter_var</span><span class="token punctuation">(</span><span class="token variable">$email</span><span class="token punctuation">,</span> <span class="token constant">FILTER_VALIDATE_EMAIL</span><span class="token punctuation">)</span> <span class="token operator">===</span> <span class="token constant boolean">FALSE</span><span class="token punctuation">)</span>
+    <span class="token punctuation">{</span>
+        <span class="token comment">// 如果是个不合法的邮箱地址，抛出异常</span>
+        <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">customException</span><span class="token punctuation">(</span><span class="token variable">$email</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+ 
+<span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">customException</span> <span class="token variable">$e</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+<span class="token comment">//display custom message</span>
+<span class="token keyword">echo</span> <span class="token variable">$e</span><span class="token operator">-&gt;</span><span class="token function">errorMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p><strong>设置顶层异常处理器</strong></p>
+<p>set_exception_handler() 函数可设置处理所有未捕获异常的用户定义函数。</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token keyword">function</span> <span class="token function-definition function">myException</span><span class="token punctuation">(</span><span class="token variable">$exception</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+    <span class="token keyword">echo</span> <span class="token string double-quoted-string">"&lt;b&gt;Exception:&lt;/b&gt; "</span> <span class="token punctuation">,</span> <span class="token variable">$exception</span><span class="token operator">-&gt;</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+ 
+<span class="token function">set_exception_handler</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'myException'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">Exception</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'Uncaught Exception occurred'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
                 
@@ -1715,48 +1979,46 @@ echo "浏览量：". $_SESSION['views'];
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/04/25/php/">
+                <a href="/2023/04/26/sql-zhu-ru/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="PHP">
+                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="sql注入">
                         
-                        <span class="card-title">PHP</span>
+                        <span class="card-title">sql注入</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            为了完成数据库实验而进行简单的学习
+                            mysql注入测试与利用
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-25
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-26
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/PHP/" class="post-category">
-                                    PHP
+                            <a href="/categories/Web%E5%AE%89%E5%85%A8/" class="post-category">
+                                    Web安全
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/PHP%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/">
-                        <span class="chip bg-color">PHP基本语法</span>
+                    <a href="/tags/sql%E6%B3%A8%E5%85%A5/">
+                        <span class="chip bg-color">sql注入</span>
                     </a>
                     
                 </div>
@@ -1987,7 +2249,7 @@ echo "浏览量：". $_SESSION['views'];
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">66.2k</span>
+                        class="white-color">74.1k</span>
             
             
             
