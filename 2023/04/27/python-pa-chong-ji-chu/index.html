@@ -358,6 +358,10 @@
                                 <span class="chip bg-color">requests模块</span>
                             </a>
                         
+                            <a href="/tags/%E6%AD%A3%E5%88%99/">
+                                <span class="chip bg-color">正则</span>
+                            </a>
+                        
                     </div>
                     
                 </div>
@@ -386,21 +390,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-27
+                    2023-04-29
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    689
+                    855
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    2 分
+                    3 分
                 </div>
                 
 
@@ -426,8 +430,8 @@
                 <p>[TOC]</p>
 <h1 id="requests-模块"><a href="#requests-模块" class="headerlink" title="requests 模块"></a>requests 模块</h1><p><code>requests模块</code>：发送 http 请求，获取响应数据；安装<code>pip/pip3 install requests</code></p>
 <h2 id="requests-请求方式"><a href="#requests-请求方式" class="headerlink" title="requests 请求方式"></a>requests 请求方式</h2><ul>
-<li><code>respose = requests.get()</code></li>
-<li><code>response = requests.post(url,data)</code>：data 为 post 数据，为一个字典</li>
+<li><code>respose = requests.get(url,data)</code>：data 为 post 数据，为一个字典</li>
+<li><code>response = requests.post(url,data)</code></li>
 <li><code>response = requests.put()</code></li>
 <li><code>response = requests.delete()</code></li>
 <li><code>response = requests.head()</code></li>
@@ -450,6 +454,12 @@
 </blockquote>
 </li>
 </ul>
+</li>
+<li><p><code>files参数</code>：文件上传，字典形式；eg：<code>files = {'file':open('favicon.ico','rb')}</code></p>
+</li>
+<li><p><code>verify参数</code>：SSL证书认证，当发送HTTPS请求的时候，会检查SSL证书，<code>verify</code>参数可以控制是否检查SSL证书。</p>
+</li>
+<li><p><code>auth参数</code>：身份认证</p>
 </li>
 </ul>
 <h2 id="requests-响应对象"><a href="#requests-响应对象" class="headerlink" title="requests 响应对象"></a>requests 响应对象</h2><ul>
@@ -526,6 +536,19 @@ response <span class="token operator">=</span> session<span class="token punctua
 response <span class="token operator">=</span> session<span class="token punctuation">.</span>post<span class="token punctuation">(</span>url<span class="token punctuation">,</span> data<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
 
+
+<h1 id="Python-正则"><a href="#Python-正则" class="headerlink" title="Python 正则"></a>Python 正则</h1><p>正则表达式具有通用型，不仅 python 里面可以用，其他的语言也一样适用。</p>
+<p>python 中<code>re</code>模块提供了正则表达式的功能，常用的有四个方法(match、search、findall)都可以用于匹配字符串</p>
+<h2 id="match"><a href="#match" class="headerlink" title="match"></a>match</h2><p>函数原型：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">re<span class="token punctuation">.</span><span class="token keyword">match</span><span class="token punctuation">(</span>pattern<span class="token punctuation">,</span> string<span class="token punctuation">)</span>
+<span class="token comment"># pattern     匹配的正则表达式</span>
+<span class="token comment"># string      要匹配的字符串</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+
+<h2 id="search"><a href="#search" class="headerlink" title="search"></a>search</h2><h2 id="findall"><a href="#findall" class="headerlink" title="findall"></a>findall</h2><h1 id="网页解析"><a href="#网页解析" class="headerlink" title="网页解析"></a>网页解析</h1><h2 id="BeautifulSoup"><a href="#BeautifulSoup" class="headerlink" title="BeautifulSoup"></a>BeautifulSoup</h2><h2 id="bs4"><a href="#bs4" class="headerlink" title="bs4"></a>bs4</h2><h1 id="动态网页"><a href="#动态网页" class="headerlink" title="动态网页"></a>动态网页</h1><h2 id="Selenium"><a href="#Selenium" class="headerlink" title="Selenium"></a>Selenium</h2>
                 
             </div>
             <hr/>
@@ -597,6 +620,10 @@ response <span class="token operator">=</span> session<span class="token punctua
                                     <span class="chip bg-color">requests模块</span>
                                 </a>
                             
+                                <a href="/tags/%E6%AD%A3%E5%88%99/">
+                                    <span class="chip bg-color">正则</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -640,54 +667,36 @@ response <span class="token operator">=</span> session<span class="token punctua
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/04/27/python-pa-chong-ji-chu/">
+                <a href="/2023/04/29/python-duo-jin-cheng-yu-duo-xian-cheng/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="python爬虫基础">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="python多进程与多线程">
                         
-                        <span class="card-title">python爬虫基础</span>
+                        <span class="card-title">python多进程与多线程</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            python爬虫基础
+                            
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-04-27
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-29
+                        </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/python%E7%88%AC%E8%99%AB/" class="post-category">
-                                    python爬虫
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            QiBin Zhou
                             
                         </span>
                     </div>
-                </div>
-
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/python%E7%88%AC%E8%99%AB/">
-                        <span class="chip bg-color">python爬虫</span>
-                    </a>
-                    
-                    <a href="/tags/requests%E6%A8%A1%E5%9D%97/">
-                        <span class="chip bg-color">requests模块</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -916,7 +925,7 @@ response <span class="token operator">=</span> session<span class="token punctua
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">78.5k</span>
+                        class="white-color">81.4k</span>
             
             
             
