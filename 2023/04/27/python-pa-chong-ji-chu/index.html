@@ -390,21 +390,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-29
+                    2023-05-01
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    855
+                    2.5k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    3 分
+                    10 分
                 </div>
                 
 
@@ -428,7 +428,8 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p>[TOC]</p>
-<h1 id="requests-模块"><a href="#requests-模块" class="headerlink" title="requests 模块"></a>requests 模块</h1><p><code>requests模块</code>：发送 http 请求，获取响应数据；安装<code>pip/pip3 install requests</code></p>
+<h1 id="requests-模块"><a href="#requests-模块" class="headerlink" title="requests 模块"></a>requests 模块</h1><p><a target="_blank" rel="noopener" href="https://httpbin.org/">官方文档</a></p>
+<p><code>requests模块</code>：发送 http 请求，获取响应数据；安装<code>pip/pip3 install requests</code>。</p>
 <h2 id="requests-请求方式"><a href="#requests-请求方式" class="headerlink" title="requests 请求方式"></a>requests 请求方式</h2><ul>
 <li><code>respose = requests.get(url,data)</code>：data 为 post 数据，为一个字典</li>
 <li><code>response = requests.post(url,data)</code></li>
@@ -446,7 +447,7 @@
 </li>
 <li><p><code>timeout参数</code>：timeout = 3表示发送请求后，3秒钟内返回响应，否则就抛出异常</p>
 </li>
-<li><p><code>proxy参数</code>：proxy 代理参数通过指定代理ip，让代理ip对应的正向代理服务器转发我们发送的请求，比如：</p>
+<li><p><code>proxies参数</code>：proxy 代理参数通过指定代理ip，让代理ip对应的正向代理服务器转发我们发送的请求，比如：</p>
 <ul>
 <li><p>proxies = {<br>“http”: “<a target="_blank" rel="noopener" href="http://1.1.1.1:9527/">http://1.1.1.1:9527</a>“,<br>“https”: “<a target="_blank" rel="noopener" href="https://1.1.1.2:9527/">https://1.1.1.2:9527</a>“,<br>}</p>
 <blockquote>
@@ -489,6 +490,8 @@
 </li>
 <li><p><code>response.json()</code>：自动将json字符串类型的响应内容转换为python对象（dict or list）</p>
 </li>
+<li><p><code>response.raise_for_status()</code>：主动抛出状态码异常</p>
+</li>
 </ul>
 <blockquote>
 <p><code>requests.utils.dict_from_cookiejar()</code>函数可以把cookieJar类型转换为字典类型</p>
@@ -496,7 +499,7 @@
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests 
 
 <span class="token comment"># 目标url</span>
-url <span class="token operator">=</span> <span class="token string">'http://www.baidu.com'</span> 
+url <span class="token operator">=</span> <span class="token string">'https://www.baidu.com'</span> 
 
 <span class="token comment"># 向目标url发送get请求</span>
 response <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token punctuation">)</span>
@@ -539,16 +542,278 @@ response <span class="token operator">=</span> session<span class="token punctua
 
 <h1 id="Python-正则"><a href="#Python-正则" class="headerlink" title="Python 正则"></a>Python 正则</h1><p>正则表达式具有通用型，不仅 python 里面可以用，其他的语言也一样适用。</p>
 <p>python 中<code>re</code>模块提供了正则表达式的功能，常用的有四个方法(match、search、findall)都可以用于匹配字符串</p>
-<h2 id="match"><a href="#match" class="headerlink" title="match"></a>match</h2><p>函数原型：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python">re<span class="token punctuation">.</span><span class="token keyword">match</span><span class="token punctuation">(</span>pattern<span class="token punctuation">,</span> string<span class="token punctuation">)</span>
+<h2 id="match"><a href="#match" class="headerlink" title="match"></a>match</h2><p><strong><code>re.match()</code>必须从字符串开头匹配！</strong>match 方法尝试从字符串的起始位置匹配一个模式，如果不是起始位置匹配成功的话，match 就返回none。</p>
+<p>函数原型：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">res <span class="token operator">=</span> re<span class="token punctuation">.</span><span class="token keyword">match</span><span class="token punctuation">(</span>pattern<span class="token punctuation">,</span> string<span class="token punctuation">)</span>
 <span class="token comment"># pattern     匹配的正则表达式</span>
-<span class="token comment"># string      要匹配的字符串</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># string      要匹配的字符串</span>
+<span class="token comment"># 返回一个匹配对象</span>
+res<span class="token punctuation">.</span>group<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span><span class="token operator">&gt;</span> 获取匹配内容
+res<span class="token punctuation">.</span>span<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span><span class="token operator">&gt;</span> 获取匹配内容的位置，左闭右开<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>eg：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> re
+s <span class="token operator">=</span> <span class="token string">"123abc123"</span>
+pattern <span class="token operator">=</span> <span class="token string">'123'</span>
+
+res <span class="token operator">=</span> re<span class="token punctuation">.</span><span class="token keyword">match</span><span class="token punctuation">(</span>pattern<span class="token punctuation">,</span> s<span class="token punctuation">)</span> 
+<span class="token keyword">print</span><span class="token punctuation">(</span>res<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>res<span class="token punctuation">.</span>span<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>res<span class="token punctuation">.</span>group<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token triple-quoted-string string">"""
+输出：
+&lt;re.Match object; span=(0, 3), match='123'&gt;
+(0, 3)
+123
+"""</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>总结：</p>
+<p><code>re.match()</code>方法返回一个匹配的对象，而不是匹配的内容。如果需要返回内容则需要调用<code>group()</code>。通过调用<code>span()</code>可以获得匹配结果的位置。<strong>而如果从起始位置开始没有匹配成功，即便其他部分包含需要匹配的内容，re.match()也会返回None。</strong></p>
+<h2 id="search"><a href="#search" class="headerlink" title="search"></a>search</h2><p>和 match 用法基本相同，但是 search 是从字符串中进行搜索，而不是起始位置开始</p>
+<h2 id="findall"><a href="#findall" class="headerlink" title="findall"></a>findall</h2><p>findall 是寻找所有能匹配到的字符，并以列表的方式返回</p>
+<p><code>re.S</code>属性：</p>
+<p>在字符串a中，包含换行符\n，在这种情况下</p>
+<ul>
+<li>如果不使用re.S参数，则只在每一行内进行匹配，如果一行没有，就换下一行重新开始。</li>
+<li>而使用re.S参数以后，正则表达式会将这个字符串作为一个整体，在整体中进行匹配。</li>
+</ul>
+<p>eg：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> re
+a <span class="token operator">=</span> <span class="token triple-quoted-string string">"""aaatestaa     
+aaaa123"""</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'test.*123'</span><span class="token punctuation">,</span>a<span class="token punctuation">)</span><span class="token punctuation">)</span>       
+<span class="token keyword">print</span><span class="token punctuation">(</span>re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'test.*123'</span><span class="token punctuation">,</span>a<span class="token punctuation">,</span>re<span class="token punctuation">.</span>S<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token triple-quoted-string string">"""
+输出：
+[]
+['testaa     \naaaa123']
+"""</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="sub、split"><a href="#sub、split" class="headerlink" title="sub、split"></a>sub、split</h2><p><code>sub()</code>：查找字符串中所有相匹配的数据进行替换</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">re<span class="token punctuation">.</span>sub<span class="token punctuation">(</span>pattern<span class="token punctuation">,</span> replace<span class="token punctuation">,</span> string<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><code>split()</code>：对字符串进行分割，并返回一个列表</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">re<span class="token punctuation">.</span>split<span class="token punctuation">(</span>pattern<span class="token punctuation">,</span> string<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<h1 id="网页解析"><a href="#网页解析" class="headerlink" title="网页解析"></a>网页解析</h1><h2 id="bs4"><a href="#bs4" class="headerlink" title="bs4"></a>bs4</h2><h3 id="bs4-简介"><a href="#bs4-简介" class="headerlink" title="bs4 简介"></a>bs4 简介</h3><p><a target="_blank" rel="noopener" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/">官方文档</a></p>
+<p>即BeautifulSoup，是python种的一个库，最主要的内容就是从网页中抓取数据。</p>
+<p>BeautifulSoup提供一些简单的、python式的函数用来处理导航、搜索、修改分析树等功能。它是一个工具箱，通过解析文档为用户提供需要抓取的数据。</p>
+<p>BeautifulSoup自动将输入文档转换为Unicode编码，输出文档转换为utf-8编码。你不需要考虑编码方式，除非文档没有指定一个编码方式；这时，BeautifulSoup就不能自动识别编码方式了。然后，你仅仅需要说明一下原始编码方式就可以了。</p>
+<h3 id="bs4-基本使用"><a href="#bs4-基本使用" class="headerlink" title="bs4 基本使用"></a>bs4 基本使用</h3><p><strong>节点查找</strong></p>
+<p><img src="/2023/04/27/python-pa-chong-ji-chu/bs-0.png"></p>
+<p><strong>节点信息</strong></p>
+<p><img src="/2023/04/27/python-pa-chong-ji-chu/bs-1.png"></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> bs4 <span class="token keyword">import</span> BeautifulSoup
+
+
+html_doc <span class="token operator">=</span> <span class="token triple-quoted-string string">"""&lt;html&gt;&lt;head&gt;&lt;title&gt;The Dormouse's story&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;p class="title"&gt;&lt;b&gt;The Dormouse's story&lt;/b&gt;&lt;/p&gt;
+
+&lt;p class="story"&gt;Once upon a time there were three little sisters; and their names were
+&lt;a href="http://example.com/elsie" class="sister" id="link1"&gt;Elsie&lt;/a&gt;,
+&lt;a href="http://example.com/lacie" class="sister" id="link2"&gt;Lacie&lt;/a&gt; and
+&lt;a href="http://example.com/tillie" class="sister" id="link3"&gt;Tillie&lt;/a&gt;;
+and they lived at the bottom of a well.&lt;/p&gt;
+
+&lt;p class="story"&gt;...&lt;/p&gt;
+"""</span>
+<span class="token comment">#创建一个BeautifulSoup对象</span>
+bs <span class="token operator">=</span> BeautifulSoup<span class="token punctuation">(</span>html_doc<span class="token punctuation">,</span> <span class="token string">"html.parser"</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#格式化输出全部内容</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>prettify<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#取出title标签</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>title<span class="token punctuation">,</span> <span class="token builtin">type</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>title<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token builtin">dir</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>title<span class="token punctuation">)</span><span class="token punctuation">,</span> sep<span class="token operator">=</span><span class="token string">'\n-----------------\n'</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#取出第一个a标签</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>a<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#取出a标签的所有属性，字典形式</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>a<span class="token punctuation">.</span>attrs<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#取出a标签的具体属性值</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>a<span class="token punctuation">.</span>attrs<span class="token punctuation">[</span><span class="token string">'href'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#判断a标签是否有某属性</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>a<span class="token punctuation">.</span>has_attr<span class="token punctuation">(</span><span class="token string">'xxx'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#bs.p.children取出第一个p标签的所有子节点,是一个迭代器</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>p<span class="token punctuation">.</span>children<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">list</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>p<span class="token punctuation">.</span>children<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">list</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>p<span class="token punctuation">.</span>children<span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">list</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>p<span class="token punctuation">.</span>children<span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#找到所有标签：bs.find_all('tag'),返回一个列表</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>find_all<span class="token punctuation">(</span><span class="token string">'a'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> a <span class="token keyword">in</span> bs<span class="token punctuation">.</span>find_all<span class="token punctuation">(</span><span class="token string">'a'</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span>attrs<span class="token punctuation">[</span><span class="token string">'href'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#找到包含某个属性的标签（如果有多个只返回第一个）</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>find<span class="token punctuation">(</span>class_<span class="token operator">=</span><span class="token string">'sister'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#去掉标签，只输出内容</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>bs<span class="token punctuation">.</span>get_text<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="lxml"><a href="#lxml" class="headerlink" title="lxml"></a>lxml</h2><h3 id="xpath-基础"><a href="#xpath-基础" class="headerlink" title="xpath 基础"></a>xpath 基础</h3><table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nodename</td>
+<td>选中所有子节点。</td>
+</tr>
+<tr>
+<td>/</td>
+<td>从根节点选取、或者是元素和元素间的过渡。</td>
+</tr>
+<tr>
+<td>//</td>
+<td>从匹配选择的当前节点选择文档中的节点，而不考虑它们的位置。</td>
+</tr>
+<tr>
+<td>.</td>
+<td>选取当前节点。</td>
+</tr>
+<tr>
+<td>..</td>
+<td>选取当前节点的父节点。</td>
+</tr>
+<tr>
+<td>@</td>
+<td>选取属性。</td>
+</tr>
+<tr>
+<td>text()</td>
+<td>选取文本。</td>
+</tr>
+</tbody></table>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> lxml <span class="token keyword">import</span> etree
+
+html_doc <span class="token operator">=</span> <span class="token triple-quoted-string string">"""&lt;bookstore&gt;
+&lt;book category="COOKING"&gt;
+  &lt;title lang="en"&gt;Everyday Italian&lt;/title&gt; 
+  &lt;author&gt;Giada De Laurentiis&lt;/author&gt; 
+  &lt;year&gt;2005&lt;/year&gt; 
+  &lt;price&gt;30.00&lt;/price&gt; 
+&lt;/book&gt;
+&lt;book category="CHILDREN"&gt;
+  &lt;title lang="en"&gt;Harry Potter&lt;/title&gt; 
+  &lt;author&gt;J K. Rowling&lt;/author&gt; 
+  &lt;year&gt;2005&lt;/year&gt; 
+  &lt;price&gt;29.99&lt;/price&gt; 
+&lt;/book&gt;
+&lt;book category="WEB"&gt;
+  &lt;title lang="en"&gt;Learning XML&lt;/title&gt; 
+  &lt;author&gt;Erik T. Ray&lt;/author&gt; 
+  &lt;year&gt;2003&lt;/year&gt; 
+  &lt;price&gt;39.95&lt;/price&gt; 
+&lt;/book&gt;
+&lt;/bookstore&gt;
+
+"""</span>
+<span class="token comment">#创建选择器对象</span>
+selector <span class="token operator">=</span> etree<span class="token punctuation">.</span>HTML<span class="token punctuation">(</span>html_doc<span class="token punctuation">)</span>
+<span class="token comment">#取出页面所有链接</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'book'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'//book'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#选取所有书作者的名字</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'//bookstore/book/author/text()'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#选取所有书的语言</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'//bookstore/book/title/@lang'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#选取第1本书的标题</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'//book[1]/title/text()'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#选取最后1本书的标题</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'//book[last()]/title/text()'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#选取倒数第2本书的标题</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'//book[last()-1]/title/text()'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#选取前两本书的标题</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'//book[position()&lt;3]/title/text()'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#选取分类为WEB的书</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'//book[@category="WEB"]/title/text()'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#选取价格≥30的书</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>selector<span class="token punctuation">.</span>xpath<span class="token punctuation">(</span><span class="token string">'//book[price&gt;=30]/price/text()'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token comment">#属性有多个值可以使用contains(@name, value)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'---------------------------------------------'</span><span class="token punctuation">)</span>
+<span class="token triple-quoted-string string">"""
+xpath:在XML文档中查找信息的语言
+概念:
+节点、属性、文本、命名空间、文档(根)节点
+节点关系:
+父 parent、子 children、同胞 sibling、先辈 ancestor、后代 descendant
+
+nodename 选取所有子节点
+//  从任意子节点中选取
+/   从根节点选取
+@ 选取属性
+"""</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p>下厨房主页图片爬取</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> os
+<span class="token keyword">from</span> bs4 <span class="token keyword">import</span> BeautifulSoup
+<span class="token keyword">import</span> requests
+
+url <span class="token operator">=</span> <span class="token string">"https://www.xiachufang.com/"</span>
+
+headers <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">"User-Agent"</span><span class="token punctuation">:</span> <span class="token string">"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 SLBrowser/8.0.0.12022 SLBChan/103"</span>
+<span class="token punctuation">}</span>
+
+session <span class="token operator">=</span> requests<span class="token punctuation">.</span>session<span class="token punctuation">(</span><span class="token punctuation">)</span>
+res <span class="token operator">=</span> session<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token operator">=</span>url<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+bs <span class="token operator">=</span> BeautifulSoup<span class="token punctuation">(</span>res<span class="token punctuation">.</span>text<span class="token punctuation">,</span> <span class="token string">'html.parser'</span><span class="token punctuation">)</span>
+
+img_url <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+all_img <span class="token operator">=</span> bs<span class="token punctuation">.</span>find_all<span class="token punctuation">(</span><span class="token string">'img'</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> all_img<span class="token punctuation">:</span>
+    <span class="token keyword">if</span> i<span class="token punctuation">.</span>has_attr<span class="token punctuation">(</span><span class="token string">'data-src'</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        img_url<span class="token punctuation">.</span>append<span class="token punctuation">(</span>i<span class="token punctuation">.</span>attrs<span class="token punctuation">[</span><span class="token string">'data-src'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">'?'</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        img_url<span class="token punctuation">.</span>append<span class="token punctuation">(</span>i<span class="token punctuation">.</span>attrs<span class="token punctuation">[</span><span class="token string">'src'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">'?'</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> urll <span class="token keyword">in</span> img_url<span class="token punctuation">:</span>
+    filename <span class="token operator">=</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>os<span class="token punctuation">.</span>curdir<span class="token punctuation">,</span> <span class="token string">'spider\img\\'</span> <span class="token operator">+</span> urll<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    res <span class="token operator">=</span> session<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token operator">=</span>urll<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> <span class="token string">'wb'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+        f<span class="token punctuation">.</span>write<span class="token punctuation">(</span>res<span class="token punctuation">.</span>content<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
 
 
 
-<h2 id="search"><a href="#search" class="headerlink" title="search"></a>search</h2><h2 id="findall"><a href="#findall" class="headerlink" title="findall"></a>findall</h2><h1 id="网页解析"><a href="#网页解析" class="headerlink" title="网页解析"></a>网页解析</h1><h2 id="BeautifulSoup"><a href="#BeautifulSoup" class="headerlink" title="BeautifulSoup"></a>BeautifulSoup</h2><h2 id="bs4"><a href="#bs4" class="headerlink" title="bs4"></a>bs4</h2><h1 id="动态网页"><a href="#动态网页" class="headerlink" title="动态网页"></a>动态网页</h1><h2 id="Selenium"><a href="#Selenium" class="headerlink" title="Selenium"></a>Selenium</h2>
+<h1 id="动态网页"><a href="#动态网页" class="headerlink" title="动态网页"></a>动态网页</h1><h2 id="Selenium"><a href="#Selenium" class="headerlink" title="Selenium"></a>Selenium</h2>
                 
             </div>
             <hr/>
@@ -683,7 +948,7 @@ response <span class="token operator">=</span> session<span class="token punctua
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            python中多进程与多线程的实现
                         
                     </div>
                     <div class="publish-info">
@@ -692,11 +957,23 @@ response <span class="token operator">=</span> session<span class="token punctua
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            QiBin Zhou
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/python%E5%9F%BA%E7%A1%80/" class="post-category">
+                                    python基础
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/python%E5%A4%9A%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+                        <span class="chip bg-color">python多进程与多线程</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -925,7 +1202,7 @@ response <span class="token operator">=</span> session<span class="token punctua
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">81.4k</span>
+                        class="white-color">108.7k</span>
             
             
             

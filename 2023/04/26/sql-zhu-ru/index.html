@@ -382,21 +382,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-29
+                    2023-04-30
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    10k
+                    10.6k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    46 分
+                    48 分
                 </div>
                 
 
@@ -1595,6 +1595,42 @@ user_pass <span class="token operator">=</span> <span class="token string">""</s
 <p>Less-57：<code>"</code>闭合，有回显联合查询</p>
 <p>Less58-62：闭合点自己找，报错注入</p>
 <p>Less62-65：盲注</p>
+<h1 id="CTF-中的骚操作"><a href="#CTF-中的骚操作" class="headerlink" title="CTF 中的骚操作"></a>CTF 中的骚操作</h1><h2 id="BUUCTF-SUCTF-2019-EasySQL"><a href="#BUUCTF-SUCTF-2019-EasySQL" class="headerlink" title="BUUCTF - [SUCTF 2019]EasySQL"></a>BUUCTF - [SUCTF 2019]EasySQL</h2><p>考点：堆叠注入，||运算符的意义转换（操作符重置，短路算法）</p>
+<p>题目页面：输入非0数字，页面输出<code>Array (    [0] =&gt; 1 )</code>、否则无输出</p>
+<img src="/2023/04/26/sql-zhu-ru/29-0.png">
+
+<p><code>'</code>,<code>"</code>等等都试过了，页面也没有报错，也没有回显；尝试堆叠注入</p>
+<pre class="line-numbers language-none"><code class="language-none">1;show databases; ==&gt; 所有数据库名
+1;select database(); ==&gt; 当前数据库名：CTF
+1;select tables; ==&gt; 当前数据库的表名：Flag
+1;show columns from Flag; ==&gt; Flag表字段名==&gt;页面输出Nonono.==&gt; 猜测有过滤
+验证过滤字符：
+1;columns; ==&gt; 页面正常
+1;from; ==&gt; 页面输出Nonono.==&gt; from被过滤
+1;Flag; ==&gt; 页面输出Nonono.==&gt; Flag被过滤<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>大的来捏</strong></p>
+<p>回想最开始我们输入的非0数字和0与字母所回显的内容：非0数字回显1，0和字母不会回显任何内容；</p>
+<blockquote>
+<p>||操作符：<strong>在MySQL中，操作符||表示“或”逻辑：</strong></p>
+<p>c1 || c2：c1和c2其中一侧为1则取1，否则取0；且只有c1为假，才会检查c2</p>
+</blockquote>
+<p>这里猜测后端语句，因为只有输入非0数字时才会回显1，而0和其他字符无回显，所以猜测逻辑大致是这样的：</p>
+<p>大胆猜测后端（内部查询语句）语句中有||操作符，只有输入非0数字才会满足||的逻辑为True从而进行回显的条件。也就是满足:<code>select 输入的内容 || 一个列名 from 表名</code>。（select 输入数据 || flag from Flag）</p>
+<p><strong>方法一</strong></p>
+<p>从这里可以找到解题方法：既然要找到flag，后端又存在“或” 的逻辑，那么只需要把 或 的逻辑改成 连接符 的作用就可以了。</p>
+<p>这里需要借用到：设置 <code>sql_mode=PIPES_AS_CONCAT</code> 来转换操作符的作用。（sql_mode设置）</p>
+<p><strong>利用<code>PIPES_AS_CONCAT</code>令||起到连接符的作用。</strong></p>
+<p>构建payload：<code>1;set sql_mode=PIPES_AS_CONCAT;select 1</code></p>
+<blockquote>
+<p>这里的逻辑是先把||转换为连接操作符，注意分号隔断了前面的命令，所以要再次添加select来进行查询，这里把1换成其他非零数字也一样会回显flag</p>
+</blockquote>
+<p><strong>方法二</strong></p>
+<p>构建payload：<code>*,1</code></p>
+<p>猜测后端语句是<code>select 输入内容 || flag from Flag</code>，输入<code>*,1</code>就相当于构造了<code>select *,1||flag from Flag</code>，这条语句执行起来相当于<code>select *,1 from Flag</code></p>
+<p>拓展：</p>
+<p><code>PIPES_AS_CONCAT</code>：将 || 视为字符串的连接操作符而非或运算符，这和Oracle数据库是一样的，也和字符串的拼接函数Concat相类似.</p>
+<p><code>select 1 from</code> ：建立一个临时列，这个列的所有初始值都被设为1。</p>
 <p><strong>参考文章：</strong></p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3fe7904683ac">https://www.jianshu.com/p/3fe7904683ac</a></p>
 
@@ -1986,7 +2022,7 @@ user_pass <span class="token operator">=</span> <span class="token string">""</s
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">81.4k</span>
+                        class="white-color">108.7k</span>
             
             
             

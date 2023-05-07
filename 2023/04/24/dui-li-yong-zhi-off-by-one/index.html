@@ -382,7 +382,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-24
+                    2023-05-02
                 </div>
                 
 
@@ -477,7 +477,7 @@
 <li>对于第二个book，name和des的大小应该接近top_chunk大小，使得name和des的chunk由mmp分配</li>
 </ul>
 </li>
-<li><p>当我们创建完book后，这是我们show的话，第一个book的book_ptr也会被输出，原因应该很好理解吧；上个图吧</p>
+<li><p>当我们创建完book后，这时我们show的话，第一个book的book_ptr也会被输出，原因应该很好理解吧；上个图吧</p>
 </li>
 </ul>
 <p><img src="/2023/04/24/dui-li-yong-zhi-off-by-one/12.png" alt="13"></p>
@@ -509,9 +509,8 @@
 <p><img src="/2023/04/24/dui-li-yong-zhi-off-by-one/18.png"></p>
 <p>但是我们要获得__free_hook就得泄漏libc，如何泄漏呢？记得我们在上面把book2的name,des的值设置的接近为top_chunk的值吗？这就是为了泄漏libc的？</p>
 <p>因为mmp分配的空间与libc的偏移是固定的，所以只要我们能够泄漏book2的name_ptr的值或者des_ptr的值就可以泄漏libc了；</p>
-<p>那么我们如何泄漏book2的name_ptr或者des_ptr呢？在上面已经给出了方法，就是把book1的name_ptr修改为book2的name_ptr即可？</p>
-<p>而在第一次我们泄漏了book1的book_ptr，我们知道book_ptr中存储的内容为<code>id name_ptr des_ptr des_size</code>，而book1与book2的book_ptr偏移是固定的所以很容易得到book2的name_ptr和des_ptr</p>
-<p><img src="/2023/04/24/dui-li-yong-zhi-off-by-one/17.png"></p>
+<p>那么我们如何泄漏book2的name_ptr或者des_ptr呢？在上面已经给出了方法，就是把book1的name_ptr修改为book2的name_ptr即可，那么我们如何获得name_ptr或者des_ptr呢？</p>
+<p>在第一次我们泄漏了book1的book_ptr，我们知道book_ptr中存储的内容为<code>id name_ptr des_ptr des_size</code>，而book1与book2的book_ptr偏移是固定的所以很容易得到book2的name_ptr和des_ptr</p>
 <p>这里我没有打通：因为gilbc 2.34已经废除__free_hook了</p>
 <p>而我用glibc 2.23也没有打通，远程环境也没有找到；哎，知道思路就行了</p>
 <p>exp：</p>
@@ -604,6 +603,8 @@ edit<span class="token punctuation">(</span><span class="token number">2</span><
 delete<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
 
 io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
 
 
                 
@@ -986,7 +987,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">81.4k</span>
+                        class="white-color">108.7k</span>
             
             
             

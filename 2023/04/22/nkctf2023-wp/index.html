@@ -378,21 +378,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-04-24
+                    2023-05-01
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.2k
+                    3.3k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    11 分
+                    15 分
                 </div>
                 
 
@@ -930,9 +930,118 @@ bool <span class="token function">check</span><span class="token punctuation">(<
 
 
 <h2 id="earlier"><a href="#earlier" class="headerlink" title="earlier"></a>earlier</h2><ul>
-<li>静态反调试</li>
+<li>静态反调试，花指令，SMC</li>
 </ul>
-<p>这题加了很多静态反调试，但都可以很容易去除。这里写的详细一点，复习一下静态反调试技术。</p>
+<p>这题主要考查静态反调试，静态反调试是比较容易过掉的。</p>
+<p>程序使用 TLS 来进行反调试，设置了两个 tls 回调函数：</p>
+<ul>
+<li><p>在回调函数 TlsCallback0 中使用 IsDebuggerPresent 函数进行反调试</p>
+</li>
+<li><p>在回调函数 TlsCallback1 中使用 NtSetInformationThread 和 NtQueryInformationProcess 函数进行反调试</p>
+</li>
+</ul>
+<p>TLS回调函数只会在程序最开始执行一次，属于静态调试技术，所以我们直接 Patch 掉就OK了</p>
+<ul>
+<li>程序中使用了花指令，我们使用脚本去除</li>
+</ul>
+<p>程序实现了一个类似SMC的功能，程序会先运行一段解密函数对相关指令进行解密，然后执行指令，最后在返回前在对指令进行加密。（这里直接说对指令进行加解密，是因为在计算机中指令和数据都是一堆01而以，没有本质区别；主要看CPU把它们当做神马）</p>
+<p><strong>程序分析</strong></p>
+<p><strong>反调试部分</strong></p>
+<p>可以看到第一个TLS回调函数反汇编失败，多半有花指令；查看汇编代码</p>
+<p><img src="/2023/04/22/nkctf2023-wp/6-1.png"></p>
+<p>通过汇编代码，我们可以看出确实存在花指令，并且可以在多处找到该类型的花指令，所以我们直接用脚本去除</p>
+<p><img src="/2023/04/22/nkctf2023-wp/6-2.png"></p>
+<p>去花脚本：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> idc
+<span class="token keyword">import</span> idautils
+<span class="token keyword">def</span> <span class="token function">Nop</span><span class="token punctuation">(</span>curaddr<span class="token punctuation">,</span> endaddr<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">while</span> curaddr <span class="token operator">&lt;</span> endaddr<span class="token punctuation">:</span>
+        patch_byte<span class="token punctuation">(</span>curaddr<span class="token punctuation">,</span> <span class="token number">0x90</span><span class="token punctuation">)</span>
+        curaddr <span class="token operator">+=</span> <span class="token number">1</span>
+pattern <span class="token operator">=</span> <span class="token string">"33 C0 85 C0 74 03 75 00 E8"</span>
+cur_addr <span class="token operator">=</span> <span class="token number">0x401000</span>
+end_addr <span class="token operator">=</span> <span class="token number">0x405000</span>
+
+<span class="token keyword">while</span> cur_addr <span class="token operator">&lt;</span> end_addr<span class="token punctuation">:</span>
+    cur_addr <span class="token operator">=</span> idc<span class="token punctuation">.</span>find_binary<span class="token punctuation">(</span>cur_addr<span class="token punctuation">,</span> SEARCH_DOWN<span class="token punctuation">,</span> pattern<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"patch address:"</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>cur_addr<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> cur_addr <span class="token operator">==</span> idc<span class="token punctuation">.</span>BADADDR<span class="token punctuation">:</span>
+        <span class="token keyword">break</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        my_nop<span class="token punctuation">(</span>cur_addr<span class="token punctuation">,</span> cur_addr <span class="token operator">+</span> <span class="token number">9</span><span class="token punctuation">)</span>
+    cur_addr <span class="token operator">=</span> idc<span class="token punctuation">.</span>next_head<span class="token punctuation">(</span>cur_addr<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>去除花指令后，我们可以看到反调试逻辑：IsDebuggerPresent 函数进行反调试，直接 Patch 掉</p>
+<p><img src="/2023/04/22/nkctf2023-wp/6-3.png"></p>
+<p>第二个TLS回调函数同理</p>
+<p><strong>main函数</strong></p>
+<p>我们进入 main 函数：万蓝千红一顿愁，三个函数依次看看</p>
+<p><img src="/2023/04/22/nkctf2023-wp/6-4.png"></p>
+<p><strong>sub_40107D函数</strong></p>
+<p>进入sub_40107D函数，然后我们会跟到 loc_91CB0 位置；我们可以看到在调用 sub_911C2 函数之前的汇编代码都很正常，但是后面的汇编代码是什么鬼东西？？？所以这里我们跟进 sub_911C2 看看</p>
+<p><img src="/2023/04/22/nkctf2023-wp/6-5.png"></p>
+<p><strong>sub_911C2函数</strong></p>
+<p>我们跟进sub_911C2函数，最后会跟到 sub_91EB0 函数；在 sub_91EB0 中调用了 runToHere.dll 中的两个函数。所以我们看下 dll 中这两个函数的作用。</p>
+<p><img src="/2023/04/22/nkctf2023-wp/6-6.png"></p>
+<p>fnGetHere 和 fnrunToHere 函数的功能如下：那么其实 sub_91EB0的作用就很明显了，其实就是对某段地址指令进行异或运算，其实就是实现SMC的效果</p>
+<p><img src="/2023/04/22/nkctf2023-wp/6-7.png"></p>
+<p><img src="/2023/04/22/nkctf2023-wp/6-8.png"></p>
+<p><strong>动态调试</strong></p>
+<p>其实 main 函数中的三个函数都调用了sub_911C2函数 </p>
+<p>这里加解密算法都很简单，你可以把加密的指令 dump 出来，然后自己解密；这里直接动态调试来看下 main 中的三个函数：sub_40107D、sub_401203、sub_401258的功能</p>
+<p><strong>sub_40107D：</strong>这个函数会提示并获取我们输入，并检查输入的字符串长度是否为42，不是则直接退出程序，可以自己调一下。</p>
+<p>我们重点看**sub_401203 **这个函数：我们把断点下在该函数处：输入<code>123456712345671234567123456712345671234567</code></p>
+<p>经过sub_911C2函数对指令解密后，我们对后面的指令重新编译，可以看到其逻辑非常清晰</p>
+<p><img src="/2023/04/22/nkctf2023-wp/6-9.png"></p>
+<p>这里我的IDA没有办法搞出伪代码，所以我手写了一下这段代码大致的意思(汇编水平有限，但说实话仔细分析其实也很简单)：</p>
+<p>其实就是对我们输入的数据进行rc4加解密，然后放入data中；其中key就是’secret’</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h&gt;</span></span>
+
+<span class="token keyword">void</span> <span class="token function">loc_91A67</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">char</span> <span class="token operator">*</span>s <span class="token operator">=</span> <span class="token string">"secret"</span><span class="token punctuation">;</span>
+    <span class="token keyword">char</span> <span class="token operator">*</span>input <span class="token operator">=</span> <span class="token string">"123456712345671234567123456712345671234567"</span><span class="token punctuation">;</span>
+	<span class="token keyword">char</span> buf<span class="token punctuation">[</span><span class="token number">0x100</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+	<span class="token function">memset</span><span class="token punctuation">(</span>buf<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0x100</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">int</span> len1 <span class="token operator">=</span> <span class="token function">strlen</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">int</span> len2 <span class="token operator">=</span> <span class="token function">strlen</span><span class="token punctuation">(</span>input<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span> i<span class="token operator">&lt;</span>len2<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        buf<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> input<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">char</span> <span class="token operator">*</span>data<span class="token punctuation">[</span><span class="token number">42</span><span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token comment">//保存input加密后的数据</span>
+    <span class="token function">rc4</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span>len1<span class="token punctuation">,</span>input<span class="token punctuation">,</span>len2<span class="token punctuation">,</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>sub_401258</strong>：这个函数其实就是在对加解密后的data进行判断</p>
+<p>同样我的IDA无法搞出伪代码，所以自己写了一下这段代码大致意思</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h&gt;</span></span>
+
+<span class="token keyword">int</span> <span class="token function">sub_401258</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+   <span class="token keyword">char</span> c<span class="token punctuation">[</span><span class="token number">42</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token number">0x83</span><span class="token punctuation">,</span> <span class="token number">0x5D</span><span class="token punctuation">,</span> <span class="token number">0xB1</span><span class="token punctuation">,</span> <span class="token number">0x68</span><span class="token punctuation">,</span> <span class="token number">0xE4</span><span class="token punctuation">,</span> <span class="token number">0xDF</span><span class="token punctuation">,</span> <span class="token number">0xAF</span><span class="token punctuation">,</span> <span class="token number">0x96</span><span class="token punctuation">,</span> <span class="token number">0x47</span><span class="token punctuation">,</span> <span class="token number">0x94</span><span class="token punctuation">,</span>
+  				 <span class="token number">0xDA</span><span class="token punctuation">,</span> <span class="token number">0xAE</span><span class="token punctuation">,</span> <span class="token number">0x96</span><span class="token punctuation">,</span> <span class="token number">0xB9</span><span class="token punctuation">,</span> <span class="token number">0x86</span><span class="token punctuation">,</span> <span class="token number">0x58</span><span class="token punctuation">,</span> <span class="token number">0xF2</span><span class="token punctuation">,</span> <span class="token number">0x54</span><span class="token punctuation">,</span> <span class="token number">0x1E</span><span class="token punctuation">,</span> <span class="token number">0x87</span><span class="token punctuation">,</span>
+  				 <span class="token number">0xF5</span><span class="token punctuation">,</span> <span class="token number">0x96</span><span class="token punctuation">,</span> <span class="token number">0xB6</span><span class="token punctuation">,</span> <span class="token number">0x03</span><span class="token punctuation">,</span> <span class="token number">0x16</span><span class="token punctuation">,</span> <span class="token number">0x4C</span><span class="token punctuation">,</span> <span class="token number">0x06</span><span class="token punctuation">,</span> <span class="token number">0xB8</span><span class="token punctuation">,</span> <span class="token number">0xBE</span><span class="token punctuation">,</span> <span class="token number">0x0F</span><span class="token punctuation">,</span>
+  				 <span class="token number">0x37</span><span class="token punctuation">,</span> <span class="token number">0x6A</span><span class="token punctuation">,</span> <span class="token number">0xD8</span><span class="token punctuation">,</span> <span class="token number">0xA6</span><span class="token punctuation">,</span> <span class="token number">0x7A</span><span class="token punctuation">,</span> <span class="token number">0xED</span><span class="token punctuation">,</span> <span class="token number">0xA5</span><span class="token punctuation">,</span> <span class="token number">0x73</span><span class="token punctuation">,</span> <span class="token number">0x4A</span><span class="token punctuation">,</span> <span class="token number">0xBE</span><span class="token punctuation">,</span>
+  		         <span class="token number">0x6B</span><span class="token punctuation">,</span> <span class="token number">0xAC</span><span class="token punctuation">,</span> <span class="token number">0x00</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">int</span> len <span class="token operator">=</span> <span class="token function">strlen</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">char</span> <span class="token operator">*</span>fail <span class="token operator">=</span> <span class="token string">"something must be wrong!"</span><span class="token punctuation">;</span>
+    <span class="token keyword">char</span> <span class="token operator">*</span>sucess <span class="token operator">=</span> <span class="token string">"you got it!"</span><span class="token punctuation">;</span>
+    <span class="token comment">//data为上面加解密后的字符串</span>
+    <span class="token keyword">int</span> res <span class="token operator">=</span> <span class="token function">memcmp</span><span class="token punctuation">(</span>data<span class="token punctuation">,</span> c<span class="token punctuation">,</span> len<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span>res <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token function">puts</span><span class="token punctuation">(</span>sucess<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token function">puts</span><span class="token punctuation">(</span>fail<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>   
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>所以其实很简单，就是一个rc4加密算法，所以对c进行rc4解密就行啦：flag：<code>nkctf{y0u_are_so_clever_f0r_debug_enc0de!}</code></p>
+<blockquote>
+<p>这道题挺好的，因为后面我的IDA不能搞出伪代码，也是硬着头皮分析汇编；仔细分析每一次跳转，每个判断，最后发现其实也不是很难</p>
+</blockquote>
+<p><img src="/2023/04/22/nkctf2023-wp/6-10.png"></p>
 
                 
             </div>
@@ -1306,7 +1415,7 @@ bool <span class="token function">check</span><span class="token punctuation">(<
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">81.4k</span>
+                        class="white-color">108.7k</span>
             
             
             
