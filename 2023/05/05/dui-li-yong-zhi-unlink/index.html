@@ -897,7 +897,7 @@ libc <span class="token operator">=</span> elf<span class="token punctuation">.<
 <p>接下来我们去申请两个 chunk，但是注意这两个 chunk我们不放在 chunk_ptr_arr的2,3位置，我们放在6,7位置；为啥呢？因为这两个chunk只是辅助的，比如0x2397000这个chunk其实就是chunk1,0x2397020这个chunk是存在堆重叠的；简单点理解，我们利用的chunk应当是连续的</p>
 <p>可以看到 chunk1的size域被修改成为了0xa1；那么这里 unlink 所需要的 大于 fastbin的 chunk就有了；并且0xa1会被放到unsortedbin，那么通过 UAF，我们就可以泄漏 main_arena，进而泄漏 libc</p>
 <p><img src="/2023/05/05/dui-li-yong-zhi-unlink/4.png"></p>
-<p>当然为了触发 unlink，仅仅有个0xa1的 chunk还是不够的，我们还得绕过 unlink检查；在前面的题我们都是前向合并，而这里我们要后向合并，所以我们得伪造 next_chunk和 next_next_chunk</p>
+<p>当然为了触发 unlink，仅仅有个0xa1的 chunk还是不够的，我们还得绕过 unlink检查；在前面的题我们都是后向合并，而这里我们是前向合并，所以我们得伪造 next_chunk和 next_next_chunk</p>
 <p>那么这里太妙了，我们这个chunk1的大小为0xa1，所以它还包括后面连续两个0x30的 chunk，以及第3个 chunk的 header，那么第3个 chunk的 user_data不就是 next_chunk吗？而如果我们让 next_chunk的 size为0x30，那么它不就包含了第4个 chunk的 header吗？那么第4个 chunk的 user_data不就是 next_next_chunk吗？而 user_data部分我们是可以完全控制的，所以一切都合理了</p>
 <p>黄色的就是我们伪造的next_chunk，绿色的就是伪造的next_next_chunk；接下来我们去释放chunk1也就是红色的0xa1的chunk，那么就会后向合并从而触发unlink</p>
 <p><img src="/2023/05/05/dui-li-yong-zhi-unlink/5.png"></p>
@@ -1326,30 +1326,29 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/05/05/dui-li-yong-zhi-unlink/">
+                <a href="/2023/05/07/dui-li-yong-zhi-fastbin-attack/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/25.jpg" class="responsive-img" alt="堆利用之unlink">
+                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="堆利用之FastBin-attack">
                         
-                        <span class="card-title">堆利用之unlink</span>
+                        <span class="card-title">堆利用之FastBin-attack</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            unlink机制的利用
+                            fastbin attack的基本利用
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-05-05
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-05-07
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -1362,12 +1361,11 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/unlink/">
-                        <span class="chip bg-color">unlink</span>
+                    <a href="/tags/fastbin-attack/">
+                        <span class="chip bg-color">fastbin attack</span>
                     </a>
                     
                 </div>
@@ -1590,7 +1588,7 @@ io<span class="token punctuation">.</span>interactive<span class="token punctuat
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">108.7k</span>
+                        class="white-color">116.9k</span>
             
             
             
